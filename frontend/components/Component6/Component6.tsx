@@ -47,16 +47,13 @@ export const Component6 = ({
             }}
         >
             {["six", "three"].includes(state.variant) && (
-                <a
+                <span
                     className={`[font-family:'Inter',Helvetica] w-fit mt-[-1.00px] tracking-[0] relative font-normal whitespace-nowrap ${state.variant === "six" ? "text-base" : "text-sm"} ${state.variant === "six" ? "text-black" : "text-[#6b6b6b]"} ${state.variant === "six" ? "leading-6" : "leading-[21px]"}`}
-                    href={href1}
-                    rel="noopener noreferrer"
-                    target="_blank"
                 >
                     {state.variant === "three" && <>𝕏</>}
 
                     {state.variant === "six" && <>𝙊𝙍𝘿𝙄𝙉𝘼𝙇𝙎 𝙏𝘼𝙃𝘼𝙃𝘼𝙆𝙀𝙊𝙑𝙀𝙍</>}
-                </a>
+                </span>
             )}
 
             {["five", "four", "one", "two"].includes(state.variant) && <>{icon}</>}

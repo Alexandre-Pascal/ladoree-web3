@@ -44,16 +44,11 @@ export const Component4 = ({
                 dispatch("mouse_leave");
             }}
         >
-            <a
+            <span
                 className="[font-family:'Inter',Helvetica] w-[163px] left-0 tracking-[0] text-sm -top-px text-black h-[21px] font-normal leading-[21px] whitespace-nowrap absolute"
-                href={href1}
-                rel="noopener noreferrer"
-                target="_blank"
             >
                 {text}
-            </a>
-
-
+            </span>
         </a>
     );
 };
