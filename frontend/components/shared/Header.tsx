@@ -33,7 +33,7 @@ const Header = () => {
                             <ul className="flex space-x-6 text-sm">
                                 <li><a href="/">ACCUEIL</a></li>
                                 <li><a href="/Explore">DECOUVRIR</a></li>
-                                <li><a href="/About">A PROPOS</a></li>
+                                <li><a href="/A-propos">A PROPOS</a></li>
                                 <li><a href="/Contact">CONTACT</a></li>
                             </ul>
                             <input type='button' value='Connexion' className='bg-black text-white px-4 py-2 rounded-md' />
