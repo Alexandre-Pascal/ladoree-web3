@@ -11,21 +11,21 @@ const Footer = () => {
                     </div>
 
                     <div className="flex justify-center space-x-8">
-                        <a href="#" className="text-gray-600 hover:underline">A propos</a>
-                        <a href="#" className="text-gray-600 hover:underline">Expositions</a>
-                        <a href="#" className="text-gray-600 hover:underline">Artistes</a>
-                        <a href="#" className="text-gray-600 hover:underline">Contact</a>
+                        <a href="/A-propos" className="text-gray-600 hover:underline">A propos</a>
+                        {/* <a href="#" className="text-gray-600 hover:underline">Expositions</a> */}
+                        <a href="/Artists" className="text-gray-600 hover:underline">Artistes</a>
+                        <a href="/Contact" className="text-gray-600 hover:underline">Contact</a>
                     </div>
 
                     <div className="flex justify-center space-x-6 mt-6">
-                        <a href="#" className="text-gray-600 hover:text-gray-500">
+                        <a href="https://www.instagram.com/boutique.ladoree/" className="text-gray-600 hover:text-gray-500">
+                            <i className="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/p/Boutique-Lador%C3%A9e-100086719748274/?locale=fr_FR" className="text-gray-600 hover:text-gray-500">
                             <i className="fab fa-facebook-f"></i>
                         </a>
                         <a href="#" className="text-gray-600 hover:text-gray-500">
                             <i className="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" className="text-gray-600 hover:text-gray-500">
-                            <i className="fab fa-instagram"></i>
                         </a>
                     </div>
 

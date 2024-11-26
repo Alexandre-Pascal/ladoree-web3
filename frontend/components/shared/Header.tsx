@@ -32,7 +32,7 @@ const Header = () => {
                         <div className="flex items-center justify-center  space-x-10">
                             <ul className="flex space-x-6 text-sm">
                                 <li><a href="/">ACCUEIL</a></li>
-                                <li><a href="/Explore">DECOUVRIR</a></li>
+                                <li><a href="/Explore"></a></li>
                                 <li><a href="/A-propos">A PROPOS</a></li>
                                 <li><a href="/Contact">CONTACT</a></li>
                             </ul>
