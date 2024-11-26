@@ -19,7 +19,7 @@ const page = () => {
                 <p className='text-gray-500 mt-1'>100 résultats</p>
             </div>
 
-            <div className="flex max-w-screen-2xl mx-auto py-12 relative ">
+            <div className="flex max-w-screen-xl-2xl mx-auto py-12 relative ">
                 {/* Colonne de filtres à gauche */}
                 <div className={`w-1/4 pr-8 ${filtersVisible ? 'block' : 'hidden'} mt-6`}>
                     {/* Section de filtres */}
@@ -56,7 +56,7 @@ const page = () => {
                 </div>
 
                 {/* Colonne de résultats à droite */}
-                <div className={`w-full ${filtersVisible ? 'w-3/4' : 'w-full'} flex flex-wrap gap-8 mt-6`}>
+                <div className={`w-full ${filtersVisible ? 'w-3/4' : 'w-full'} flex flex-wrap gap-8 mt-6 max-md:justify-center`}>
                     {/* Bouton icône de filtre placé en haut à gauche des oeuvres */}
                     <div className="absolute top-0 left-0 mt-4 ml-6">
                         <button

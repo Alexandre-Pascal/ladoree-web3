@@ -15,19 +15,19 @@ const Header = () => {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
                         <input
                             type="text"
-                            placeholder="Search..."
+                            placeholder="Rechercher..."
                             className="w-full px-10 py-2 border rounded-md ml-1"
                         />
                     </div>
                     <nav>
                         <div className="flex items-center justify-center  space-x-10">
-                            <ul className="flex space-x-4">
-                                <li><a href="/">HOME</a></li>
-                                <li><a href="/Explore">EXPLORE</a></li>
-                                <li><a href="/About">ABOUT</a></li>
+                            <ul className="flex space-x-6 text-sm">
+                                <li><a href="/">ACCUEIL</a></li>
+                                <li><a href="/Explore">DECOUVRIR</a></li>
+                                <li><a href="/About">A PROPOS</a></li>
                                 <li><a href="/Contact">CONTACT</a></li>
                             </ul>
-                            <input type='button' value='Login' className='bg-black text-white px-4 py-2 rounded-md' />
+                            <input type='button' value='Connexion' className='bg-black text-white px-4 py-2 rounded-md' />
                         </div>
                     </nav>
                 </div>

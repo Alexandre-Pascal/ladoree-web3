@@ -10,7 +10,10 @@ interface ArtCardProps {
 
 const ArtCard: React.FC<ArtCardProps> = ({ image, title, artistImage, artist, price }) => {
     return (
-        <div className="border p-4 rounded-md  transition-colors duration-300 hover:bg-gray-50 flex-none w-[350px] h-[450px] content-center justify-items-center cursor-pointer">
+        <div
+            onClick={() => window.location.href = '/artwork'}
+            className="border p-4 rounded-md  transition-colors duration-300 hover:bg-gray-50 flex-none w-[325px] h-[450px] content-center justify-items-center cursor-pointer"
+        >
             <img
                 src={image}
                 alt="Oeuvre d'art"

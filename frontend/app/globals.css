@@ -28,6 +28,10 @@ body {
   font-weight: 300;
 }
 
+.max-w-screen-xl-2xl {
+  max-width: 1408px;
+}
+
 
 @layer utilities {
   .text-balance {
