@@ -103,7 +103,27 @@ const page = () => {
                         artist="Edvard Munch"
                         price={"120 000 000"}
                     />
-
+                    <ArtCard
+                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/1920px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg"
+                        title="La Naissance de Vénus"
+                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sandro_Botticelli_Self-portrait_ca_1475.jpg/800px-Sandro_Botticelli_Self-portrait_ca_1475.jpg"
+                        artist="Sandro Botticelli"
+                        price={"140 000 000"}
+                    />
+                    <ArtCard
+                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/1280px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg"
+                        title="Impression, soleil levant"
+                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/800px-Claude_Monet_1899_Nadar_crop.jpg"
+                        artist="Claude Monet"
+                        price={"110 000 000"}
+                    />
+                    <ArtCard
+                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/800px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg"
+                        title="American Gothic"
+                        artistImage="https://upload.wikimedia.org/wikipedia/commons/0/02/Grant_Wood.jpg"
+                        artist="Grant Wood"
+                        price={"85 000 000"}
+                    />
                 </div>
             </div>
         </div >
