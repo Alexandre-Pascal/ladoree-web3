@@ -2,26 +2,10 @@
 import React from 'react';
 import Link from 'next/link';
 import ArtCard from '@/components/shared/ArtCard';
-import { artworksData } from '../data/artistsData';
+import { artworksData, artistsData } from '../data/artistsData';
 
 // Exemple de données d'artistes et d'acheteurs
-const topArtists = [
-  {
-    name: 'Vincent van Gogh',
-    sales: '210 000 000',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg/800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg',
-  },
-  {
-    name: 'Leonardo da Vinci',
-    sales: '180 000 000',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Francesco_Melzi_-_Portrait_of_Leonardo.png/800px-Francesco_Melzi_-_Portrait_of_Leonardo.png',
-  },
-  {
-    name: 'Salvador Dalí',
-    sales: '120 000 000',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Salvador_Dal%C3%AD_1939.jpg/800px-Salvador_Dal%C3%AD_1939.jpg',
-  },
-];
+const topArtists = artistsData.slice(0, 3);
 
 const topBuyers = [
   {
@@ -82,13 +66,13 @@ const HomePage = () => {
                   className="w-16 h-16 object-cover rounded-full"
                 />
                 <div>
-                  <h4
-                    className="text-lg font-medium text-gray-800 cursor-pointer"
-                    onClick={() => { window.location.href = '/artists-list/' + artist.name; }}
-                  >
-                    {artist.name}
-                  </h4>
-                  <p className="text-gray-600">Total des ventes : <span className="font-medium">{artist.sales} €</span></p>
+                  <Link href={`/artists-list/${encodeURIComponent(artist.name)}`}>
+                    <h4
+                      className="text-lg font-medium text-gray-800 cursor-pointer">
+                      {artist.name}
+                    </h4>
+                  </Link>
+                  <p className="text-gray-600">Total des ventes : <span className="font-medium">{artist.totalValue} €</span></p>
                 </div>
               </div>
             ))}
@@ -118,8 +102,6 @@ const HomePage = () => {
           </div>
         </section>
       </div>
-
-
 
       {/* Section de recommandation ou autres éléments supplémentaires */}
       <section className="mb-16">
