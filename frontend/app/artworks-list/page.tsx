@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Filter } from 'lucide-react'; // Import de l'icône de filtre
 import ArtCard from '@/components/shared/ArtCard';
+import { artworksData } from '../../data/artistsData';
 
 const page = () => {
     // État pour contrôler l'affichage des filtres
@@ -68,62 +69,12 @@ const page = () => {
                         </button>
                     </div>
 
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_natural_color.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_natural_color.jpg"
-                        title="La Joconde"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Francesco_Melzi_-_Portrait_of_Leonardo.png/800px-Francesco_Melzi_-_Portrait_of_Leonardo.png"
-                        artist="Léonard de Vinci"
-                        price={"78 000 000"}
-                    />
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Korenveld_met_kraaien_-_s0149V1962_-_Van_Gogh_Museum.jpg/1920px-Korenveld_met_kraaien_-_s0149V1962_-_Van_Gogh_Museum.jpg"
-                        title="Champ de blé aux corbeaux"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg/800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg"
-                        artist="Vincent van Gogh"
-                        price={"90 000 000"}
-                    />
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg"
-                        title="La Nuit étoilée"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg/800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg"
-                        artist="Vincent van Gogh"
-                        price={"82 000 000"}
-                    />
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg"
-                        title="La Persistance de la mémoire"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Salvador_Dal%C3%AD_1939.jpg/800px-Salvador_Dal%C3%AD_1939.jpg"
-                        artist="Salvador Dalí"
-                        price={"60 000 000"}
-                    />
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/commons/f/f4/The_Scream.jpg"
-                        title="Le Cri"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/4/4a/Edvard_Munch_1933-2.jpg"
-                        artist="Edvard Munch"
-                        price={"120 000 000"}
-                    />
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/1920px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg"
-                        title="La Naissance de Vénus"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sandro_Botticelli_Self-portrait_ca_1475.jpg/800px-Sandro_Botticelli_Self-portrait_ca_1475.jpg"
-                        artist="Sandro Botticelli"
-                        price={"140 000 000"}
-                    />
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/1280px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg"
-                        title="Impression, soleil levant"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/800px-Claude_Monet_1899_Nadar_crop.jpg"
-                        artist="Claude Monet"
-                        price={"110 000 000"}
-                    />
-                    <ArtCard
-                        image="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/800px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg"
-                        title="American Gothic"
-                        artistImage="https://upload.wikimedia.org/wikipedia/commons/0/02/Grant_Wood.jpg"
-                        artist="Grant Wood"
-                        price={"85 000 000"}
-                    />
+                    {artworksData.map((artwork, index) => (
+                        <ArtCard
+                            key={index}
+                            artwork={artwork}
+                        />
+                    ))}
                 </div>
             </div>
         </div >

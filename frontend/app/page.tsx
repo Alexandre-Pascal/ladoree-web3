@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import ArtCard from '@/components/shared/ArtCard';
+import { artworksData } from '../data/artistsData';
 
 // Exemple de données d'artistes et d'acheteurs
 const topArtists = [
@@ -55,7 +56,7 @@ const HomePage = () => {
             <h2 className="text-5xl font-bold">La Nuit étoilée</h2>
             <p className="mt-2 text-lg">Par Vincent van Gogh</p>
             <Link
-              href="/artwork?image=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fe%2Fea%2FVan_Gogh_-_Starry_Night_-_Google_Art_Project.jpg%2F1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg&title=La+Nuit+étoilée&artistImage=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb2%2FVincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg%2F800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg&artist=Vincent+van+Gogh&price=82+000+000"
+              href="/artworks-list/La%20Nuit%20étoilée"
               className="mt-6 px-6 py-3 bg-indigo-500 rounded-md hover:bg-indigo-600 transition"
             >
               Découvrez cette œuvre
@@ -120,27 +121,9 @@ const HomePage = () => {
         <h3 className="text-3xl font-semibold text-gray-800 mb-6">Recommandations pour vous</h3>
         <div className="flex flex-wrap gap-8">
           {/* Affichage d'œuvres d'art sous forme de cartes */}
-          <ArtCard
-            image="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/1920px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg"
-            title="La Naissance de Vénus"
-            artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sandro_Botticelli_Self-portrait_ca_1475.jpg/800px-Sandro_Botticelli_Self-portrait_ca_1475.jpg"
-            artist="Sandro Botticelli"
-            price={"140 000 000"}
-          />
-          <ArtCard
-            image="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/1280px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg"
-            title="Impression, soleil levant"
-            artistImage="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/800px-Claude_Monet_1899_Nadar_crop.jpg"
-            artist="Claude Monet"
-            price={"110 000 000"}
-          />
-          <ArtCard
-            image="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/800px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg"
-            title="American Gothic"
-            artistImage="https://upload.wikimedia.org/wikipedia/commons/0/02/Grant_Wood.jpg"
-            artist="Grant Wood"
-            price={"85 000 000"}
-          />
+          <ArtCard artwork={artworksData[0]} />
+          <ArtCard artwork={artworksData[1]} />
+          <ArtCard artwork={artworksData[2]} />
         </div>
       </section>
     </div>

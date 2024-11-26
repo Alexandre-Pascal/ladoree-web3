@@ -1,7 +1,9 @@
-import React from 'react';
-import Link from 'next/link';
+// components/ArtCard.tsx
 
-interface ArtCardProps {
+import React from 'react';
+import Image from 'next/image';
+
+interface Artwork {
     image: string;
     title: string;
     artistImage: string;
@@ -9,9 +11,32 @@ interface ArtCardProps {
     price: string;
 }
 
-const ArtCard: React.FC<ArtCardProps> = ({ image, title, artistImage, artist, price }) => {
+const ArtCard = ({ artwork }: { artwork: Artwork }) => {
     return (
-        <Link
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
+            onClick={() => window.location.href = `/artworks-list/${encodeURIComponent(artwork.title)}`}
+        >
+            <div className="relative h-48">
+                <Image src={artwork.image} alt={artwork.title} layout="fill" objectFit="cover" className="w-full h-full object-cover" />
+            </div>
+            <div className="p-6">
+                <div className="flex items-center">
+                    <Image src={artwork.artistImage} alt={artwork.artist} width={60} height={60} className="rounded-full border-2 border-gray-200" />
+                    <div className="ml-4">
+                        <h3 className="text-lg font-semibold text-gray-800">{artwork.title}</h3>
+                        <p className="text-gray-500">Artiste : {artwork.artist}</p>
+                        <p className="text-gray-500">Prix : {artwork.price}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ArtCard;
+
+/** 
+ * <Link
             href={{
                 pathname: '/artwork', // Page de destination
                 query: {
@@ -47,7 +72,4 @@ const ArtCard: React.FC<ArtCardProps> = ({ image, title, artistImage, artist, pr
                 </div>
             </div>
         </Link>
-    );
-};
-
-export default ArtCard;
+*/
