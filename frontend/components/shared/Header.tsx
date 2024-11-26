@@ -1,15 +1,24 @@
+'use client';
+
 import React from 'react'
 import { Search } from 'lucide-react';
 import Image from 'next/image';
 
-import logo from '../../icons/logo.png';
+import logo from '../../icons/ldr cut4.png';
 
 const Header = () => {
     return (
         <header className="border-b border-gray-800">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center py-4">
-                    <Image src={logo} alt="logo" width={100} height={100} />
+                    <Image
+                        src={logo}
+                        alt="logo"
+                        width={300}
+                        height={100}
+                        className='cursor-pointer shadow-sm-md rounded-md'
+                        onClick={() => window.location.href = '/'}
+                    />
                     <div className="relative">
                         {/* Icone de recherche */}
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
