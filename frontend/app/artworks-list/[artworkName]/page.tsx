@@ -2,6 +2,7 @@
 import React from 'react';
 import ArtCard from '@/components/shared/ArtCard';
 import { artworksData } from '../../../data/artistsData';
+import Link from 'next/link';
 
 interface ArtworkDetailPageProps {
     params: {
@@ -43,7 +44,9 @@ const ArtworkDetailPage: React.FC<ArtworkDetailPageProps> = ({ params }) => {
                                 className="w-10 h-10 object-cover rounded-full"
                             />
                         )}
-                        <p className="text-gray-600">{artwork.artist}</p>
+                        <Link href={`/artists-list/${encodeURIComponent(artwork.artist)}`}>
+                            <p className="text-gray-600 hover:underline">{artwork.artist}</p>
+                        </Link>
                     </div>
                     <p className="text-xl text-gray-800 mt-4  border-b border-gray-300 pb-2">{artwork.price} €</p>
                     <div className="mt-6 flex flex-col gap-4">

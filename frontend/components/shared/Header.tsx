@@ -36,8 +36,8 @@ const Header = () => {
                         <div className="flex items-center justify-center  space-x-10">
                             <ul className="flex space-x-6 text-sm">
                                 <li><Link href="/">ACCUEIL</Link></li>
-                                <li><Link href="/artists-list">ARTISTES</Link></li>
                                 <li><Link href="/artworks-list">OEUVRES</Link></li>
+                                <li><Link href="/artists-list">ARTISTES</Link></li>
                                 <li><Link href="/about">A PROPOS</Link></li>
                                 <li><Link href="/contact">CONTACT</Link></li>
                             </ul>

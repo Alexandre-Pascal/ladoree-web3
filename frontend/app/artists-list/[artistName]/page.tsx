@@ -1,6 +1,7 @@
 // app/artists-list/[artistName]/page.tsx
 import React from 'react';
-import { artistsData } from '../../../data/artistsData'; // ou le bon chemin d'accès à vos données
+import { artistsData, artworksData } from '../../../data/artistsData'; // ou le bon chemin d'accès à vos données
+import ArtCard from '@/components/shared/ArtCard';
 
 interface ArtistDetailPageProps {
     params: {
@@ -40,6 +41,14 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
                         ))}
                     </ul>
                 </div>
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-800 mt-8">Œuvres de {artist.name}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-4">
+                {artworksData
+                    .filter(artwork => artwork.artist === artist.name)
+                    .map(artwork => (
+                        <ArtCard key={artwork.title} artwork={artwork} />
+                    ))}
             </div>
         </div>
     );
