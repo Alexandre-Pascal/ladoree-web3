@@ -1,15 +1,18 @@
 import React from 'react'
 import { Search } from 'lucide-react';
+import Image from 'next/image';
+
+import logo from '../../icons/logo.png';
 
 const Header = () => {
     return (
-        <header className="border-b border-gray-300">
+        <header className="border-b border-gray-800">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center py-4">
-                    <div className="text-2xl">Logo</div>
-                    <div className="relative mt-4">
+                    <Image src={logo} alt="logo" width={100} height={100} />
+                    <div className="relative">
                         {/* Icone de recherche */}
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" />
                         <input
                             type="text"
                             placeholder="Search..."
@@ -17,13 +20,14 @@ const Header = () => {
                         />
                     </div>
                     <nav>
-                        <div className="flex items-center space-x-10">
-                            <ul className="flex space-x-4 text-lg">
-                                <li>Home</li>
-                                <li>About</li>
-                                <li>Contact</li>
+                        <div className="flex items-center justify-center  space-x-10">
+                            <ul className="flex space-x-4">
+                                <li><a href="/">HOME</a></li>
+                                <li><a href="/Explore">EXPLORE</a></li>
+                                <li><a href="/About">ABOUT</a></li>
+                                <li><a href="/Contact">CONTACT</a></li>
                             </ul>
-                            <input type='button' value='Login' className='bg-blue-500 text-white px-4 py-2 rounded-md' />
+                            <input type='button' value='Login' className='bg-black text-white px-4 py-2 rounded-md' />
                         </div>
                     </nav>
                 </div>
