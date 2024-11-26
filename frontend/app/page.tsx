@@ -69,7 +69,7 @@ const HomePage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
         {/* Top Artistes */}
         <section className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-2xl font-semibold mb-6 text-gray-900 underline">Artistes les plus vendus</h3>
+          <h3 className="text-2xl font-semibold mb-6 text-gray-900 underline">Meilleurs vendeurs</h3>
           <div className="divide-y divide-gray-200">
             {topArtists.map((artist, index) => (
               <div
@@ -82,7 +82,12 @@ const HomePage = () => {
                   className="w-16 h-16 object-cover rounded-full"
                 />
                 <div>
-                  <h4 className="text-lg font-medium text-gray-800">{artist.name}</h4>
+                  <h4
+                    className="text-lg font-medium text-gray-800 cursor-pointer"
+                    onClick={() => { window.location.href = '/artists-list/' + artist.name; }}
+                  >
+                    {artist.name}
+                  </h4>
                   <p className="text-gray-600">Total des ventes : <span className="font-medium">{artist.sales} €</span></p>
                 </div>
               </div>

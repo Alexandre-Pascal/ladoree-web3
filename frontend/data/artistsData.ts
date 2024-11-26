@@ -223,7 +223,7 @@ export const artworksData: Artwork[] = [
         title: "Le Baiser",
         artist: "Gustav Klimt",
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/260px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",
-        artistImage: "https://upload.wikimedia.org/wikipedia/commons/8/87/The_Kiss_%28Gustav_Klimt%29.jpg",
+        artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Klimt.jpg/260px-Klimt.jpg",
         price: "190 000 000",
     },
 ];
