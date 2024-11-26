@@ -11,10 +11,10 @@ const Footer = () => {
                     </div>
 
                     <div className="flex justify-center space-x-8">
-                        <a href="/A-propos" className="text-gray-600 hover:underline">A propos</a>
+                        <a href="/about" className="text-gray-600 hover:underline">A propos</a>
                         {/* <a href="#" className="text-gray-600 hover:underline">Expositions</a> */}
-                        <a href="/Artists" className="text-gray-600 hover:underline">Artistes</a>
-                        <a href="/Contact" className="text-gray-600 hover:underline">Contact</a>
+                        <a href="/artists" className="text-gray-600 hover:underline">Artistes</a>
+                        <a href="/contact" className="text-gray-600 hover:underline">Contact</a>
                     </div>
 
                     <div className="flex justify-center space-x-6 mt-6">

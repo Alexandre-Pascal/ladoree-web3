@@ -13,7 +13,7 @@ const ArtCard: React.FC<ArtCardProps> = ({ image, title, artistImage, artist, pr
     return (
         <Link
             href={{
-                pathname: '/Artwork', // Page de destination
+                pathname: '/artwork', // Page de destination
                 query: {
                     image,
                     title,

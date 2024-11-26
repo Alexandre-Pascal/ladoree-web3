@@ -55,7 +55,7 @@ const HomePage = () => {
             <h2 className="text-5xl font-bold">La Nuit étoilée</h2>
             <p className="mt-2 text-lg">Par Vincent van Gogh</p>
             <Link
-              href="/Artwork?image=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fe%2Fea%2FVan_Gogh_-_Starry_Night_-_Google_Art_Project.jpg%2F1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg&title=La+Nuit+étoilée&artistImage=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb2%2FVincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg%2F800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg&artist=Vincent+van+Gogh&price=82+000+000"
+              href="/artwork?image=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fe%2Fea%2FVan_Gogh_-_Starry_Night_-_Google_Art_Project.jpg%2F1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg&title=La+Nuit+étoilée&artistImage=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb2%2FVincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg%2F800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg&artist=Vincent+van+Gogh&price=82+000+000"
               className="mt-6 px-6 py-3 bg-indigo-500 rounded-md hover:bg-indigo-600 transition"
             >
               Découvrez cette œuvre

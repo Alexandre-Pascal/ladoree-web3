@@ -19,7 +19,7 @@ const ArtworkPage = () => {
                     {image && (
                         <img
                             src={image}
-                            alt={title || 'Artwork'}
+                            alt={title || 'artwork'}
                             className=" object-cover rounded-md max-h-full-header"
                         />
                     )}

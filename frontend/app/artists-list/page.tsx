@@ -78,9 +78,9 @@ const ArtistCard = ({ artist }: { artist: Artist }) => (
             <Image
                 src={artist.profileImage}
                 alt={artist.name}
-                layout="fill"
-                objectFit="cover"
-                className="w-full h-full object-cover"
+                fill={true} // Utilisation de `fill` pour la gestion de l'image
+                style={{ objectFit: 'cover' }} // Remplacement de `objectFit="cover"`
+                className="w-full h-full"
             />
         </div>
         <div className="p-6">
