@@ -2,7 +2,6 @@
 
 export interface Artist {
     name: string;
-    image: string;
     artworksSold: number;
     artworksForSale: number;
     totalValue: number;
@@ -18,13 +17,13 @@ export interface Artwork {
     image: string;
     artistImage: string;
     price: string;
+    description: string;
 }
 
 // Données des artistes
 export const artistsData: Artist[] = [
     {
         name: 'Léonard de Vinci',
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_natural_color.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_natural_color.jpg",
         artworksSold: 5,
         artworksForSale: 2,
         totalValue: 78000000,
@@ -35,7 +34,6 @@ export const artistsData: Artist[] = [
     },
     {
         name: 'Vincent van Gogh',
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
         artworksSold: 8,
         artworksForSale: 3,
         totalValue: 172000000,
@@ -46,7 +44,6 @@ export const artistsData: Artist[] = [
     },
     {
         name: 'Pablo Picasso',
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Mural_del_Gernika.jpg/260px-Mural_del_Gernika.jpg",
         artworksSold: 12,
         artworksForSale: 4,
         totalValue: 500000000,
@@ -57,7 +54,6 @@ export const artistsData: Artist[] = [
     },
     {
         name: 'Claude Monet',
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/260px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg",
         artworksSold: 7,
         artworksForSale: 3,
         totalValue: 110000000,
@@ -68,7 +64,6 @@ export const artistsData: Artist[] = [
     },
     {
         name: 'Frida Kahlo',
-        image: "https://www.museumtv.art/wp-content/uploads/2021/04/les-deux-fridas-portrait.jpg",
         artworksSold: 4,
         artworksForSale: 1,
         totalValue: 30000000,
@@ -79,7 +74,6 @@ export const artistsData: Artist[] = [
     },
     {
         name: 'Salvador Dalí',
-        image: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
         artworksSold: 3,
         artworksForSale: 1,
         totalValue: 60000000,
@@ -90,7 +84,6 @@ export const artistsData: Artist[] = [
     },
     {
         name: "Georgia O'Keeffe",
-        image: "https://upload.wikimedia.org/wikipedia/en/thumb/c/ca/Red_Canna_%281924%29_by_Georgia_O%27Keeffe.jpg/270px-Red_Canna_%281924%29_by_Georgia_O%27Keeffe.jpg",
         artworksSold: 4,
         artworksForSale: 1,
         totalValue: 75000000,
@@ -101,7 +94,6 @@ export const artistsData: Artist[] = [
     },
     {
         name: 'Henri Matisse',
-        image: "https://upload.wikimedia.org/wikipedia/en/a/a7/Matissedance.jpg",
         artworksSold: 10,
         artworksForSale: 4,
         totalValue: 150000000,
@@ -120,6 +112,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_natural_color.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_natural_color.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Francesco_Melzi_-_Portrait_of_Leonardo.png/800px-Francesco_Melzi_-_Portrait_of_Leonardo.png",
         price: "78 000 000",
+        description: "La Joconde, ou Mona Lisa, est un portrait de Lisa Gherardini, épouse de Francesco del Giocondo, réalisé par Léonard de Vinci entre 1503 et 1506. C'est l'une des œuvres les plus célèbres et les plus étudiées de l'histoire de l'art.",
     },
     {
         title: "La Nuit étoilée",
@@ -127,13 +120,15 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg/800px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg",
         price: "82 000 000",
+        description: "La Nuit étoilée est une peinture de Vincent van Gogh réalisée en 1889. Elle représente le ciel nocturne au-dessus de Saint-Rémy-de-Provence, où l'artiste était interné à l'époque.",
     },
     {
         title: "Guernica",
         artist: "Pablo Picasso",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Mural_del_Gernika.jpg/260px-Mural_del_Gernika.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Mural_del_Gernika.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Pablo_picasso_1.jpg/800px-Pablo_picasso_1.jpg",
         price: "200 000 000",
+        description: "Guernica est une peinture de Pablo Picasso réalisée en 1937 en réaction au bombardement de la ville basque de Guernica par l'aviation allemande pendant la guerre civile espagnole.",
     },
     {
         title: "Les Demoiselles d'Avignon",
@@ -141,6 +136,7 @@ export const artworksData: Artwork[] = [
         image: "https://uploads2.wikiart.org/00492/images/pablo-picasso/les-demoiselles-d-avignon-1907.jpg!Large.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Pablo_picasso_1.jpg/800px-Pablo_picasso_1.jpg",
         price: "180 000 000",
+        description: "Les Demoiselles d'Avignon est une peinture de Pablo Picasso réalisée en 1907. Elle marque le début du cubisme et est l'une des œuvres les plus importantes de l'art moderne.",
     },
     {
         title: "Impression, soleil levant",
@@ -148,6 +144,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/260px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/800px-Claude_Monet_1899_Nadar_crop.jpg",
         price: "120 000 000",
+        description: "Impression, soleil levant est une peinture de Claude Monet réalisée en 1872. Elle est à l'origine du terme 'impressionnisme' et est l'une des œuvres les plus célèbres du mouvement.",
     },
     {
         title: "Les Nymphéas",
@@ -155,6 +152,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Claude_Monet_038.jpg/260px-Claude_Monet_038.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/800px-Claude_Monet_1899_Nadar_crop.jpg",
         price: "105 000 000",
+        description: "Les Nymphéas est une série de peintures de Claude Monet réalisée entre 1899 et 1926. Elle représente les jardins de sa maison de Giverny et est l'une des œuvres les plus emblématiques de l'artiste.",
     },
     {
         title: "Les Deux Fridas",
@@ -162,6 +160,7 @@ export const artworksData: Artwork[] = [
         image: "https://www.museumtv.art/wp-content/uploads/2021/04/les-deux-fridas-portrait.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg/260px-Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg",
         price: "55 000 000",
+        description: "Les Deux Fridas est une peinture de Frida Kahlo réalisée en 1939. Elle représente deux versions de l'artiste, l'une vêtue de blanc et l'autre de rouge, symbolisant son identité mexicaine et européenne.",
     },
     {
         title: "La Persistance de la mémoire",
@@ -169,6 +168,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Salvador_Dal%C3%AD_1939.jpg/800px-Salvador_Dal%C3%AD_1939.jpg",
         price: "120 000 000",
+        description: "La Persistance de la mémoire est une peinture de Salvador Dalí réalisée en 1931. Elle représente des montres molles et un paysage désertique, symbolisant la relativité du temps et de la réalité.",
     },
     // 2. Red Canna - Georgia O'Keeffe
     {
@@ -177,6 +177,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/en/thumb/c/ca/Red_Canna_%281924%29_by_Georgia_O%27Keeffe.jpg/270px-Red_Canna_%281924%29_by_Georgia_O%27Keeffe.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Georgia_O%27Keeffe_MET_DP230868.jpg/220px-Georgia_O%27Keeffe_MET_DP230868.jpg",
         price: "80 000 000",
+        description: "Red Canna est une peinture de Georgia O'Keeffe réalisée en 1924. Elle représente une fleur de canna rouge, symbole de la nature et de la féminité dans l'œuvre de l'artiste.",
     },
     // 3. La Danse - Henri Matisse
     {
@@ -185,6 +186,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/en/a/a7/Matissedance.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Portrait_of_Henri_Matisse_1933_May_20.jpg/260px-Portrait_of_Henri_Matisse_1933_May_20.jpg",
         price: "120 000 000",
+        description: "La Danse est une peinture d'Henri Matisse réalisée en 1909. Elle représente cinq figures en mouvement, symbolisant la joie et la liberté de la danse.",
     },
     // 4. Campbell's Soup Cans - Andy Warhol
     {
@@ -193,6 +195,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Campbells_Soup_Cans_MOMA.jpg/270px-Campbells_Soup_Cans_MOMA.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Andy_Warhol_at_the_Jewish_Museum_%28by_Bernard_Gotfryd%29_%E2%80%93_LOC.jpg/220px-Andy_Warhol_at_the_Jewish_Museum_%28by_Bernard_Gotfryd%29_%E2%80%93_LOC.jpg",
         price: "150 000 000",
+        description: "Campbell's Soup Cans est une série de peintures d'Andy Warhol réalisée en 1962. Elle représente des boîtes de soupe Campbell, symbole de la culture de consommation de masse.",
     },
     // 5. David - Michelangelo
     {
@@ -201,6 +204,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/%27David%27_by_Michelangelo_Fir_JBU004.jpg/260px-%27David%27_by_Michelangelo_Fir_JBU004.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Michelangelo_Daniele_da_Volterra_%28dettaglio%29.jpg/260px-Michelangelo_Daniele_da_Volterra_%28dettaglio%29.jpg",
         price: "300 000 000",
+        description: "David est une sculpture de Michelangelo réalisée entre 1501 et 1504. Elle représente le héros biblique David, symbole de la force et de la liberté de la République de Florence.",
     },
     // 6. La Ronde de Nuit - Rembrandt van Rijn
     {
@@ -209,6 +213,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Netherlands-4167_-_The_Night_Watch_%2811715123333%29.jpg/390px-Netherlands-4167_-_The_Night_Watch_%2811715123333%29.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg/260px-Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg",
         price: "140 000 000",
+        description: "La Ronde de Nuit est une peinture de Rembrandt van Rijn réalisée en 1642. Elle représente une compagnie de miliciens d'Amsterdam en mouvement, symbolisant la puissance et la solidarité de la ville.",
     },
     // 7. La Classe de danse - Edgar Degas
     {
@@ -217,6 +222,7 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Edgar_Degas_-_La_Classe_de_danse.jpg/260px-Edgar_Degas_-_La_Classe_de_danse.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/2/24/Edgar_Degas_%281834-1917%29.jpg",
         price: "85 000 000",
+        description: "La Classe de danse est une peinture d'Edgar Degas réalisée en 1873. Elle représente des danseuses en répétition, capturant l'élégance et la grâce du mouvement.",
     },
     // 8. Le Baiser - Gustav Klimt
     {
@@ -225,5 +231,6 @@ export const artworksData: Artwork[] = [
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/260px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Klimt.jpg/260px-Klimt.jpg",
         price: "190 000 000",
+        description: "Le Baiser est une peinture de Gustav Klimt réalisée en 1907-1908. Elle représente un couple enlacé, symbolisant l'amour et l'intimité dans l'art nouveau.",
     },
 ];

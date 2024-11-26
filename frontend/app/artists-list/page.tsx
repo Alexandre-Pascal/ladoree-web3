@@ -6,7 +6,6 @@ import { artistsData } from '../../data/artistsData'; // Import des données dep
 // Composant pour afficher chaque artiste
 interface Artist {
     name: string;
-    image: string;
     artworksSold: number;
     artworksForSale: number;
     totalValue: number;
@@ -31,13 +30,6 @@ const ArtistCard = ({ artist }: { artist: Artist }) => (
         </div>
         <div className="p-6">
             <div className="flex items-center">
-                <Image
-                    src={artist.image}
-                    alt={artist.name}
-                    width={60}
-                    height={60}
-                    className="rounded-full border-2 border-gray-200"
-                />
                 <div className="ml-4">
                     <h3 className="text-lg font-semibold text-gray-800">{artist.name}</h3>
                     <p className="text-gray-500">Œuvres vendues : {artist.artworksSold}</p>

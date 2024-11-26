@@ -57,9 +57,7 @@ const ArtworkDetailPage: React.FC<ArtworkDetailPageProps> = ({ params }) => {
                     <div className="mt-6">
                         <h2 className="text-xl font-normal">Description</h2>
                         <p className="text-gray-600 mt-2">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc sit amet urna
-                            efficitur tincidunt. Nullam nec nunc eget libero lacinia lacinia. Nullam nec nunc eget
-                            libero lacinia lacinia.
+                            {artwork.description}
                         </p>
                     </div>
                 </div>
