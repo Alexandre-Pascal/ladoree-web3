@@ -24,7 +24,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-geist-sans), monospace;
+  font-family: var(--font-geist-sans²), monospace;
   font-weight: 300;
 }
 
@@ -32,6 +32,13 @@ body {
   max-width: 1408px;
 }
 
+.max-h-full-header {
+  max-height: calc(100vh - 350px);
+}
+
+.h-screen-header {
+  height: calc(100vh - 100px);
+}
 
 @layer utilities {
   .text-balance {
