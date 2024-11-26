@@ -1,11 +1,10 @@
 'use client';
 
+import React, { Suspense } from 'react';  // Import de Suspense
 import ArtCard from '@/components/shared/ArtCard';
 import { useSearchParams } from 'next/navigation';
-import React from 'react';
 
 const ArtworkPage = () => {
-    // Utilise useSearchParams pour récupérer les paramètres de l'URL
     const searchParams = useSearchParams();
     const image = searchParams.get('image');
     const title = searchParams.get('title');
@@ -91,4 +90,11 @@ const ArtworkPage = () => {
     );
 };
 
-export default ArtworkPage;
+// Envelopper le composant avec Suspense pour gérer l'asynchronisme de useSearchParams()
+export default function Page() {
+    return (
+        <Suspense fallback={<div>Chargement...</div>}>
+            <ArtworkPage />
+        </Suspense>
+    );
+}
