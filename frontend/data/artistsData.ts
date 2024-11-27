@@ -141,7 +141,7 @@ export const artworksData: Artwork[] = [
     {
         title: "Impression, soleil levant",
         artist: "Claude Monet",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/260px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/1920px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/800px-Claude_Monet_1899_Nadar_crop.jpg",
         price: "120 000 000",
         description: "Impression, soleil levant est une peinture de Claude Monet réalisée en 1872. Elle est à l'origine du terme 'impressionnisme' et est l'une des œuvres les plus célèbres du mouvement.",
@@ -149,7 +149,7 @@ export const artworksData: Artwork[] = [
     {
         title: "Les Nymphéas",
         artist: "Claude Monet",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Claude_Monet_038.jpg/260px-Claude_Monet_038.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Claude_Monet_038.jpg/1920px-Claude_Monet_038.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/800px-Claude_Monet_1899_Nadar_crop.jpg",
         price: "105 000 000",
         description: "Les Nymphéas est une série de peintures de Claude Monet réalisée entre 1899 et 1926. Elle représente les jardins de sa maison de Giverny et est l'une des œuvres les plus emblématiques de l'artiste.",
@@ -165,7 +165,7 @@ export const artworksData: Artwork[] = [
     {
         title: "La Persistance de la mémoire",
         artist: "Salvador Dalí",
-        image: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
+        image: "https://misterprepa.net/wp-content/uploads/2023/07/Salvador-Dali-persistance-de-la-memoire-1931-1536x1167.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Salvador_Dal%C3%AD_1939.jpg/800px-Salvador_Dal%C3%AD_1939.jpg",
         price: "120 000 000",
         description: "La Persistance de la mémoire est une peinture de Salvador Dalí réalisée en 1931. Elle représente des montres molles et un paysage désertique, symbolisant la relativité du temps et de la réalité.",
@@ -174,10 +174,10 @@ export const artworksData: Artwork[] = [
     {
         title: "Red Canna",
         artist: "Georgia O'Keeffe",
-        image: "https://upload.wikimedia.org/wikipedia/en/thumb/c/ca/Red_Canna_%281924%29_by_Georgia_O%27Keeffe.jpg/270px-Red_Canna_%281924%29_by_Georgia_O%27Keeffe.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Georgia_O%27Keeffe_Red_Canna_1919_HMA.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Georgia_O%27Keeffe_MET_DP230868.jpg/220px-Georgia_O%27Keeffe_MET_DP230868.jpg",
         price: "80 000 000",
-        description: "Red Canna est une peinture de Georgia O'Keeffe réalisée en 1924. Elle représente une fleur de canna rouge, symbole de la nature et de la féminité dans l'œuvre de l'artiste.",
+        description: "Red Canna est une peinture de Georgia O'Keeffe réalisée en 1919. Elle représente une fleur de canna rouge, symbole de la nature et de la féminité dans l'œuvre de l'artiste.",
     },
     // 3. La Danse - Henri Matisse
     {
@@ -192,7 +192,7 @@ export const artworksData: Artwork[] = [
     {
         title: "Campbell's Soup Cans",
         artist: "Andy Warhol",
-        image: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Campbells_Soup_Cans_MOMA.jpg/270px-Campbells_Soup_Cans_MOMA.jpg",
+        image: "https://www.moma.org/media/W1siZiIsIjMxODI0MiJdLFsicCIsImNvbnZlcnQiLCItcXVhbGl0eSA5MCAtcmVzaXplIDIwMDB4MTQ0MFx1MDAzZSJdXQ.jpg?sha=f1e923ce509ba9e6",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Andy_Warhol_at_the_Jewish_Museum_%28by_Bernard_Gotfryd%29_%E2%80%93_LOC.jpg/220px-Andy_Warhol_at_the_Jewish_Museum_%28by_Bernard_Gotfryd%29_%E2%80%93_LOC.jpg",
         price: "150 000 000",
         description: "Campbell's Soup Cans est une série de peintures d'Andy Warhol réalisée en 1962. Elle représente des boîtes de soupe Campbell, symbole de la culture de consommation de masse.",
@@ -201,7 +201,7 @@ export const artworksData: Artwork[] = [
     {
         title: "David",
         artist: "Michelangelo",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/%27David%27_by_Michelangelo_Fir_JBU004.jpg/260px-%27David%27_by_Michelangelo_Fir_JBU004.jpg",
+        image: "https://i.f1g.fr/media/cms/orig/2023/03/28/54561cefa113a5c5312bab88d343f65bc218e84773188d7a2c5b8c1725697c25.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Michelangelo_Daniele_da_Volterra_%28dettaglio%29.jpg/260px-Michelangelo_Daniele_da_Volterra_%28dettaglio%29.jpg",
         price: "300 000 000",
         description: "David est une sculpture de Michelangelo réalisée entre 1501 et 1504. Elle représente le héros biblique David, symbole de la force et de la liberté de la République de Florence.",
@@ -210,7 +210,7 @@ export const artworksData: Artwork[] = [
     {
         title: "La Ronde de Nuit",
         artist: "Rembrandt van Rijn",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Netherlands-4167_-_The_Night_Watch_%2811715123333%29.jpg/390px-Netherlands-4167_-_The_Night_Watch_%2811715123333%29.jpg",
+        image: "https://www.connaissancedesarts.com/wp-content/thumbnails/uploads/2021/06/copie-de-cda19_article_actu-rembrandt-ronde-de-nuit-rijksmuseum-reconstitution-tt-width-1200-height-900-fill-0-crop-1-bgcolor-ffffff.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg/260px-Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg",
         price: "140 000 000",
         description: "La Ronde de Nuit est une peinture de Rembrandt van Rijn réalisée en 1642. Elle représente une compagnie de miliciens d'Amsterdam en mouvement, symbolisant la puissance et la solidarité de la ville.",
@@ -219,7 +219,7 @@ export const artworksData: Artwork[] = [
     {
         title: "La Classe de danse",
         artist: "Edgar Degas",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Edgar_Degas_-_La_Classe_de_danse.jpg/260px-Edgar_Degas_-_La_Classe_de_danse.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Edgar_Degas_-_La_Classe_de_danse.jpg/1200px-Edgar_Degas_-_La_Classe_de_danse.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/2/24/Edgar_Degas_%281834-1917%29.jpg",
         price: "85 000 000",
         description: "La Classe de danse est une peinture d'Edgar Degas réalisée en 1873. Elle représente des danseuses en répétition, capturant l'élégance et la grâce du mouvement.",
@@ -228,7 +228,7 @@ export const artworksData: Artwork[] = [
     {
         title: "Le Baiser",
         artist: "Gustav Klimt",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/260px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/1200px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",
         artistImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Klimt.jpg/260px-Klimt.jpg",
         price: "190 000 000",
         description: "Le Baiser est une peinture de Gustav Klimt réalisée en 1907-1908. Elle représente un couple enlacé, symbolisant l'amour et l'intimité dans l'art nouveau.",

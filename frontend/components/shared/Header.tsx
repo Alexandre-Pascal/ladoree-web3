@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 import Link from 'next/link';
 
-import logo from '../../icons/ldr cut3.png';
+import logo from '../../icons/ldrcut3.png';
 
 const Header = () => {
     return (
@@ -17,9 +17,7 @@ const Header = () => {
                         <Image
                             src={logo}
                             alt="logo"
-                            width={300}
-                            height={100}
-                            className='cursor-pointer shadow-sm-md rounded-md'
+                            className='cursor-pointer shadow-sm-md rounded-md h-auto w-auto h-12 w-12'
                         // onClick={() => window.location.href = '/'}
                         />
                     </Link>

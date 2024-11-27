@@ -61,7 +61,7 @@ const HomePage = () => {
                 className="flex items-center gap-4 py-4 hover:bg-gray-50 transition-colors"
               >
                 <img
-                  src={artist.image}
+                  src={artist.profileImage}
                   alt={artist.name}
                   className="w-16 h-16 object-cover rounded-full"
                 />

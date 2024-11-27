@@ -26,8 +26,32 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'www.museumtv.art',
                 pathname: '/**',
-            }
-
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.museumtv.art',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'misterprepa.net',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.moma.org',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.f1g.fr',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'www.connaissancedesarts.com',
+                pathname: '/**',
+            },
         ],
     },
 }
