@@ -17,7 +17,7 @@ const Header = () => {
                         <Image
                             src={logo}
                             alt="logo"
-                            className='cursor-pointer shadow-sm-md rounded-md h-auto w-auto h-12 w-12'
+                            className='cursor-pointer shadow-sm-md rounded-md w-auto h-12'
                         // onClick={() => window.location.href = '/'}
                         />
                     </Link>
