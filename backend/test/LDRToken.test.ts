@@ -15,8 +15,8 @@ describe("LDRToken", function () {
         [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
         // Déploie le contrat
-        ldrToken = await ethers.getContractFactory("LDRToken");
-        ldrToken = await ldrToken.connect(owner).deploy();
+        const LDRToken = await ethers.getContractFactory("LDRToken");
+        ldrToken = await LDRToken.connect(owner).deploy();
     });
 
     describe("Deployment", function () {
@@ -31,39 +31,43 @@ describe("LDRToken", function () {
     });
 
     describe("Minting Tokens", function () {
-        it("Should allow the owner to mint tokens to an address", async function () {
+        it("Should allow the owner to mint tokens to an address and emit TokensMinted", async function () {
             const amountToMint = 50;
             const addr1Address = await addr1.getAddress();
 
-            await ldrToken.mint(addr1Address, amountToMint);
+            await expect(ldrToken.mint(addr1Address, amountToMint))
+                .to.emit(ldrToken, "TokensMinted")
+                .withArgs(addr1Address, amountToMint);
 
             const balance = await ldrToken.balanceOf(addr1Address);
             expect(balance).to.equal(amountToMint);
         });
 
-        it("Should adjust the amount to not exceed 200 tokens per address", async function () {
+        it("Should adjust the amount to not exceed 200 tokens per address and emit MintAdjusted", async function () {
             const addr1Address = await addr1.getAddress();
 
             // Mint 150 tokens
             await ldrToken.mint(addr1Address, 150);
 
             // Attempt to mint 100 tokens, only 50 should be minted
-            await ldrToken.mint(addr1Address, 100);
+            await expect(ldrToken.mint(addr1Address, 100))
+                .to.emit(ldrToken, "MintAdjusted")
+                .withArgs(addr1Address, 100, 50);
 
             const balance = await ldrToken.balanceOf(addr1Address);
             expect(balance).to.equal(200);
         });
 
-        it("Should revert if the address already has 200 tokens", async function () {
-            const addr1Address = (await addr1.getAddress()).toLowerCase();
+        it("Should emit MintAttemptedWithMaxBalance if the address already has 200 tokens", async function () {
+            const addr1Address = await addr1.getAddress();
 
             // Mint exactly 200 tokens
             await ldrToken.mint(addr1Address, 200);
 
-            // Attempt to mint more should fail
-            await expect(ldrToken.mint(addr1Address, 10)).to.be.revertedWith(
-                `LDRToken: ${addr1Address} possede deja 200 tokens`
-            );
+            // Attempt to mint more should emit MintAttemptedWithMaxBalance
+            await expect(ldrToken.mint(addr1Address, 10))
+                .to.emit(ldrToken, "MintAttemptedWithMaxBalance")
+                .withArgs(addr1Address, 200);
         });
 
         it("Should revert if the amount to mint is zero", async function () {
@@ -76,45 +80,54 @@ describe("LDRToken", function () {
     });
 
     describe("Minting 10 Tokens for Caller", function () {
-        it("Should mint 10 tokens for the caller", async function () {
+        it("Should mint 10 tokens for the caller and emit TokensMinted", async function () {
             const addr1Address = await addr1.getAddress();
 
-            await ldrToken.connect(addr1).mintTokens(10);
+            await expect(ldrToken.connect(addr1).mintTokens(10))
+                .to.emit(ldrToken, "TokensMinted")
+                .withArgs(addr1Address, 10);
 
             const balance = await ldrToken.balanceOf(addr1Address);
             expect(balance).to.equal(10);
         });
 
-        it("Should adjust the amount to not exceed 200 tokens for caller", async function () {
+        it("Should adjust the amount to not exceed 200 tokens for caller and emit MintAdjusted", async function () {
             const addr1Address = await addr1.getAddress();
 
             // Mint 195 tokens
             await ldrToken.mint(addr1Address, 195);
 
             // Attempt to mint 10 tokens, only 5 should be minted
-            await ldrToken.connect(addr1).mintTokens(10);
+            await expect(ldrToken.connect(addr1).mintTokens(10))
+                .to.emit(ldrToken, "MintAdjusted")
+                .withArgs(addr1Address, 10, 5);
 
             const balance = await ldrToken.balanceOf(addr1Address);
             expect(balance).to.equal(200);
         });
 
-        it("Should revert if caller already has 200 tokens", async function () {
-            const addr1Address = (await addr1.getAddress()).toLowerCase();
+        it("Should emit MintAttemptedWithMaxBalance if caller already has 200 tokens", async function () {
+            const addr1Address = await addr1.getAddress();
 
             // Mint exactly 200 tokens
             await ldrToken.mint(addr1Address, 200);
 
-            // Attempt to mint more should fail
-            await expect(ldrToken.connect(addr1).mintTokens(10)).to.be.revertedWith(
-                `LDRToken: ${addr1Address} possede deja 200 tokens`
+            // Attempt to mint more should emit MintAttemptedWithMaxBalance
+            await expect(ldrToken.connect(addr1).mintTokens(10))
+                .to.emit(ldrToken, "MintAttemptedWithMaxBalance")
+                .withArgs(addr1Address, 200);
+        });
 
+        it("Should revert if the amount to mint is zero", async function () {
+            await expect(ldrToken.connect(addr1).mintTokens(0)).to.be.revertedWith(
+                "LDRToken: Le montant a mint doit etre superieur a 0"
             );
         });
     });
 
     describe("Ownership", function () {
         it("Should revert if a non-owner tries to mint tokens to another address", async function () {
-            const addr1Address = (await addr1.getAddress());
+            const addr1Address = await addr1.getAddress();
 
             try {
                 // Tente de mint des tokens avec une adresse non autorisée
@@ -143,16 +156,16 @@ describe("LDRToken", function () {
         });
 
         it("Should not allow minting more than 200 tokens in total per address", async function () {
-            const addr1Address = (await addr1.getAddress()).toLowerCase();
+            const addr1Address = await addr1.getAddress();
 
             // Mint 200 tokens in two steps
             await ldrToken.mint(addr1Address, 100);
             await ldrToken.mint(addr1Address, 100);
 
             // Attempt to mint more
-            await expect(ldrToken.mint(addr1Address, 10)).to.be.revertedWith(
-                `LDRToken: ${addr1Address} possede deja 200 tokens`
-            );
+            await expect(ldrToken.mint(addr1Address, 10))
+                .to.emit(ldrToken, "MintAttemptedWithMaxBalance")
+                .withArgs(addr1Address, 200);
 
             const balance = await ldrToken.balanceOf(addr1Address);
             expect(balance).to.equal(200);
