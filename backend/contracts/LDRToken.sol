@@ -8,10 +8,22 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 contract LDRToken is ERC20, Ownable {
     using Strings for address; // Permet d'utiliser `.toHexString()` directement sur les adresses
 
+    // Événements
+    event TokensMinted(address indexed to, uint256 amount);
+    event MintAdjusted(
+        address indexed to,
+        uint256 originalAmount,
+        uint256 adjustedAmount
+    );
+    event MintAttemptedWithMaxBalance(
+        address indexed to,
+        uint256 currentBalance
+    );
+
     constructor() ERC20("Ladoree Token", "LDR") Ownable(msg.sender) {}
 
     // Modifier pour vérifier que le solde est inférieur à 200 tokens
-    modifier checkminAndMax200Tokens(address _to, uint256 amountToMint) {
+    modifier checkMinAndMax200Tokens(address _to, uint256 amountToMint) {
         // Vérifie que le montant à mint est supérieur à 0
         require(
             amountToMint > 0,
@@ -19,16 +31,9 @@ contract LDRToken is ERC20, Ownable {
         );
 
         // Vérifie que le solde de l'utilisateur est inférieur à 200 tokens
-        require(
-            balanceOf(_to) < 200,
-            string(
-                abi.encodePacked(
-                    "LDRToken: ",
-                    _to.toHexString(),
-                    " possede deja 200 tokens"
-                )
-            )
-        );
+        if (balanceOf(_to) == 200) {
+            emit MintAttemptedWithMaxBalance(_to, balanceOf(_to));
+        }
         _; // Continue l'exécution de la fonction
     }
 
@@ -36,31 +41,37 @@ contract LDRToken is ERC20, Ownable {
     function _adjustMintAmount(
         address to,
         uint256 amountToMint
-    ) internal view returns (uint256) {
+    ) internal returns (uint256) {
         uint256 currentBalance = balanceOf(to);
 
         // Ajuste le montant si nécessaire pour ne pas dépasser 200 tokens
+        uint256 adjustedAmount = amountToMint;
         if (currentBalance + amountToMint > 200) {
-            amountToMint = 200 - currentBalance;
+            adjustedAmount = 200 - currentBalance;
+            emit MintAdjusted(to, amountToMint, adjustedAmount);
         }
 
-        return amountToMint;
+        return adjustedAmount;
     }
 
     // Fonction pour mint des tokens pour un utilisateur spécifique
     function mint(
         address to,
         uint256 amountToMint
-    ) external onlyOwner checkminAndMax200Tokens(to, amountToMint) {
-        amountToMint = _adjustMintAmount(to, amountToMint);
-        _mint(to, amountToMint);
+    ) external onlyOwner checkMinAndMax200Tokens(to, amountToMint) {
+        uint256 finalAmount = _adjustMintAmount(to, amountToMint);
+        _mint(to, finalAmount);
+
+        emit TokensMinted(to, finalAmount);
     }
 
     // Fonction pour mint 10 tokens
     function mintTokens(
         uint256 amountToMint
-    ) external checkminAndMax200Tokens(msg.sender, amountToMint) {
-        amountToMint = _adjustMintAmount(msg.sender, amountToMint);
-        _mint(msg.sender, amountToMint);
+    ) external checkMinAndMax200Tokens(msg.sender, amountToMint) {
+        uint256 finalAmount = _adjustMintAmount(msg.sender, amountToMint);
+        _mint(msg.sender, finalAmount);
+
+        emit TokensMinted(msg.sender, finalAmount);
     }
 }
