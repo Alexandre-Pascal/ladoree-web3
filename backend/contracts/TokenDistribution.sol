@@ -4,12 +4,14 @@ pragma solidity 0.8.27;
 import "./LDRToken.sol";
 import "./UserManager.sol";
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 /// @title TokenDistribution - Gère la distribution des tokens après les transactions
 interface ITokenDistribution {
     function distributeTokens(address user, uint256 amountSpent) external;
 }
 
-contract TokenDistribution {
+contract TokenDistribution is Ownable {
     // ========================
     // CONSTANTES
     // ========================
@@ -19,8 +21,8 @@ contract TokenDistribution {
     // ========================
     // VARIABLES D'ÉTAT
     // ========================
-    ILDRToken public ldrToken; // Interface pour le contrat LDRToken
-    IUserManager public userManager; // Interface pour le contrat UserManager
+    ILDRToken ldrToken; // Interface pour le contrat LDRToken
+    IUserManager userManager; // Interface pour le contrat UserManager
 
     // ========================
     // ÉVÉNEMENTS
@@ -36,22 +38,24 @@ contract TokenDistribution {
     );
 
     // ========================
+    // CONSTRUCTEUR
+    // ========================
+    constructor() Ownable(msg.sender) {}
+
+    // ========================
     // INITIALISATION
     // ========================
     /// @notice Initialise l'adresse du contrat LDRToken
     /// @param _ldrTokenAddress Adresse du contrat LDRToken
-    function initializeLDRToken(address _ldrTokenAddress) external {
-        require(_ldrTokenAddress != address(0), "Adresse LDRToken invalide");
+    function initializeLDRToken(address _ldrTokenAddress) external onlyOwner {
         ldrToken = ILDRToken(_ldrTokenAddress);
     }
 
     /// @notice Initialise l'adresse du contrat UserManager
     /// @param _userManagerAddress Adresse du contrat UserManager
-    function initializeUserManager(address _userManagerAddress) external {
-        require(
-            _userManagerAddress != address(0),
-            "Adresse UserManager invalide"
-        );
+    function initializeUserManager(
+        address _userManagerAddress
+    ) external onlyOwner {
         userManager = IUserManager(_userManagerAddress);
     }
 
@@ -62,7 +66,7 @@ contract TokenDistribution {
     modifier onlyNFTContract() {
         require(
             msg.sender == address(0), // Remplacez par l'adresse réelle du contrat NFT
-            "TokenDistribution: L'appelant n'est pas le contrat NFT"
+            "TokenDistribution: Caller is not the NFT contract"
         );
         _;
     }
@@ -70,17 +74,6 @@ contract TokenDistribution {
     // ========================
     // MÉTHODES PUBLIQUES
     // ========================
-    /// @notice Calcule le nombre de tokens à distribuer en fonction du montant dépensé
-    /// @param amountSpent Montant dépensé dans la transaction
-    /// @return tokens Nombre de tokens à distribuer
-    function calculateTokens(
-        uint256 amountSpent
-    ) public pure returns (uint256) {
-        require(amountSpent > 0, "Le montant depense doit etre superieur a 0");
-
-        return (MAX_TOKENS * amountSpent) / (DECAY_PARAMETER + amountSpent);
-    }
-
     /// @notice Distribue des tokens à un utilisateur après une transaction
     /// @param user Adresse de l'utilisateur recevant les tokens
     /// @param amountSpent Montant dépensé dans la transaction
@@ -88,18 +81,32 @@ contract TokenDistribution {
         address user,
         uint256 amountSpent
     ) external onlyNFTContract {
-        require(user != address(0), "Adresse utilisateur invalide");
-        require(amountSpent > 0, "Le montant depense doit etre superieur a 0");
+        require(user != address(0), "User address cannot be 0x0");
+        require(amountSpent > 0, "Amount spent must be greater than 0");
         require(
             userManager.isUserRegistered(user),
-            "Utilisateur non enregistre"
+            "User is not registered with UserManager"
         );
 
-        uint256 tokensToDistribute = calculateTokens(amountSpent);
+        uint256 tokensToDistribute = _calculateTokens(amountSpent);
 
         // Appelle la méthode mintReward dans le contrat LDRToken
         ldrToken.mintReward(user, tokensToDistribute);
 
         emit TokensDistributed(user, amountSpent, tokensToDistribute);
+    }
+
+    // ========================
+    // MÉTHODES PRIVÉES
+    // ========================
+    /// @notice Calcule le nombre de tokens à distribuer en fonction du montant dépensé
+    /// @param amountSpent Montant dépensé dans la transaction
+    /// @return tokens Nombre de tokens à distribuer
+    function _calculateTokens(
+        uint256 amountSpent
+    ) private pure returns (uint256) {
+        require(amountSpent > 0, "Amount spent must be greater than 0");
+
+        return (MAX_TOKENS * amountSpent) / (DECAY_PARAMETER + amountSpent);
     }
 }
