@@ -88,7 +88,7 @@ contract TokenDistribution is Ownable {
             "User is not registered with UserManager"
         );
 
-        uint256 tokensToDistribute = _calculateTokens(amountSpent);
+        uint256 tokensToDistribute = calculateTokens(amountSpent);
 
         // Appelle la méthode mintReward dans le contrat LDRToken
         ldrToken.mintReward(user, tokensToDistribute);
@@ -96,15 +96,12 @@ contract TokenDistribution is Ownable {
         emit TokensDistributed(user, amountSpent, tokensToDistribute);
     }
 
-    // ========================
-    // MÉTHODES PRIVÉES
-    // ========================
     /// @notice Calcule le nombre de tokens à distribuer en fonction du montant dépensé
     /// @param amountSpent Montant dépensé dans la transaction
     /// @return tokens Nombre de tokens à distribuer
-    function _calculateTokens(
+    function calculateTokens(
         uint256 amountSpent
-    ) private pure returns (uint256) {
+    ) public pure returns (uint256) {
         require(amountSpent > 0, "Amount spent must be greater than 0");
 
         return (MAX_TOKENS * amountSpent) / (DECAY_PARAMETER + amountSpent);
