@@ -59,6 +59,12 @@ contract UserManager is Ownable {
         _;
     }
 
+    /// @dev Vérifie que l'utilisateur est enregistré
+    modifier onlyRegisteredUser(address user) {
+        require(users[user].isRegistered, "User not registered");
+        _;
+    }
+
     // ========================
     // FONCTIONS PUBLIQUES
     // ========================
@@ -80,15 +86,17 @@ contract UserManager is Ownable {
     /// @notice Récupère la dernière fois que l'utilisateur a mint
     /// @param user Adresse de l'utilisateur
     /// @return lastMintTime Timestamp de la dernière opération de mint
-    function getLastMintTime(address user) external view returns (uint256) {
-        require(users[user].isRegistered, "User not registered");
+    function getLastMintTime(
+        address user
+    ) external view onlyRegisteredUser(user) returns (uint256) {
         return users[user].lastMintTime;
     }
 
     /// @notice Réinitialise le dernier mint time de l'utilisateur
     /// @param user Adresse de l'utilisateur
-    function resetLastMintTime(address user) external onlyOwnerOrTokenContract {
-        require(users[user].isRegistered, "User not registered");
+    function resetLastMintTime(
+        address user
+    ) external onlyOwnerOrTokenContract onlyRegisteredUser(user) {
         users[user].lastMintTime = 0;
     }
 
@@ -96,8 +104,7 @@ contract UserManager is Ownable {
     /// @param user Adresse de l'utilisateur
     function updateLastMintTime(
         address user
-    ) external onlyOwnerOrTokenContract {
-        require(users[user].isRegistered, "User not registered");
+    ) external onlyOwnerOrTokenContract onlyRegisteredUser(user) {
         users[user].lastMintTime = block.timestamp;
     }
 

@@ -96,6 +96,12 @@ describe("UserManager", function () {
                 userManager.connect(user2).updateLastMintTime(user1.getAddress())
             ).to.be.revertedWith("UserManager: Caller is not the owner or the token contract");
         });
+
+        it("Should revert if a user is not registered", async function () {
+            await expect(
+                userManager.connect(owner).updateLastMintTime(user2.getAddress())
+            ).to.be.revertedWith("User not registered");
+        });
     });
 
     describe("Reset Last Mint Time", function () {
@@ -124,7 +130,7 @@ describe("UserManager", function () {
             ).to.be.revertedWith("UserManager: Caller is not the owner or the token contract");
         });
 
-        it("Should revert if the user is not registered", async function () {
+        it("Should revert if a user is not registered", async function () {
             await expect(
                 userManager.connect(owner).resetLastMintTime(user2.getAddress())
             ).to.be.revertedWith("User not registered");
@@ -165,16 +171,12 @@ describe("UserManager", function () {
             expect(lastMintTime).to.be.gt(0);
         });
 
-        it("Should revert if the user is not registered", async function () {
+        it("Should revert if a user is not registered", async function () {
             await expect(
-                userManager.getLastMintTime(user2.getAddress())
-            ).to.be.revertedWith("User not registered");
-        });
-
-        it("Sould revert if the user is not registered", async function () {
-            await expect(
-                userManager.getLastMintTime(user2.getAddress())
+                userManager.connect(owner).getLastMintTime(user2.getAddress())
             ).to.be.revertedWith("User not registered");
         });
     });
+
+
 });
