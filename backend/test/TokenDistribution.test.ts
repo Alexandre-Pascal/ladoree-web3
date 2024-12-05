@@ -1,116 +1,143 @@
-// import { ethers } from "hardhat";
-// import { expect } from "chai";
-// import { Signer } from "ethers";
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { TokenDistribution, LDRToken, UserManager } from "../typechain-types";
+import { Signer } from "ethers";
 
-// describe("TokenDistribution", function () {
-//     let tokenDistribution: any;
+describe("TokenDistribution", function () {
+    let tokenDistribution: TokenDistribution;
+    let ldrToken: LDRToken;
+    let userManager: UserManager;
+    let owner: Signer;
+    let user1: Signer;
 
-//     let owner: Signer;
-//     let addr1: Signer;
-//     let addr2: Signer;
+    beforeEach(async function () {
+        [owner, user1] = await ethers.getSigners();
 
-//     beforeEach(async function () {
-//         [owner, addr1, addr2] = await ethers.getSigners();
+        // Deploy LDRToken mock
+        const LDRTokenFactory = await ethers.getContractFactory("LDRToken");
+        ldrToken = (await LDRTokenFactory.deploy(
+            ethers.ZeroAddress,
+            ethers.ZeroAddress
+        )) as LDRToken;
 
-//         // Déploie le contrat TokenDistribution
-//         const TokenDistribution = await ethers.getContractFactory("TokenDistribution");
-//         tokenDistribution = await TokenDistribution.connect(owner).deploy();
-//     });
+        // Deploy UserManager mock
+        const UserManagerFactory = await ethers.getContractFactory("UserManager");
+        userManager = (await UserManagerFactory.deploy()) as UserManager;
 
-//     describe("calculateTokens", function () {
-//         it("Should calculate tokens correctly for small amounts", async function () {
-//             const amountSpent = 50;
-//             const expectedTokens = (200 * amountSpent) / (200 + amountSpent);
+        // Deploy TokenDistribution contract
+        const TokenDistributionFactory = await ethers.getContractFactory(
+            "TokenDistribution"
+        );
+        tokenDistribution = (await TokenDistributionFactory.deploy()) as TokenDistribution;
 
-//             const tokens = await tokenDistribution.calculateTokens(amountSpent);
-//             expect(tokens).to.equal(expectedTokens);
-//         });
+        // Initialize LDRToken and UserManager in TokenDistribution
+        await tokenDistribution.initializeLDRToken(ldrToken.getAddress());
+        await tokenDistribution.initializeUserManager(userManager.getAddress());
+    });
 
-//         it("Should cap tokens at MAX_TOKENS for large amounts", async function () {
-//             const amountSpent = 1_000_000; // Large amount
-//             const tokens = await tokenDistribution.calculateTokens(amountSpent);
+    describe("Calculate Tokens", function () {
+        it("Should calculate tokens correctly for a given amount spent", async function () {
+            const amountSpent = 100;
 
-//             expect(tokens).to.equal(200); // MAX_TOKENS
-//         });
+            // Use the same scaling factor as Solidity's fixed-point arithmetic
+            const DECIMALS = 1e18;
+            const MAX_TOKENS = 200 * DECIMALS; // Scale up the constants
+            const DECAY_PARAMETER = 200 * DECIMALS;
 
-//         it("Should revert if amountSpent is 0", async function () {
-//             await expect(tokenDistribution.calculateTokens(0)).to.be.revertedWith(
-//                 "Amount spent must be greater than 0"
-//             );
-//         });
-//     });
+            // Scale the input as well
+            const scaledAmountSpent = amountSpent * DECIMALS;
 
-//     describe("distributeTokens", function () {
-//         it("Should distribute tokens correctly and emit TokensDistributed", async function () {
-//             const amountSpent = 100;
-//             const addr1Address = await addr1.getAddress();
-//             const expectedTokens = (200 * amountSpent) / (200 + amountSpent);
+            // Perform the calculation
+            const tokens = await tokenDistribution.calculateTokens(amountSpent);
 
-//             await expect(tokenDistribution.connect(owner).distributeTokens(addr1Address, amountSpent))
-//                 .to.emit(tokenDistribution, "TokensDistributed")
-//                 .withArgs(addr1Address, amountSpent, expectedTokens);
+            // Expected tokens calculation: (MAX_TOKENS * amountSpent) / (DECAY_PARAMETER + amountSpent)
+            const expectedTokens =
+                (MAX_TOKENS * scaledAmountSpent) / (DECAY_PARAMETER + scaledAmountSpent);
 
-//             const balance = await tokenDistribution.balanceOf(addr1Address);
-//             expect(balance).to.equal(expectedTokens);
-//         });
+            // Scale the expected tokens back down to match Solidity output
+            const normalizedTokens = Math.floor(expectedTokens / DECIMALS);
 
-//         it("Should cap tokens at MAX_TOKENS for large spending and emit TokensDistributed", async function () {
-//             const amountSpent = 1_000_000; // Large amount
-//             const addr1Address = await addr1.getAddress();
+            expect(tokens).to.equal(normalizedTokens);
+        });
 
-//             await expect(tokenDistribution.connect(owner).distributeTokens(addr1Address, amountSpent))
-//                 .to.emit(tokenDistribution, "TokensDistributed")
-//                 .withArgs(addr1Address, amountSpent, 200);
 
-//             const balance = await tokenDistribution.balanceOf(addr1Address);
-//             expect(balance).to.equal(200); // MAX_TOKENS
-//         });
+        it("Should return a maximum lower than 200 tokens if the amount is really hight", async function () {
+            const largeAmountSpent = 100000; // Large value to hit cap
+            const tokens = await tokenDistribution.calculateTokens(largeAmountSpent);
 
-//         it("Should revert if distributeTokens is called with zero amountSpent", async function () {
-//             const addr1Address = await addr1.getAddress();
+            expect(tokens).to.be.below(200);
+        });
 
-//             await expect(
-//                 tokenDistribution.connect(owner).distributeTokens(addr1Address, 0)
-//             ).to.be.revertedWith("Amount spent must be greater than 0");
-//         });
+        it("Should revert if the amount spent is zero", async function () {
+            await expect(tokenDistribution.calculateTokens(0)).to.be.revertedWith(
+                "Amount spent must be greater than 0"
+            );
+        });
 
-//         it("Should revert if distributeTokens is called with zero address", async function () {
-//             await expect(
-//                 tokenDistribution.connect(owner).distributeTokens(ethers.ZeroAddress, 100)
-//             ).to.be.revertedWith("Invalid user address");
-//         });
+        it("Should modify the quantity of tokens if its superior to 200", async function () {
+            const amountSpent = 1000;
+            const tokens = await tokenDistribution.calculateTokens(amountSpent);
 
-//         it("Should distribute tokens to multiple users correctly", async function () {
-//             const addr1Address = await addr1.getAddress();
-//             const addr2Address = await addr2.getAddress();
+            expect(tokens).to.be.below(200);
+        });
+    });
 
-//             // Distribute to addr1
-//             await tokenDistribution.connect(owner).distributeTokens(addr1Address, 100);
-//             const balance1 = await tokenDistribution.balanceOf(addr1Address);
-//             expect(balance1).to.equal((200 * 100) / (200 + 100));
+    describe("Distribute Tokens", function () {
+        beforeEach(async function () {
+            // Register user in UserManager mock
+            await userManager.connect(owner).registerUser(user1.getAddress());
+        });
 
-//             // Distribute to addr2
-//             await tokenDistribution.connect(owner).distributeTokens(addr2Address, 50);
-//             const balance2 = await tokenDistribution.balanceOf(addr2Address);
-//             expect(balance2).to.equal((200 * 50) / (200 + 50));
-//         });
+        // FONCTIONNE PAS CAR ON A PAS DE NFT CONTRACT
+        // it("Should distribute tokens to a registered user", async function () {
+        //     const amountSpent = 50;
 
-//         it("Should adjust distribution if the user's balance would exceed MAX_TOKENS", async function () {
-//             const addr1Address = await addr1.getAddress();
+        //     // Call distributeTokens
+        //     await tokenDistribution
+        //         .connect(owner)
+        //         .distributeTokens(user1.getAddress(), amountSpent);
 
-//             // Mint 150 tokens to addr1
-//             await tokenDistribution.connect(owner).distributeTokens(addr1Address, 600); // ~150 tokens
+        //     // Check the emitted event
+        //     await expect(
+        //         tokenDistribution.distributeTokens(user1.getAddress(), amountSpent)
+        //     )
+        //         .to.emit(tokenDistribution, "TokensDistributed")
+        //         .withArgs(
+        //             user1.getAddress(),
+        //             amountSpent,
+        //             await tokenDistribution.calculateTokens(amountSpent)
+        //         );
+        // });
 
-//             // Distribute more tokens
-//             const amountSpent = 100;
-//             const expectedTokens = Math.min(200 - 150, (200 * amountSpent) / (200 + amountSpent));
+        // it("Should revert if the user is not registered", async function () {
+        //     const unregisteredUser = ethers.Wallet.createRandom().getAddress();
+        //     const amountSpent = 50;
 
-//             await expect(tokenDistribution.connect(owner).distributeTokens(addr1Address, amountSpent))
-//                 .to.emit(tokenDistribution, "TokensDistributed")
-//                 .withArgs(addr1Address, amountSpent, expectedTokens);
+        //     await expect(
+        //         tokenDistribution.distributeTokens(unregisteredUser, amountSpent)
+        //     ).to.be.revertedWith("User not registered");
+        // });
 
-//             const balance = await tokenDistribution.balanceOf(addr1Address);
-//             expect(balance).to.equal(200); // MAX_TOKENS
-//         });
-//     });
-// });
+        // it("Should revert if the user address is invalid", async function () {
+        //     const amountSpent = 50;
+
+        //     await expect(
+        //         tokenDistribution.distributeTokens(ethers.ZeroAddress, amountSpent)
+        //     ).to.be.revertedWith("Invalid user address");
+        // });
+
+        // it("Should revert if the amount spent is zero", async function () {
+        //     await expect(
+        //         tokenDistribution.distributeTokens(user1.getAddress(), 0)
+        //     ).to.be.revertedWith("Amount spent must be greater than 0");
+        // });
+
+        it("Should only allow the NFT contract to call distributeTokens", async function () {
+            const amountSpent = 50;
+
+            await expect(
+                tokenDistribution.distributeTokens(user1.getAddress(), amountSpent)
+            ).to.be.revertedWith("TokenDistribution: Caller is not the NFT contract");
+        });
+    });
+});

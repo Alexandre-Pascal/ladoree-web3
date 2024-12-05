@@ -56,10 +56,6 @@ contract TokenDistribution {
         uint256 tokens = (MAX_TOKENS * amountSpent) /
             (DECAY_PARAMETER + amountSpent);
 
-        if (tokens > MAX_TOKENS) {
-            tokens = MAX_TOKENS;
-        }
-
         return tokens;
     }
 
