@@ -3,12 +3,15 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import "./UserManager.sol";
+import "./TokenDistribution.sol";
 
+/// @title LDRToken - ERC20 Token pour le projet Ladorée
+/// @notice Ce contrat gère les fonctionnalités du token LDR, incluant le mint mensuel et les récompenses
 contract LDRToken is ERC20, Ownable {
-    using Strings for address; // Permet d'utiliser `.toHexString()` directement sur les adresses
-
-    // Événements
+    // ========================
+    // ÉVÉNEMENTS
+    // ========================
     event TokensMinted(address indexed to, uint256 amount);
     event MintAdjusted(
         address indexed to,
@@ -20,32 +23,91 @@ contract LDRToken is ERC20, Ownable {
         uint256 currentBalance
     );
 
-    constructor() ERC20("Ladoree Token", "LDR") Ownable(msg.sender) {}
+    // ========================
+    // VARIABLES
+    // ========================
+    IUserManager public userManager;
+    ITokenDistribution public tokenDistribution;
 
-    // Modifier pour vérifier que le solde est inférieur à 200 tokens
-    modifier checkMinAndMax200Tokens(address _to, uint256 amountToMint) {
-        // Vérifie que le montant à mint est supérieur à 0
-        require(
-            amountToMint > 0,
-            "LDRToken: Le montant a mint doit etre superieur a 0"
-        );
-
-        // Vérifie que le solde de l'utilisateur est inférieur à 200 tokens
-        if (balanceOf(_to) == 200) {
-            emit MintAttemptedWithMaxBalance(_to, balanceOf(_to));
-        }
-        _; // Continue l'exécution de la fonction
+    // ========================
+    // CONSTRUCTEUR
+    // ========================
+    /// @param _userManagerAddress Adresse du contrat UserManager
+    /// @param _tokenDistribution Adresse du contrat TokenDistribution
+    constructor(
+        address _userManagerAddress,
+        address _tokenDistribution
+    ) ERC20("Ladoree Token", "LDR") Ownable(msg.sender) {
+        userManager = IUserManager(_userManagerAddress);
+        tokenDistribution = ITokenDistribution(_tokenDistribution);
     }
 
-    // Fonction auxiliaire pour ajuster le montant à mint
+    // ========================
+    // MODIFICATEURS
+    // ========================
+    /// @dev Vérifie que le solde max de 200 tokens n'est pas dépassé
+    modifier checkMinAndMax200Tokens(address _to, uint256 amountToMint) {
+        require(
+            amountToMint > 0,
+            "LDRToken: Amount to mint must be greater than 0"
+        );
+        if (balanceOf(_to) >= 200) {
+            emit MintAttemptedWithMaxBalance(_to, balanceOf(_to));
+        }
+        _;
+    }
+
+    /// @dev Restreint l'accès à TokenDistribution
+    modifier onlyTokenDistribution() {
+        require(
+            msg.sender == address(tokenDistribution),
+            "LDRToken: Unauthorized caller"
+        );
+        _;
+    }
+
+    // ========================
+    // FONCTIONS PUBLIQUES
+    // ========================
+    /// @notice Mint mensuel limité à une fois par mois
+    /// @param to Adresse du destinataire des tokens
+    /// @param amountToMint Montant à mint
+    function mint(address to, uint256 amountToMint) public {
+        require(to != address(0), "LDRToken: Invalid address");
+        require(
+            block.timestamp - userManager.getLastMintTime(to) >= 30 days,
+            "LDRToken: Can only mint once per month"
+        );
+
+        userManager.updateLastMintTime(to);
+        _mintTokens(to, amountToMint);
+    }
+
+    /// @notice Mint des récompenses après une vente ou un achat
+    /// @param to Adresse du destinataire des tokens
+    /// @param amountToMint Montant à mint
+    function mintReward(
+        address to,
+        uint256 amountToMint
+    ) public onlyTokenDistribution {
+        require(to != address(0), "LDRToken: Invalid address");
+        _mintTokens(to, amountToMint);
+    }
+
+    // ========================
+    // FONCTIONS INTERNES
+    // ========================
+    /// @dev Ajuste le montant à mint pour respecter le plafond de 200 tokens
+    /// @param to Adresse du destinataire
+    /// @param amountToMint Montant initial à mint
+    /// @return uint256 Montant ajusté à mint
     function _adjustMintAmount(
         address to,
         uint256 amountToMint
     ) internal returns (uint256) {
         uint256 currentBalance = balanceOf(to);
-
-        // Ajuste le montant si nécessaire pour ne pas dépasser 200 tokens
         uint256 adjustedAmount = amountToMint;
+
         if (currentBalance + amountToMint > 200) {
             adjustedAmount = 200 - currentBalance;
             emit MintAdjusted(to, amountToMint, adjustedAmount);
@@ -54,24 +116,15 @@ contract LDRToken is ERC20, Ownable {
         return adjustedAmount;
     }
 
-    // Fonction pour mint des tokens pour un utilisateur spécifique
-    function mint(
+    /// @dev Mint des tokens tout en respectant les règles de vérification
+    /// @param to Adresse du destinataire
+    /// @param amountToMint Montant à mint
+    function _mintTokens(
         address to,
         uint256 amountToMint
-    ) external onlyOwner checkMinAndMax200Tokens(to, amountToMint) {
+    ) private checkMinAndMax200Tokens(to, amountToMint) {
         uint256 finalAmount = _adjustMintAmount(to, amountToMint);
         _mint(to, finalAmount);
-
         emit TokensMinted(to, finalAmount);
-    }
-
-    // Fonction pour mint 10 tokens
-    function mintTokens(
-        uint256 amountToMint
-    ) external checkMinAndMax200Tokens(msg.sender, amountToMint) {
-        uint256 finalAmount = _adjustMintAmount(msg.sender, amountToMint);
-        _mint(msg.sender, finalAmount);
-
-        emit TokensMinted(msg.sender, finalAmount);
     }
 }
