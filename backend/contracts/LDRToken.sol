@@ -28,6 +28,10 @@ contract LDRToken is ERC20, Ownable {
         address indexed to,
         uint256 currentBalance
     );
+    event TokenBurned(address indexed from, uint256 amount);
+
+    event BuyerDiscountBought(address indexed from, uint256 amount);
+    event SellerDiscountBought(address indexed from, uint256 amount);
 
     // ========================
     // VARIABLES
@@ -72,6 +76,15 @@ contract LDRToken is ERC20, Ownable {
         _;
     }
 
+    /// @dev Restreint l'accès à l'achat de réductions
+    modifier canBuyDiscount(uint256 amountToUse) {
+        require(
+            balanceOf(msg.sender) >= amountToUse,
+            "LDRToken: Insufficient balance"
+        );
+        _;
+    }
+
     // ========================
     // FONCTIONS PUBLIQUES
     // ========================
@@ -85,12 +98,7 @@ contract LDRToken is ERC20, Ownable {
             "LDRToken: Can only mint once per month"
         );
 
-        // console.log("Last mint time: %s", userManager.getLastMintTime(to));
         userManager.updateLastMintTime(to);
-        // console.log(
-        //     "Last mint time updated: %s",
-        //     userManager.getLastMintTime(to)
-        // );
 
         _mintTokens(to, amountToMint);
     }
@@ -104,6 +112,24 @@ contract LDRToken is ERC20, Ownable {
     ) public onlyTokenDistribution {
         require(to != address(0), "LDRToken: Invalid address");
         _mintTokens(to, amountToMint);
+    }
+
+    /// @notice Brûle des tokens pour acheter des réductions d'achat
+    /// @param amountToUse Montant à brûler
+    function buyBuyersDiscount(
+        uint256 amountToUse
+    ) public canBuyDiscount(amountToUse) {
+        _burnTokens(amountToUse);
+        emit BuyerDiscountBought(msg.sender, amountToUse);
+    }
+
+    /// @notice Brûle des tokens pour acheter des réductions de vente
+
+    function buySellersDiscount(
+        uint256 amountToUse
+    ) public canBuyDiscount(amountToUse) {
+        _burnTokens(amountToUse);
+        emit SellerDiscountBought(msg.sender, amountToUse);
     }
 
     // ========================
@@ -138,5 +164,14 @@ contract LDRToken is ERC20, Ownable {
         uint256 finalAmount = _adjustMintAmount(to, amountToMint);
         _mint(to, finalAmount);
         emit TokensMinted(to, finalAmount);
+    }
+
+    // Fonction pour dépenser des tokens (burn)
+    /// @notice Brûle des tokens
+    /// @param amount Montant à brûler
+    function _burnTokens(uint256 amount) internal {
+        require(amount > 0, "LDRToken: Amount to burn must be greater than 0");
+        _burn(msg.sender, amount);
+        emit TokenBurned(msg.sender, amount);
     }
 }

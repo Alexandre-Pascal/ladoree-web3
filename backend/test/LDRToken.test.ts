@@ -124,6 +124,83 @@ describe("LDRToken", function () {
         // });
     });
 
+    describe("Use Token", function () {
+        beforeEach(async function () {
+            await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+        });
+        it("Should allow users buy discount for buyers", async function () {
+            const amountToMint = 70
+
+            await userManager.connect(owner).registerUser(user1.getAddress());
+
+            await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
+
+            await ldrToken.connect(user1).buyBuyersDiscount(50);
+
+            expect(await ldrToken.balanceOf(user1.getAddress())).to.equal(amountToMint - 50);
+        });
+
+        it("Should emit BuyerDiscountBought event on successful buy", async function () {
+            const amountToMint = 70
+
+            await userManager.connect(owner).registerUser(user1.getAddress());
+
+            await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
+
+            await expect(ldrToken.connect(user1).buyBuyersDiscount(50))
+                .to.emit(ldrToken, "BuyerDiscountBought")
+                .withArgs(user1.getAddress(), 50);
+        });
+
+        it("Should allow users buy discount for sellers", async function () {
+            const amountToMint = 70
+
+            await userManager.connect(owner).registerUser(user1.getAddress());
+
+            await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
+
+            await ldrToken.connect(user1).buySellersDiscount(50);
+
+            expect(await ldrToken.balanceOf(user1.getAddress())).to.equal(amountToMint - 50);
+        });
+
+        it("Should emit SellerDiscountBought event on successful buy", async function () {
+            const amountToMint = 70
+
+            await userManager.connect(owner).registerUser(user1.getAddress());
+
+            await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
+
+            await expect(ldrToken.connect(user1).buySellersDiscount(50))
+                .to.emit(ldrToken, "SellerDiscountBought")
+                .withArgs(user1.getAddress(), 50);
+        });
+
+        it("Should revert if user tries to buy a buyer discount with insufficient balance", async function () {
+            const amountToMint = 70
+
+            await userManager.connect(owner).registerUser(user1.getAddress());
+
+            await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
+
+            await expect(
+                ldrToken.connect(user1).buyBuyersDiscount(100)
+            ).to.be.revertedWith("LDRToken: Insufficient balance");
+        });
+
+        it("Sould revert if user tries to buy a seller discount with insufficient balance", async function () {
+            const amountToMint = 70
+
+            await userManager.connect(owner).registerUser(user1.getAddress());
+
+            await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
+
+            await expect(
+                ldrToken.connect(user1).buySellersDiscount(100)
+            ).to.be.revertedWith("LDRToken: Insufficient balance");
+        });
+    });
+
     describe("Modifiers", function () {
         it("checkMinAndMax200Tokens should prevent mint if amount is 0", async function () {
 
@@ -182,6 +259,12 @@ describe("LDRToken", function () {
             await expect(ldrToken.connect(owner).mint(user1.getAddress(), amountToMint2))
                 .to.emit(ldrToken, "MintAdjusted")
                 .withArgs(user1.getAddress(), amountToMint2, 200 - amountToMint);
+        });
+
+        it("Should revert if the amount to burn is 0", async function () {
+            await expect(
+                ldrToken.connect(user1).buyBuyersDiscount(0)
+            ).to.be.revertedWith("LDRToken: Amount to burn must be greater than 0");
         });
     });
 });
