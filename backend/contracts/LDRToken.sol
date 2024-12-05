@@ -5,6 +5,12 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./UserManager.sol";
 import "./TokenDistribution.sol";
+import "hardhat/console.sol";
+
+/// @title ILDRToken - Interface pour interagir avec le contrat LDRToken
+interface ILDRToken {
+    function mintReward(address to, uint256 amountToMint) external;
+}
 
 /// @title LDRToken - ERC20 Token pour le projet Ladorée
 /// @notice Ce contrat gère les fonctionnalités du token LDR, incluant le mint mensuel et les récompenses
@@ -79,7 +85,13 @@ contract LDRToken is ERC20, Ownable {
             "LDRToken: Can only mint once per month"
         );
 
+        // console.log("Last mint time: %s", userManager.getLastMintTime(to));
         userManager.updateLastMintTime(to);
+        // console.log(
+        //     "Last mint time updated: %s",
+        //     userManager.getLastMintTime(to)
+        // );
+
         _mintTokens(to, amountToMint);
     }
 
