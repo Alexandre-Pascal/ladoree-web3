@@ -42,7 +42,7 @@ describe("LDRToken", function () {
     describe("Mint", function () {
         beforeEach(async function () {
             // Mock registering a user in UserManager
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             // Set LDRToken as the token contract in UserManager
             await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
@@ -131,7 +131,7 @@ describe("LDRToken", function () {
         it("Should allow users buy discount for buyers", async function () {
             const amountToMint = 70
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
@@ -143,7 +143,7 @@ describe("LDRToken", function () {
         it("Should emit BuyerDiscountBought event on successful buy", async function () {
             const amountToMint = 70
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
@@ -155,7 +155,7 @@ describe("LDRToken", function () {
         it("Should allow users buy discount for sellers", async function () {
             const amountToMint = 70
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
@@ -167,7 +167,7 @@ describe("LDRToken", function () {
         it("Should emit SellerDiscountBought event on successful buy", async function () {
             const amountToMint = 70
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
@@ -179,7 +179,7 @@ describe("LDRToken", function () {
         it("Should revert if user tries to buy a buyer discount with insufficient balance", async function () {
             const amountToMint = 70
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
@@ -191,7 +191,7 @@ describe("LDRToken", function () {
         it("Sould revert if user tries to buy a seller discount with insufficient balance", async function () {
             const amountToMint = 70
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
@@ -206,7 +206,7 @@ describe("LDRToken", function () {
 
             await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await expect(
                 ldrToken
@@ -235,7 +235,7 @@ describe("LDRToken", function () {
 
             await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             const amountToMint = 50
 
@@ -250,7 +250,7 @@ describe("LDRToken", function () {
 
             await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
 
-            await userManager.connect(owner).registerUser(user1.getAddress());
+            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
 
             await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 

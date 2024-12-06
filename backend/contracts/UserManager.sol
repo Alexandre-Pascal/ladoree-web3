@@ -19,6 +19,9 @@ contract UserManager is Ownable {
     // ========================
     /// @dev Structure pour stocker les informations de l'utilisateur
     struct User {
+        string email; // Adresse mail de l'utilisateur
+        string firstName; // Prénom de l'utilisateur
+        string lastName; // Nom de l'utilisateur
         bool isRegistered; // Indique si l'utilisateur est enregistré
         uint256 lastMintTime; // Dernière fois où l'utilisateur a mint
     }
@@ -65,6 +68,12 @@ contract UserManager is Ownable {
         _;
     }
 
+    /// @dev Vérifie que l'utilisateur qui appelle est bien le propriétaire de l'adresse
+    modifier onlyOwnerOf(address user) {
+        require(msg.sender == user, "User not the owner of the address");
+        _;
+    }
+
     // ========================
     // FONCTIONS PUBLIQUES
     // ========================
@@ -73,14 +82,6 @@ contract UserManager is Ownable {
     function setTokenContract(address tokenContract) external onlyOwner {
         require(tokenContract != address(0), "Invalid token contract address");
         ldrToken = ILDRToken(tokenContract);
-    }
-
-    /// @notice Enregistre un nouvel utilisateur
-    /// @param user Adresse de l'utilisateur à enregistrer
-    function registerUser(address user) external onlyOwner {
-        require(!users[user].isRegistered, "User already registered");
-        users[user] = User(true, 0);
-        emit UserRegistered(user);
     }
 
     /// @notice Récupère la dernière fois que l'utilisateur a mint
@@ -113,5 +114,75 @@ contract UserManager is Ownable {
     /// @return isRegistered Booléen indiquant si l'utilisateur est enregistré
     function isUserRegistered(address user) external view returns (bool) {
         return users[user].isRegistered;
+    }
+
+    // // Définir les informations personnelles de l'utilisateur
+
+    // /// @notice Définit l'adresse mail, le prénom et le nom de l'utilisateur
+    // /// @param user Adresse de l'utilisateur
+    // /// @param email Adresse mail de l'utilisateur
+    // /// @param firstName Prénom de l'utilisateur
+    // /// @param lastName Nom de l'utilisateur
+    // function setUserInfo(
+    //     address user,
+    //     string memory ?email,
+    //     string memory ?firstName,
+    //     string memory ?lastName
+    // ) external onlyOwner {
+    //     users[user].email = email;
+    //     users[user].firstName = firstName;
+    //     users[user].lastName = lastName;
+    //     users[user].isRegistered = true;
+    // }
+
+    /// notice Perfet de définir l'addresse mail de l'utilisateur
+    /// @param user Adresse de l'utilisateur
+    /// @param email Adresse mail de l'utilisateur
+    function setUserEmail(
+        address user,
+        string memory email
+    ) public onlyOwnerOf(user) {
+        users[user].email = email;
+        users[user].isRegistered = true;
+    }
+
+    /// @notice Définit le prénom de l'utilisateur
+    /// @param user Adresse de l'utilisateur
+    /// @param firstName Prénom de l'utilisateur
+    function setUserFirstName(
+        address user,
+        string memory firstName
+    ) public onlyOwnerOf(user) {
+        users[user].firstName = firstName;
+        users[user].isRegistered = true;
+    }
+
+    /// @notice Définit le nom de l'utilisateur
+    /// @param user Adresse de l'utilisateur
+    /// @param lastName Nom de l'utilisateur
+    function setUserLastName(
+        address user,
+        string memory lastName
+    ) public onlyOwnerOf(user) {
+        users[user].lastName = lastName;
+    }
+
+    /// @notice Définit les informations de l'utilisateur, utilisée dès que le user est connecté avec son metamask pour la première fois (y a une pop up qui demande ces informations)
+    /// @param user Adresse de l'utilisateur
+    /// @param email Adresse mail de l'utilisateur
+    /// @param firstName Prénom de l'utilisateur
+    /// @param lastName Nom de l'utilisateur
+    function registerUser(
+        address user,
+        string memory email,
+        string memory firstName,
+        string memory lastName
+    ) external {
+        require(!users[user].isRegistered, "User already registered");
+        setUserLastName(user, lastName);
+        setUserFirstName(user, firstName);
+        setUserEmail(user, email);
+        users[user].isRegistered = true;
+        emit UserRegistered(user);
     }
 }
