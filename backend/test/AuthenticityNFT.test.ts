@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { Signer } from "ethers";
+import { Signer, ZeroAddress } from "ethers";
 import { AuthenticityNFT } from "../typechain-types";
 
 describe("AuthenticityNFT", function () {
@@ -122,5 +122,61 @@ describe("AuthenticityNFT", function () {
     expect(await nftContract.supportsInterface(ERC721_INTERFACE_ID)).to.be.true;
     expect(await nftContract.supportsInterface(EIP2981_INTERFACE_ID)).to.be
       .true;
+  });
+
+  // Add more tests here
+  describe("Modifier tests", function () {
+    // Test else path onlyOwnerOrMarketplace
+    it("Should revert if not owner or marketplace", async function () {
+      const metadataURI = "ipfs://metadataURI";
+      const royaltyFee = 500;
+
+      await expect(
+        nftContract
+          .connect(recipient)
+          .mintNFT(
+            await recipient.getAddress(),
+            metadataURI,
+            await royaltyRecipient.getAddress(),
+            royaltyFee
+          )
+      ).to.be.revertedWith("Not owner or marketplace");
+    });
+
+    // Test else path require(royaltyFee <= 10000, "Royalty fee exceeds 100%");
+    it("Should revert if royaltyFee exceeds 100%", async function () {
+      const metadataURI = "ipfs://metadataURI";
+      const royaltyFee = 10001;
+
+      await expect(
+        nftContract
+          .connect(owner)
+          .mintNFT(
+            await recipient.getAddress(),
+            metadataURI,
+            await royaltyRecipient.getAddress(),
+            royaltyFee
+          )
+      ).to.be.revertedWith("Royalty fee exceeds 100%");
+    });
+
+    // Test else path function setMarketplaceContract(address marketplace) external EonlyOwner
+    it("Should revert if not owner", async function () {
+      try {
+        await nftContract
+          .connect(recipient)
+          .setMarketplaceContract(await recipient.getAddress());
+      } catch (error: any) {
+        // Vérifie que le message d'erreur inclut "OwnableUnauthorizedAccount"
+        expect(error.message).to.include("OwnableUnauthorizedAccount");
+      }
+    });
+
+    // Test else path require(marketplace != address(0), "Invalid marketplace address");
+    it("Should revert if marketplace address is 0", async function () {
+      await expect(
+        nftContract.connect(owner).setMarketplaceContract(ZeroAddress)
+      ).to.be.revertedWith("Invalid marketplace address");
+    });
   });
 });
