@@ -6,46 +6,62 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
+import "./Marketplace.sol";
+
 /// @title AuthenticityNFT
 /// @dev Contrat ERC721 pour les certificats d'authenticité avec gestion des royalties
 contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
     // Structure des informations de royalties
     struct RoyaltyInfo {
         address recipient; // Adresse recevant les royalties
-        uint96 fee; // Taux de royalties en basis points (e.g., 500 = 5%)
+        uint96 fee;        // Taux de royalties en basis points (e.g., 500 = 5%)
     }
 
-    uint256 private _tokenIdCounter; // Compteur pour générer des IDs uniques
+    uint256 private _tokenIdCounter = 1; // Compteur pour générer des IDs uniques
     mapping(uint256 => RoyaltyInfo) private _royalties; // Mapping des royalties par NFT
 
     /// @dev Constructeur pour initialiser le contrat avec un nom et un symbole
     constructor() ERC721("AuthenticityNFT", "ANFT") Ownable(msg.sender) {}
 
-    /// @notice Mint un nouveau NFT avec des informations de royalties
-    /// @param buyer L'adresse recevant le NFT
-    /// @param metadataURI URI des métadonnées du NFT
-    /// @param royaltyRecipient Adresse recevant les royalties
-    /// @param royaltyFee Pourcentage des royalties en basis points
+    mapping(string => uint256) private _metadataToTokenId; // Associe URI à tokenId
+
+    // un modifier onlyOwner ou le contrat marketplace pourra mint un NFT
+    modifier onlyOwnerOrMarketplace() {
+        require(msg.sender == owner() || msg.sender == address(marketplaceContract), "Not owner or marketplace");
+        _;
+    }
+
     function mintNFT(
-        address buyer,
+        address recipient,
         string memory metadataURI,
         address royaltyRecipient,
         uint96 royaltyFee
-    ) external onlyOwner {
+    ) external onlyOwnerOrMarketplace returns (uint256) {
         require(royaltyFee <= 10000, "Royalty fee exceeds 100%");
 
         // Générer un nouveau token ID
         uint256 tokenId = _tokenIdCounter;
 
         // Mint le NFT et associe les métadonnées
-        _safeMint(buyer, tokenId);
+        _safeMint(recipient, tokenId);
+
         _setTokenURI(tokenId, metadataURI);
+
+        // Associe l’URI au token ID
+        _metadataToTokenId[metadataURI] = tokenId;
 
         // Enregistrer les informations de royalties
         _royalties[tokenId] = RoyaltyInfo(royaltyRecipient, royaltyFee);
 
         // Incrémenter le compteur
         _tokenIdCounter += 1;
+
+        return tokenId;
+    }
+
+    function getTokenIdByMetadata(string memory metadataURI) public view returns (uint256) {
+        require(_metadataToTokenId[metadataURI] != 0, "Token does not exist for this URI");
+        return _metadataToTokenId[metadataURI];
     }
 
     /// @notice Récupère les informations de royalties pour un NFT donné
@@ -56,12 +72,7 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
     function royaltyInfo(
         uint256 tokenId,
         uint256 salePrice
-    )
-        external
-        view
-        override
-        returns (address recipient, uint256 royaltyAmount)
-    {
+    ) external view override returns (address recipient, uint256 royaltyAmount) {
         RoyaltyInfo memory royalty = _royalties[tokenId];
         royaltyAmount = (salePrice * royalty.fee) / 10000;
         return (royalty.recipient, royaltyAmount);
@@ -76,5 +87,14 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
         return
             interfaceId == type(IERC2981).interfaceId ||
             super.supportsInterface(interfaceId);
+    }
+
+    IMarketplace public marketplaceContract; // Contrat Marketplace associé
+
+    /// @notice Définit l'address du contrat Marketplace associé
+    /// @param marketplace Adresse du contrat Marketplace
+    function setMarketplaceContract(address marketplace) external onlyOwner {
+        require(marketplace != address(0), "Invalid marketplace address");
+        marketplaceContract = IMarketplace(marketplace);
     }
 }
