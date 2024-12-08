@@ -8,6 +8,26 @@ import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
 import "./Marketplace.sol";
 
+interface IAuthenticityNFT {
+    function mintNFT(
+        address recipient,
+        string memory metadataURI,
+        address royaltyRecipient,
+        uint96 royaltyFee
+    ) external returns (uint256);
+
+    function getTokenIdByMetadata(string memory metadataURI) external view returns (uint256);
+
+    function ownerOf(uint256 tokenId) external view returns (address);
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) external;
+
+}   
+
 /// @title AuthenticityNFT
 /// @dev Contrat ERC721 pour les certificats d'authenticité avec gestion des royalties
 contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {

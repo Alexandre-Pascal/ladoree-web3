@@ -4,6 +4,7 @@ import { Signer } from "ethers";
 import { LDRToken, UserManager, TokenDistribution } from "../typechain-types";
 
 describe("LDRToken", function () {
+  // Variables communes pour les tests
   let ldrToken: LDRToken;
   let userManager: UserManager;
   let tokenDistribution: TokenDistribution;
@@ -11,8 +12,8 @@ describe("LDRToken", function () {
   let user1: Signer;
   let user2: Signer;
 
+  // Déploiement des contrats avant chaque test
   beforeEach(async function () {
-    // Deploy mocks for UserManager and TokenDistribution
     const UserManagerMock = await ethers.getContractFactory("UserManager");
     userManager = (await UserManagerMock.deploy()) as UserManager;
 
@@ -22,7 +23,6 @@ describe("LDRToken", function () {
     tokenDistribution =
       (await TokenDistributionMock.deploy()) as TokenDistribution;
 
-    // Deploy LDRToken
     const LDRTokenFactory = await ethers.getContractFactory("LDRToken");
     [owner, user1, user2] = await ethers.getSigners();
     ldrToken = (await LDRTokenFactory.deploy(
@@ -31,6 +31,7 @@ describe("LDRToken", function () {
     )) as LDRToken;
   });
 
+  // Tests relatifs au déploiement
   describe("Deployment", function () {
     it("Should initialize the contract with correct parameters", async function () {
       expect(await ldrToken.name()).to.equal("Ladoree Token");
@@ -39,15 +40,13 @@ describe("LDRToken", function () {
     });
   });
 
+  // Tests pour le mint de tokens
   describe("Mint", function () {
     beforeEach(async function () {
       const addressUser1 = await user1.getAddress();
-      // Mock registering a user in UserManager
       await userManager
         .connect(user1)
         .registerUser(addressUser1, "abcd@gmail.com", "John", "Doe");
-
-      // Set LDRToken as the token contract in UserManager
       await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
     });
 
@@ -89,17 +88,8 @@ describe("LDRToken", function () {
     });
   });
 
+  // Tests pour la récompense de mint
   describe("Mint Reward", function () {
-    // PAS ENCORE UTILISABLE CAR CEST LE NFT MARKETPLACE QUI APPELLE DISTRIBUTETOKENS QUI APPELLE MINTREWARD
-    // it("Should allow TokenDistribution to call mintReward", async function () {
-    // const amountToMint = 50
-
-    // await tokenDistribution
-    //     .connect(owner).distributeTokens(user1.getAddress(), amountToMint);
-    // //Distribute token uses mintReward
-    // expect(await ldrToken.balanceOf(user1.getAddress())).to.equal(amountToMint);
-    // });
-
     it("Should reject mintReward calls from unauthorized addresses", async function () {
       const amountToMint = 50;
 
@@ -107,36 +97,20 @@ describe("LDRToken", function () {
         ldrToken.connect(user2).mintReward(user1.getAddress(), amountToMint)
       ).to.be.revertedWith("LDRToken: Unauthorized caller");
     });
-
-    //PAS ENCORE UTILISABLE CAR CEST LE NFT MARKETPLACE QUI APPELLE DISTRIBUTETOKENS QUI APPELLE MINTREWARD
-    // it("Should respect the 200-token cap for mintReward", async function () {
-    //     const largeAmount = ethers.parseEther("300");
-
-    //     // await ldrToken
-    //     //     .connect(owner)
-    //     //     .setAuthorizedContract(tokenDistribution.getAddress());
-
-    //     await ldrToken
-    //         .connect(owner)
-    //         .mintReward(user1.getAddress(), largeAmount);
-
-    //     expect(await ldrToken.balanceOf(user1.getAddress())).to.equal(
-    //         ethers.parseEther("200")
-    //     );
-    // });
   });
 
+  // Tests pour l'utilisation des tokens
   describe("Use Token", function () {
     beforeEach(async function () {
       await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
     });
+
     it("Should allow users buy discount for buyers", async function () {
       const amountToMint = 70;
 
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
-
       await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
       await ldrToken.connect(user1).buyBuyersDiscount(50);
@@ -152,7 +126,6 @@ describe("LDRToken", function () {
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
-
       await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
       await expect(ldrToken.connect(user1).buyBuyersDiscount(50))
@@ -166,7 +139,6 @@ describe("LDRToken", function () {
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
-
       await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
       await ldrToken.connect(user1).buySellersDiscount(50);
@@ -182,7 +154,6 @@ describe("LDRToken", function () {
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
-
       await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
       await expect(ldrToken.connect(user1).buySellersDiscount(50))
@@ -196,7 +167,6 @@ describe("LDRToken", function () {
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
-
       await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
       await expect(
@@ -204,13 +174,12 @@ describe("LDRToken", function () {
       ).to.be.revertedWith("LDRToken: Insufficient balance");
     });
 
-    it("Sould revert if user tries to buy a seller discount with insufficient balance", async function () {
+    it("Should revert if user tries to buy a seller discount with insufficient balance", async function () {
       const amountToMint = 70;
 
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
-
       await ldrToken.connect(owner).mint(user1.getAddress(), amountToMint);
 
       await expect(
@@ -219,10 +188,10 @@ describe("LDRToken", function () {
     });
   });
 
+  // Tests des modifiers
   describe("Modifiers", function () {
     it("checkMinAndMax200Tokens should prevent mint if amount is 0", async function () {
       await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
-
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
@@ -241,6 +210,7 @@ describe("LDRToken", function () {
     });
   });
 
+  // Tests des cas limites
   describe("Edge Cases", function () {
     it("Should reject mint if user address is null", async function () {
       await expect(
@@ -250,7 +220,6 @@ describe("LDRToken", function () {
 
     it("Should emit TokensMinted event on successful mint", async function () {
       await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
-
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
@@ -269,7 +238,6 @@ describe("LDRToken", function () {
       const amountToMint2 = 50;
 
       await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
-
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");

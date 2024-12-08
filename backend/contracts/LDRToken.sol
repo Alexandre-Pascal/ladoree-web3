@@ -110,7 +110,6 @@ contract LDRToken is ERC20, Ownable {
         address to,
         uint256 amountToMint
     ) public onlyTokenDistribution {
-        require(to != address(0), "LDRToken: Invalid address");
         _mintTokens(to, amountToMint);
     }
 
@@ -161,6 +160,10 @@ contract LDRToken is ERC20, Ownable {
         address to,
         uint256 amountToMint
     ) private checkMinAndMax200Tokens(to, amountToMint) {
+        require(
+            userManager.isUserRegistered(to),
+            "User is not registered with UserManager"
+        );
         uint256 finalAmount = _adjustMintAmount(to, amountToMint);
         _mint(to, finalAmount);
         emit TokensMinted(to, finalAmount);

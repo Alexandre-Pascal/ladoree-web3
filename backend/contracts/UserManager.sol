@@ -143,7 +143,6 @@ contract UserManager is Ownable {
         string memory email
     ) public onlyOwnerOf(user) {
         users[user].email = email;
-        users[user].isRegistered = true;
     }
 
     /// @notice Définit le prénom de l'utilisateur
@@ -154,7 +153,6 @@ contract UserManager is Ownable {
         string memory firstName
     ) public onlyOwnerOf(user) {
         users[user].firstName = firstName;
-        users[user].isRegistered = true;
     }
 
     /// @notice Définit le nom de l'utilisateur

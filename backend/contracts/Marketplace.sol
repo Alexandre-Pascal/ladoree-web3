@@ -3,7 +3,12 @@ pragma solidity ^0.8.20;
 
 // Importation du contrat NFT
 import "./AuthenticityNFT.sol";
+import "./LDRToken.sol";
+import "./TokenDistribution.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+import "hardhat/console.sol";
 
 interface IMarketplace {
     function listItem(
@@ -13,12 +18,15 @@ interface IMarketplace {
         uint96 royaltyFee
     ) external;
 
-    function buyItem(uint256 itemId, address buyer) external;
+    function itemBuyed(uint256 itemId, address buyer) external;
 }
 
 /// @title Marketplace
 /// @dev Contrat pour gérer les ventes initiales et les reventes d'objets physiques liés aux NFTs
-contract Marketplace is IERC721Receiver {
+contract Marketplace is IERC721Receiver, Ownable {
+
+    constructor() Ownable(msg.sender) {}
+
     // Structure des items en vente
     struct Item {
         uint256 tokenId;  // NFT associé à l'objet
@@ -27,18 +35,15 @@ contract Marketplace is IERC721Receiver {
         bool isSold;      // Statut de l'objet (vendu ou non)
     }
 
-    AuthenticityNFT private nftContract; // Instance du contrat AuthenticityNFT
+    IAuthenticityNFT private nftContract; // Instance du contrat AuthenticityNFT
+    ILDRToken private ldrToken; // Instance du contrat LDRToken
+    ITokenDistribution private tokenDistribution; // Instance du contrat TokenDistribution
     mapping(uint256 => Item) public itemsForSale; // Mapping des items mis en vente
     uint256 public itemCount; // Compteur pour générer des IDs d'items
 
     // Événements
     event ItemListed(uint256 itemId, uint256 tokenId, address seller, uint256 price);
     event ItemSold(uint256 itemId, address buyer, uint256 price);
-
-    /// @dev Initialisation avec l'adresse du contrat NFT
-    constructor(address nftAddress) {
-        nftContract = AuthenticityNFT(nftAddress);
-    }
 
     /// @notice Implémentation de IERC721Receiver pour accepter les transferts sécurisés de NFTs
     function onERC721Received(
@@ -62,7 +67,6 @@ contract Marketplace is IERC721Receiver {
         uint96 royaltyFee
     ) external {
         require(price > 0, "Price must be greater than zero");
-
         uint256 tokenId;
 
         // Vérifie si c'est une première vente ou une revente
@@ -93,7 +97,7 @@ contract Marketplace is IERC721Receiver {
     /// @notice Acheter une création (paiement hors blockchain)
     /// @param itemId ID de l'item en vente
     /// @param buyer Adresse de l'acheteur
-    function buyItem(uint256 itemId, address buyer) external {
+    function itemBuyed(uint256 itemId, address buyer) external onlyOwner{
         Item storage item = itemsForSale[itemId];
         require(!item.isSold, "Item already sold");
 
@@ -103,7 +107,11 @@ contract Marketplace is IERC721Receiver {
         // Marquer l'objet comme vendu
         item.isSold = true;
 
-        emit ItemSold(itemId, buyer, item.price);
+        emit ItemSold(itemId, buyer, item.price);  
+
+        tokenDistribution.distributeTokens(buyer, item.price); // Distribuer les tokens LDR au buyer
+        
+        tokenDistribution.distributeTokens(item.seller, item.price); // Distribuer les tokens LDR au seller
     }
 
     /// @notice Vérifie si un NFT existe pour une URI donnée
@@ -114,4 +122,15 @@ contract Marketplace is IERC721Receiver {
             return false; // Le NFT n'existe pas
         }
     }
+
+    /// @notice SetNFTContract permet de définir le contrat AuthenticityNFT
+    function setNFTContract(address nftContractAddress) external {
+        nftContract = IAuthenticityNFT(nftContractAddress);
+    }
+
+    /// @notice SetTokenDistribution permet de définir le contrat TokenDistribution
+    function setTokenDistribution(address tokenDistributionAddress) external {
+        tokenDistribution = ITokenDistribution(tokenDistributionAddress);
+    }
 }
+

@@ -4,11 +4,13 @@ import { Signer, ZeroAddress } from "ethers";
 import { AuthenticityNFT } from "../typechain-types";
 
 describe("AuthenticityNFT", function () {
+  // Variables communes
   let nftContract: AuthenticityNFT;
   let owner: Signer;
   let recipient: Signer;
   let royaltyRecipient: Signer;
 
+  // Setup commun
   beforeEach(async function () {
     [owner, recipient, royaltyRecipient] = await ethers.getSigners();
 
@@ -16,118 +18,115 @@ describe("AuthenticityNFT", function () {
     nftContract = (await AuthenticityNFT.deploy()) as AuthenticityNFT;
   });
 
-  it("Should mint a new NFT with royalties", async function () {
-    const metadataURI = "ipfs://metadataURI";
-    const royaltyFee = 500; // 5%
+  // Tests liés au minting d'NFTs
+  describe("Minting NFTs", function () {
+    it("Should mint a new NFT with royalties", async function () {
+      const metadataURI = "ipfs://metadataURI";
+      const royaltyFee = 500; // 5%
 
-    // Mint a new NFT
-    const tx = await nftContract
-      .connect(owner)
-      .mintNFT(
-        await recipient.getAddress(),
-        metadataURI,
-        await royaltyRecipient.getAddress(),
-        royaltyFee
+      const tx = await nftContract
+        .connect(owner)
+        .mintNFT(
+          await recipient.getAddress(),
+          metadataURI,
+          await royaltyRecipient.getAddress(),
+          royaltyFee
+        );
+
+      const receipt = await tx.wait();
+
+      if (!receipt) {
+        throw new Error("Transaction receipt is null");
+      }
+
+      const iface = nftContract.interface;
+      const transferLog = receipt.logs.find(
+        (log) => iface.parseLog(log)?.name === "Transfer"
       );
 
-    const receipt = await tx.wait();
+      if (!transferLog) {
+        throw new Error("Transfer event not found");
+      }
 
-    if (!receipt) {
-      throw new Error("Transaction receipt is null");
-    }
+      const parsedEvent = iface.parseLog(transferLog);
+      if (!parsedEvent) {
+        throw new Error("Parsed event is null");
+      }
+      const tokenId = Number(parsedEvent.args?.tokenId);
 
-    // Decode logs to extract the Transfer event
-    const iface = nftContract.interface; // Interface of the contract
-    const transferLog = receipt.logs.find(
-      (log) => iface.parseLog(log)?.name === "Transfer"
-    );
+      expect(await nftContract.ownerOf(tokenId)).to.equal(
+        await recipient.getAddress()
+      );
+      expect(await nftContract.tokenURI(tokenId)).to.equal(metadataURI);
 
-    if (!transferLog) {
-      throw new Error("Transfer event not found");
-    }
-
-    const parsedEvent = iface.parseLog(transferLog);
-    if (!parsedEvent) {
-      throw new Error("Parsed event is null");
-    }
-    const tokenId = Number(parsedEvent.args?.tokenId);
-
-    // Verify ownership
-    expect(await nftContract.ownerOf(tokenId)).to.equal(
-      await recipient.getAddress()
-    );
-
-    // Verify metadata URI
-    expect(await nftContract.tokenURI(tokenId)).to.equal(metadataURI);
-
-    // Verify royalties
-    const salePrice = 1000; // Exemple de prix en euros
-    const [royaltyAddress, royaltyAmount] = await nftContract.royaltyInfo(
-      tokenId,
-      salePrice
-    );
-
-    expect(royaltyAddress).to.equal(await royaltyRecipient.getAddress());
-    expect(royaltyAmount).to.equal((salePrice * royaltyFee) / 10000);
-  });
-
-  it("Should map metadataURI to tokenId", async function () {
-    const metadataURI = "ipfs://metadataURI";
-    const royaltyFee = 500;
-
-    // Mint a new NFT
-    const tx = await nftContract
-      .connect(owner)
-      .mintNFT(
-        await recipient.getAddress(),
-        metadataURI,
-        await royaltyRecipient.getAddress(),
-        royaltyFee
+      const salePrice = 1000;
+      const [royaltyAddress, royaltyAmount] = await nftContract.royaltyInfo(
+        tokenId,
+        salePrice
       );
 
-    const receipt = await tx.wait();
+      expect(royaltyAddress).to.equal(await royaltyRecipient.getAddress());
+      expect(royaltyAmount).to.equal((salePrice * royaltyFee) / 10000);
+    });
 
-    if (!receipt) {
-      throw new Error("Transaction receipt is null");
-    }
+    it("Should map metadataURI to tokenId", async function () {
+      const metadataURI = "ipfs://metadataURI";
+      const royaltyFee = 500;
 
-    // Decode logs to extract the Transfer event
-    const iface = nftContract.interface; // Interface of the contract
-    const transferLog = receipt.logs.find(
-      (log) => iface.parseLog(log)?.name === "Transfer"
-    );
+      const tx = await nftContract
+        .connect(owner)
+        .mintNFT(
+          await recipient.getAddress(),
+          metadataURI,
+          await royaltyRecipient.getAddress(),
+          royaltyFee
+        );
 
-    if (!transferLog) {
-      throw new Error("Transfer event not found");
-    }
+      const receipt = await tx.wait();
 
-    const parsedEvent = iface.parseLog(transferLog);
+      if (!receipt) {
+        throw new Error("Transaction receipt is null");
+      }
 
-    if (!parsedEvent) {
-      throw new Error("Parsed event is null");
-    }
+      const iface = nftContract.interface;
+      const transferLog = receipt.logs.find(
+        (log) => iface.parseLog(log)?.name === "Transfer"
+      );
 
-    const tokenId = Number(parsedEvent.args?.tokenId);
+      if (!transferLog) {
+        throw new Error("Transfer event not found");
+      }
 
-    // Verify mapping
-    expect(await nftContract.getTokenIdByMetadata(metadataURI)).to.equal(
-      tokenId
-    );
+      const parsedEvent = iface.parseLog(transferLog);
+
+      if (!parsedEvent) {
+        throw new Error("Parsed event is null");
+      }
+
+      const tokenId = Number(parsedEvent.args?.tokenId);
+
+      expect(await nftContract.getTokenIdByMetadata(metadataURI)).to.equal(
+        tokenId
+      );
+    });
   });
 
-  it("Should support ERC721 and EIP-2981 interfaces", async function () {
-    const ERC721_INTERFACE_ID = "0x80ac58cd";
-    const EIP2981_INTERFACE_ID = "0x2a55205a";
+  // Tests liés au support des interfaces
+  describe("Interface Support", function () {
+    it("Should support ERC721 and EIP-2981 interfaces", async function () {
+      const ERC721_INTERFACE_ID = "0x80ac58cd";
+      const EIP2981_INTERFACE_ID = "0x2a55205a";
 
-    expect(await nftContract.supportsInterface(ERC721_INTERFACE_ID)).to.be.true;
-    expect(await nftContract.supportsInterface(EIP2981_INTERFACE_ID)).to.be
-      .true;
+      expect(await nftContract.supportsInterface(ERC721_INTERFACE_ID)).to.be
+        .true;
+      expect(await nftContract.supportsInterface(EIP2981_INTERFACE_ID)).to.be
+        .true;
+    });
   });
 
-  // Add more tests here
-  describe("Modifier tests", function () {
-    // Test else path onlyOwnerOrMarketplace
-    it("Should revert if not owner or marketplace", async function () {
+  // Tests liés aux validations et modifiers
+  describe("Modifiers and Validation", function () {
+    it("Should revert if not owner or marketplace tries to mint", async function () {
       const metadataURI = "ipfs://metadataURI";
       const royaltyFee = 500;
 
@@ -143,7 +142,6 @@ describe("AuthenticityNFT", function () {
       ).to.be.revertedWith("Not owner or marketplace");
     });
 
-    // Test else path require(royaltyFee <= 10000, "Royalty fee exceeds 100%");
     it("Should revert if royaltyFee exceeds 100%", async function () {
       const metadataURI = "ipfs://metadataURI";
       const royaltyFee = 10001;
@@ -160,19 +158,16 @@ describe("AuthenticityNFT", function () {
       ).to.be.revertedWith("Royalty fee exceeds 100%");
     });
 
-    // Test else path function setMarketplaceContract(address marketplace) external EonlyOwner
-    it("Should revert if not owner", async function () {
+    it("Should revert if not owner tries to set marketplace", async function () {
       try {
         await nftContract
           .connect(recipient)
           .setMarketplaceContract(await recipient.getAddress());
       } catch (error: any) {
-        // Vérifie que le message d'erreur inclut "OwnableUnauthorizedAccount"
         expect(error.message).to.include("OwnableUnauthorizedAccount");
       }
     });
 
-    // Test else path require(marketplace != address(0), "Invalid marketplace address");
     it("Should revert if marketplace address is 0", async function () {
       await expect(
         nftContract.connect(owner).setMarketplaceContract(ZeroAddress)

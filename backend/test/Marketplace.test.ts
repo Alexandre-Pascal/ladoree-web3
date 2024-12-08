@@ -1,33 +1,98 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { Signer } from "ethers";
-import { Marketplace, AuthenticityNFT } from "../typechain-types";
+import { Signer, ZeroAddress } from "ethers";
+import {
+  Marketplace,
+  AuthenticityNFT,
+  UserManager,
+  LDRToken,
+  TokenDistribution,
+} from "../typechain-types";
 
 describe("Marketplace", function () {
   let nftContract: AuthenticityNFT;
   let marketplace: Marketplace;
+  let userManager: UserManager;
+  let ldrToken: LDRToken;
+  let tokenDistribution: TokenDistribution;
   let owner: Signer;
   let seller: Signer;
   let buyer: Signer;
+  let notRegistered: Signer;
   let royaltyRecipient: Signer;
 
   beforeEach(async function () {
-    [owner, seller, buyer, royaltyRecipient] = await ethers.getSigners();
-
+    [owner, seller, buyer, notRegistered, royaltyRecipient] =
+      await ethers.getSigners();
     // Deploy AuthenticityNFT contract
     const AuthenticityNFT = await ethers.getContractFactory("AuthenticityNFT");
     nftContract = (await AuthenticityNFT.deploy()) as AuthenticityNFT;
 
     // Deploy Marketplace contract
     const Marketplace = await ethers.getContractFactory("Marketplace");
-    marketplace = (await Marketplace.deploy(
-      nftContract.getAddress()
-    )) as Marketplace;
+    marketplace = (await Marketplace.deploy()) as Marketplace;
+
+    const TokenDistribution = await ethers.getContractFactory(
+      "TokenDistribution"
+    );
+    tokenDistribution = await TokenDistribution.deploy();
+
+    await tokenDistribution
+      .connect(owner)
+      .initializeMarketplace(marketplace.getAddress());
 
     //Set address of AuthenticityNFT contract in Marketplace
     await nftContract
       .connect(owner)
       .setMarketplaceContract(marketplace.getAddress());
+
+    await marketplace.connect(owner).setNFTContract(nftContract.getAddress());
+
+    await marketplace
+      .connect(owner)
+      .setTokenDistribution(tokenDistribution.getAddress());
+
+    const userManagerFactory = await ethers.getContractFactory("UserManager");
+    userManager = await userManagerFactory.deploy();
+
+    tokenDistribution.initializeUserManager(userManager.getAddress());
+
+    const LDRToken = await ethers.getContractFactory("LDRToken");
+    ldrToken = (await LDRToken.deploy(
+      userManager.getAddress(),
+      tokenDistribution.getAddress()
+    )) as LDRToken;
+
+    tokenDistribution.initializeLDRToken(ldrToken.getAddress());
+    await userManager
+      .connect(buyer)
+      .registerUser(
+        (await buyer.getAddress()).toLowerCase(),
+        "azaz",
+        "John",
+        "Doe"
+      );
+
+    await userManager
+      .connect(seller)
+      .registerUser(
+        (await seller.getAddress()).toLowerCase(),
+        "azaz",
+        "John",
+        "Doe"
+      );
+  });
+
+  describe("Deployment", function () {
+    it("Should revert if its not the owner who tries to initialize the Marketplace", async function () {
+      try {
+        await tokenDistribution
+          .connect(seller)
+          .initializeMarketplace(nftContract.getAddress());
+      } catch (error: any) {
+        expect(error.message).to.include("OwnableUnauthorizedAccount");
+      }
+    });
   });
 
   describe("Listing an item", function () {
@@ -123,10 +188,9 @@ describe("Marketplace", function () {
 
       const itemId = parsedEvent.args.itemId;
 
-      // Buy the item
       await marketplace
-        .connect(buyer)
-        .buyItem(itemId, await buyer.getAddress());
+        .connect(owner)
+        .itemBuyed(itemId, await buyer.getAddress());
 
       // Approve the Marketplace to transfer the NFT for resale
       const tokenId = await nftContract.getTokenIdByMetadata(metadataURI); // Fetch tokenId
@@ -193,8 +257,8 @@ describe("Marketplace", function () {
 
       // Buy the item
       await marketplace
-        .connect(buyer)
-        .buyItem(itemId, await buyer.getAddress());
+        .connect(owner)
+        .itemBuyed(itemId, await buyer.getAddress());
 
       // Approve the Marketplace to transfer the NFT for resale
       const tokenId = await nftContract.getTokenIdByMetadata(metadataURI); // Fetch tokenId
@@ -235,7 +299,7 @@ describe("Marketplace", function () {
       const tokenId = await nftContract.getTokenIdByMetadata(metadataURI);
 
       // Buyer purchases the item
-      await marketplace.connect(owner).buyItem(0, await buyer.getAddress());
+      await marketplace.connect(owner).itemBuyed(0, await buyer.getAddress());
 
       // Verify NFT ownership
       expect(await nftContract.ownerOf(tokenId)).to.equal(
@@ -263,7 +327,7 @@ describe("Marketplace", function () {
         );
 
       // Buyer purchases the item
-      await marketplace.connect(owner).buyItem(0, await buyer.getAddress());
+      await marketplace.connect(owner).itemBuyed(0, await buyer.getAddress());
 
       // Verify the item is marked as sold
       const item = await marketplace.itemsForSale(0);
@@ -271,8 +335,75 @@ describe("Marketplace", function () {
 
       // Try to purchase the item again
       await expect(
-        marketplace.connect(owner).buyItem(0, await buyer.getAddress())
+        marketplace.connect(owner).itemBuyed(0, await buyer.getAddress())
       ).to.be.revertedWith("Item already sold");
+    });
+
+    it("Should reward the seller when an item is purchased", async function () {
+      const metadataURI = "ipfs://metadata";
+      const price = 1000; // Prix en euros
+      const royaltyFee = 500;
+
+      // List the item for sale
+      await marketplace
+        .connect(seller)
+        .listItem(
+          metadataURI,
+          price,
+          await royaltyRecipient.getAddress(),
+          royaltyFee
+        );
+
+      // Buyer purchases the item
+      await marketplace.connect(owner).itemBuyed(0, await buyer.getAddress());
+
+      ldrToken;
+      // Verify the seller's balance
+      const sellerBalance = await ldrToken.balanceOf(await seller.getAddress());
+      expect(sellerBalance).to.equal(
+        await tokenDistribution.calculateTokens(price)
+      );
+    });
+
+    it("Should not reward seller or buyer if to = address(0)", async function () {
+      const metadataURI = "ipfs://metadata";
+      const price = 1000; // Prix en euros
+      const royaltyFee = 500;
+
+      // List the item for sale
+      await marketplace
+        .connect(seller)
+        .listItem(
+          metadataURI,
+          price,
+          await royaltyRecipient.getAddress(),
+          royaltyFee
+        );
+    });
+
+    it("Should not allow to access to itemBuyed if not the owner", async function () {
+      const metadataURI = "ipfs://metadata";
+      const price = 1000; // Prix en euros
+      const royaltyFee = 500;
+
+      // List the item for sale
+      await marketplace
+        .connect(seller)
+        .listItem(
+          metadataURI,
+          price,
+          await royaltyRecipient.getAddress(),
+          royaltyFee
+        );
+
+      // Buyer purchases the item
+      try {
+        await marketplace
+          .connect(seller)
+          .itemBuyed(0, await buyer.getAddress());
+      } catch (error: any) {
+        expect(error.message).to.include("OwnableUnauthorizedAccount");
+      }
     });
   });
 
@@ -293,6 +424,40 @@ describe("Marketplace", function () {
             royaltyFee
           )
       ).to.be.revertedWith("Price must be greater than zero");
+    });
+
+    it("Should revert if we try to distribute tokens from an other contract thant the Market", async function () {
+      const amountSpent = 50;
+
+      await expect(
+        tokenDistribution
+          .connect(seller)
+          .distributeTokens(await seller.getAddress(), amountSpent)
+      ).to.be.revertedWith(
+        "TokenDistribution: Caller is not the Marketplace contract"
+      );
+    });
+
+    it("Should not distribute tokens to not registered users", async function () {
+      const metadataURI = "ipfs://metadata";
+      const price = 50;
+      const royaltyFee = 500;
+
+      await marketplace
+        .connect(seller)
+        .listItem(
+          metadataURI,
+          price,
+          await royaltyRecipient.getAddress(),
+          royaltyFee
+        );
+
+      // Call distributeTokens from the NFT contract
+      await expect(
+        marketplace
+          .connect(owner)
+          .itemBuyed(0, await notRegistered.getAddress())
+      ).to.be.revertedWith("User is not registered with UserManager");
     });
   });
 });

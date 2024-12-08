@@ -3,13 +3,18 @@ pragma solidity 0.8.27;
 
 import "./LDRToken.sol";
 import "./UserManager.sol";
+import "./Marketplace.sol";
+
+import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @title TokenDistribution - Gère la distribution des tokens après les transactions
 interface ITokenDistribution {
     function distributeTokens(address user, uint256 amountSpent) external;
-}
+
+    function initializeMarketplace(address _ldrTokenAddress) external;
+    }
 
 contract TokenDistribution is Ownable {
     // ========================
@@ -23,6 +28,7 @@ contract TokenDistribution is Ownable {
     // ========================
     ILDRToken ldrToken; // Interface pour le contrat LDRToken
     IUserManager userManager; // Interface pour le contrat UserManager
+    IMarketplace marketplace; // Interface pour le contrat Marketplace
 
     // ========================
     // ÉVÉNEMENTS
@@ -59,14 +65,22 @@ contract TokenDistribution is Ownable {
         userManager = IUserManager(_userManagerAddress);
     }
 
+    /// @notice Initialise l'adresse du contrat Marketplace
+    /// @param _marketplaceAddress Adresse du contrat Marketplace
+    function initializeMarketplace(
+        address _marketplaceAddress
+    ) external onlyOwner {
+        marketplace = IMarketplace(_marketplaceAddress);
+    }
+
     // ========================
     // MODIFICATEURS
     // ========================
     /// @dev Vérifie que l'appelant est le contrat NFT
-    modifier onlyNFTContract() {
+    modifier onlyMarktPlaceContract() {
         require(
-            msg.sender == address(0), // Remplacez par l'adresse réelle du contrat NFT
-            "TokenDistribution: Caller is not the NFT contract"
+            msg.sender == address(marketplace),
+            "TokenDistribution: Caller is not the Marketplace contract"
         );
         _;
     }
@@ -80,13 +94,8 @@ contract TokenDistribution is Ownable {
     function distributeTokens(
         address user,
         uint256 amountSpent
-    ) external onlyNFTContract {
-        require(user != address(0), "User address cannot be 0x0");
-        require(amountSpent > 0, "Amount spent must be greater than 0");
-        require(
-            userManager.isUserRegistered(user),
-            "User is not registered with UserManager"
-        );
+    ) external onlyMarktPlaceContract {
+        
 
         uint256 tokensToDistribute = calculateTokens(amountSpent);
 
