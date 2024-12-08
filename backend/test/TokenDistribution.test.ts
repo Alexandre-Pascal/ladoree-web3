@@ -35,15 +35,15 @@ describe("TokenDistribution", function () {
   describe("Deployment", function () {
     it("Should initialize the contract with correct parameters", async function () {
       // Initialize LDRToken and UserManager in TokenDistribution
-      await tokenDistribution.initializeLDRToken(ldrToken.getAddress());
-      await tokenDistribution.initializeUserManager(userManager.getAddress());
+      await tokenDistribution.setLDRToken(ldrToken.getAddress());
+      await tokenDistribution.setUserManager(userManager.getAddress());
     });
 
     it("Should revert if its not the owner who tries to initialize the LDRToken", async function () {
       try {
         await tokenDistribution
           .connect(user1)
-          .initializeLDRToken(ldrToken.getAddress());
+          .setLDRToken(ldrToken.getAddress());
       } catch (error: any) {
         // Vérifie que le message d'erreur inclut "OwnableUnauthorizedAccount"
         expect(error.message).to.include("OwnableUnauthorizedAccount");
@@ -54,7 +54,7 @@ describe("TokenDistribution", function () {
       try {
         await tokenDistribution
           .connect(user1)
-          .initializeUserManager(userManager.getAddress());
+          .setUserManager(userManager.getAddress());
       } catch (error: any) {
         // Vérifie que le message d'erreur inclut "OwnableUnauthorizedAccount"
         expect(error.message).to.include("OwnableUnauthorizedAccount");
@@ -111,8 +111,8 @@ describe("TokenDistribution", function () {
 
   describe("Distribute Tokens", async function () {
     // Initialize LDRToken and UserManager in TokenDistribution
-    await tokenDistribution.initializeLDRToken(ldrToken.getAddress());
-    await tokenDistribution.initializeUserManager(userManager.getAddress());
+    await tokenDistribution.setLDRToken(ldrToken.getAddress());
+    await tokenDistribution.setUserManager(userManager.getAddress());
 
     it("Should only allow the NFT contract to call distributeTokens", async function () {
       const amountSpent = 50;

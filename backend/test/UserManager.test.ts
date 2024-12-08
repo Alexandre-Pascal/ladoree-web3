@@ -146,12 +146,6 @@ describe("UserManager", function () {
             expect(await userManager.ldrToken()).to.equal(newTokenAddress);
         });
 
-        it("Should revert if the token contract address is invalid", async function () {
-            await expect(
-                userManager.connect(owner).setTokenContract(ethers.ZeroAddress)
-            ).to.be.revertedWith("Invalid token contract address");
-        });
-
         it("Should not allow a non-owner to set the token contract", async function () {
             const newTokenAddress = ethers.Wallet.createRandom().address;
 

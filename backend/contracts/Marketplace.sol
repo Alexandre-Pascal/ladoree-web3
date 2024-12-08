@@ -1,15 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-// Importation du contrat NFT
+// ========================
+// IMPORTATIONS
+// ========================
 import "./AuthenticityNFT.sol";
 import "./LDRToken.sol";
 import "./TokenDistribution.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-
 import "hardhat/console.sol";
 
+// ========================
+// INTERFACES
+// ========================
 interface IMarketplace {
     function listItem(
         string memory metadataURI,
@@ -21,18 +25,23 @@ interface IMarketplace {
     function itemBuyed(uint256 itemId, address buyer) external;
 }
 
-/// @title Marketplace
-/// @dev Contrat pour gérer les ventes initiales et les reventes d'objets physiques liés aux NFTs
+// ========================
+// CONTRAT PRINCIPAL
+// ========================
+/**
+ * @title Marketplace
+ * @notice Contrat pour gérer les ventes initiales et reventes d'objets physiques liés aux NFTs.
+ * @dev Implémente IERC721Receiver et utilise Ownable pour la gestion des droits.
+ */
 contract Marketplace is IERC721Receiver, Ownable {
-
-    constructor() Ownable(msg.sender) {}
-
-    // Structure des items en vente
+    // ========================
+    // STRUCTURES ET VARIABLES
+    // ========================
     struct Item {
-        uint256 tokenId;  // NFT associé à l'objet
-        address seller;   // Adresse du vendeur
-        uint256 price;    // Prix de l'objet en euros (ou équivalent)
-        bool isSold;      // Statut de l'objet (vendu ou non)
+        uint256 tokenId; // NFT associé à l'objet
+        address seller; // Adresse du vendeur
+        uint256 price; // Prix de l'objet en euros (ou équivalent)
+        bool isSold; // Statut de l'objet (vendu ou non)
     }
 
     IAuthenticityNFT private nftContract; // Instance du contrat AuthenticityNFT
@@ -41,25 +50,51 @@ contract Marketplace is IERC721Receiver, Ownable {
     mapping(uint256 => Item) public itemsForSale; // Mapping des items mis en vente
     uint256 public itemCount; // Compteur pour générer des IDs d'items
 
-    // Événements
-    event ItemListed(uint256 itemId, uint256 tokenId, address seller, uint256 price);
-    event ItemSold(uint256 itemId, address buyer, uint256 price);
+    // ========================
+    // ÉVÉNEMENTS
+    // ========================
+    event ItemListed(
+        uint256 indexed itemId,
+        uint256 indexed tokenId,
+        address indexed seller,
+        uint256 price
+    );
+    event ItemSold(
+        uint256 indexed itemId,
+        address indexed buyer,
+        uint256 price
+    );
 
-    /// @notice Implémentation de IERC721Receiver pour accepter les transferts sécurisés de NFTs
+    // ========================
+    // CONSTRUCTEUR
+    // ========================
+    /**
+     * @notice Initialise le contrat et assigne le propriétaire.
+     */
+    constructor() Ownable(msg.sender) {}
+
+    // ========================
+    // FONCTIONS PUBLIQUES
+    // ========================
+    /**
+     * @notice Implémentation de IERC721Receiver pour accepter les transferts sécurisés de NFTs.
+     */
     function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
+        address /*operator*/,
+        address /*from*/,
+        uint256 /*tokenId*/,
+        bytes calldata /*data*/
     ) external pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }
 
-    /// @notice Mettre en vente une création (mint automatique si nécessaire)
-    /// @param metadataURI URI des métadonnées si le NFT n'existe pas encore
-    /// @param price Prix de l'objet
-    /// @param royaltyRecipient Adresse recevant les royalties (créateur)
-    /// @param royaltyFee Taux des royalties en basis points
+    /**
+     * @notice Met en vente un item (création de NFT si nécessaire).
+     * @param metadataURI URI des métadonnées si le NFT n'existe pas encore.
+     * @param price Prix de l'objet.
+     * @param royaltyRecipient Adresse recevant les royalties.
+     * @param royaltyFee Taux des royalties en basis points.
+     */
     function listItem(
         string memory metadataURI,
         uint256 price,
@@ -67,22 +102,27 @@ contract Marketplace is IERC721Receiver, Ownable {
         uint96 royaltyFee
     ) external {
         require(price > 0, "Price must be greater than zero");
+
         uint256 tokenId;
 
-        // Vérifie si c'est une première vente ou une revente
         if (!nftExists(metadataURI)) {
-            // Première vente : Mint le NFT et l’associe au Marketplace
-            tokenId = nftContract.mintNFT(address(this), metadataURI, royaltyRecipient, royaltyFee);
+            // Mint le NFT si c'est une première vente
+            tokenId = nftContract.mintNFT(
+                address(this),
+                metadataURI,
+                royaltyRecipient,
+                royaltyFee
+            );
         } else {
-            // Revente : Vérifie la propriété et transfère le NFT au Marketplace
-            tokenId = nftContract.getTokenIdByMetadata(metadataURI); // Associe le tokenId existant
-            require(nftContract.ownerOf(tokenId) == msg.sender, "Not the NFT owner");
-
-            // Transfère le NFT au Marketplace
+            // Vérifie que l'appelant est propriétaire du NFT pour une revente
+            tokenId = nftContract.getTokenIdByMetadata(metadataURI);
+            require(
+                nftContract.ownerOf(tokenId) == msg.sender,
+                "Not the NFT owner"
+            );
             nftContract.safeTransferFrom(msg.sender, address(this), tokenId);
         }
 
-        // Enregistre l'objet en vente
         itemsForSale[itemCount] = Item({
             tokenId: tokenId,
             seller: msg.sender,
@@ -94,43 +134,59 @@ contract Marketplace is IERC721Receiver, Ownable {
         itemCount++;
     }
 
-    /// @notice Acheter une création (paiement hors blockchain)
-    /// @param itemId ID de l'item en vente
-    /// @param buyer Adresse de l'acheteur
-    function itemBuyed(uint256 itemId, address buyer) external onlyOwner{
+    /**
+     * @notice Acheter une création (paiement hors blockchain).
+     * @param itemId ID de l'item en vente.
+     * @param buyer Adresse de l'acheteur.
+     */
+    function itemBuyed(uint256 itemId, address buyer) external onlyOwner {
         Item storage item = itemsForSale[itemId];
         require(!item.isSold, "Item already sold");
 
-        // Transférer le NFT à l'acheteur
         nftContract.safeTransferFrom(address(this), buyer, item.tokenId);
-
-        // Marquer l'objet comme vendu
         item.isSold = true;
 
-        emit ItemSold(itemId, buyer, item.price);  
+        emit ItemSold(itemId, buyer, item.price);
 
-        tokenDistribution.distributeTokens(buyer, item.price); // Distribuer les tokens LDR au buyer
-        
-        tokenDistribution.distributeTokens(item.seller, item.price); // Distribuer les tokens LDR au seller
+        // Distribution des tokens LDR
+        tokenDistribution.distributeTokens(buyer, item.price);
+        tokenDistribution.distributeTokens(item.seller, item.price);
     }
 
-    /// @notice Vérifie si un NFT existe pour une URI donnée
+    // ========================
+    // FONCTIONS INTERNES
+    // ========================
+    /**
+     * @notice Vérifie si un NFT existe pour une URI donnée.
+     * @param metadataURI URI des métadonnées du NFT.
+     * @return bool Vrai si le NFT existe, faux sinon.
+     */
     function nftExists(string memory metadataURI) public view returns (bool) {
         try nftContract.getTokenIdByMetadata(metadataURI) {
-            return true; // Le NFT existe
+            return true;
         } catch {
-            return false; // Le NFT n'existe pas
+            return false;
         }
     }
 
-    /// @notice SetNFTContract permet de définir le contrat AuthenticityNFT
-    function setNFTContract(address nftContractAddress) external {
+    // ========================
+    // FONCTIONS ADMIN
+    // ========================
+    /**
+     * @notice Définit l'adresse du contrat AuthenticityNFT.
+     * @param nftContractAddress Adresse du contrat AuthenticityNFT.
+     */
+    function setAuthenticityNFT(address nftContractAddress) external onlyOwner {
         nftContract = IAuthenticityNFT(nftContractAddress);
     }
 
-    /// @notice SetTokenDistribution permet de définir le contrat TokenDistribution
-    function setTokenDistribution(address tokenDistributionAddress) external {
+    /**
+     * @notice Définit l'adresse du contrat TokenDistribution.
+     * @param tokenDistributionAddress Adresse du contrat TokenDistribution.
+     */
+    function setTokenDistribution(
+        address tokenDistributionAddress
+    ) external onlyOwner {
         tokenDistribution = ITokenDistribution(tokenDistributionAddress);
     }
 }
-

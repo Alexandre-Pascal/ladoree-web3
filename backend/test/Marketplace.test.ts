@@ -39,14 +39,14 @@ describe("Marketplace", function () {
 
     await tokenDistribution
       .connect(owner)
-      .initializeMarketplace(marketplace.getAddress());
+      .setMarketplace(marketplace.getAddress());
 
     //Set address of AuthenticityNFT contract in Marketplace
     await nftContract
       .connect(owner)
       .setMarketplaceContract(marketplace.getAddress());
 
-    await marketplace.connect(owner).setNFTContract(nftContract.getAddress());
+    await marketplace.connect(owner).setAuthenticityNFT(nftContract.getAddress());
 
     await marketplace
       .connect(owner)
@@ -55,7 +55,7 @@ describe("Marketplace", function () {
     const userManagerFactory = await ethers.getContractFactory("UserManager");
     userManager = await userManagerFactory.deploy();
 
-    tokenDistribution.initializeUserManager(userManager.getAddress());
+    tokenDistribution.setUserManager(userManager.getAddress());
 
     const LDRToken = await ethers.getContractFactory("LDRToken");
     ldrToken = (await LDRToken.deploy(
@@ -63,7 +63,7 @@ describe("Marketplace", function () {
       tokenDistribution.getAddress()
     )) as LDRToken;
 
-    tokenDistribution.initializeLDRToken(ldrToken.getAddress());
+    tokenDistribution.setLDRToken(ldrToken.getAddress());
     await userManager
       .connect(buyer)
       .registerUser(
@@ -84,12 +84,34 @@ describe("Marketplace", function () {
   });
 
   describe("Deployment", function () {
-    it("Should revert if its not the owner who tries to initialize the Marketplace", async function () {
+    it("Should revert if its not the owner who tries to set the Marketplace", async function () {
       try {
         await tokenDistribution
           .connect(seller)
-          .initializeMarketplace(nftContract.getAddress());
+          .setMarketplace(nftContract.getAddress());
       } catch (error: any) {
+        expect(error.message).to.include("OwnableUnauthorizedAccount");
+      }
+    });
+
+    it("Should revert if its not the owner who tries to set the NFT contract address", async function () {
+      try {
+        await marketplace
+          .connect(seller)
+          .setAuthenticityNFT(nftContract.getAddress());
+      }
+      catch (error: any) {
+        expect(error.message).to.include("OwnableUnauthorizedAccount");
+      }
+    });
+
+    it("Should revert if its not the owner who tries to set the TokenDistribution contract address", async function () {
+      try {
+        await marketplace
+          .connect(seller)
+          .setTokenDistribution(tokenDistribution.getAddress());
+      }
+      catch (error: any) {
         expect(error.message).to.include("OwnableUnauthorizedAccount");
       }
     });
