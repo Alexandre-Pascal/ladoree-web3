@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Search } from 'lucide-react';
 import Image from 'next/image';
 
@@ -10,10 +10,55 @@ import logo from '../../icons/ldrcut3.png';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
+import { useAccount, useReadContract, useWriteContract, useDisconnect } from "wagmi";
+
+import { userManagerAddress, userManagerAbi } from "../../utils/abis";
+
+
+import { user } from "../../utils/types";
 
 const Header = () => {
+    const { isConnected, address, status } = useAccount();
+
+    const isRegistered = useReadContract({
+        address: userManagerAddress,
+        abi: userManagerAbi,
+        functionName: "isUserRegistered",
+        args: [address],
+    });
+
+    const { data, writeContract, error } = useWriteContract();
+
+    const [user, setUser] = useState<user | null>(null);
+
+    const registerUser = async () => {
+        writeContract({
+            address: userManagerAddress,
+            abi: userManagerAbi,
+            functionName: "registerUser",
+            args: [address, user?.email, user?.firstName, user?.lastName],
+        });
+    };
+
+    const { disconnect } = useDisconnect(); // Hook pour gérer la déconnexion
+
+    const forceDisconnect = () => {
+        disconnect(); // Déconnexion immédiate
+    };
+
+
+    useEffect(() => {
+        console.log('isRegistered', isRegistered)
+        if (isRegistered.isError) {
+            console.error('Error while checking if user is registered', isRegistered.error)
+        }
+    }, [address, isRegistered.isPending, isRegistered.isError])
+
+
+
+
     return (
-        <header className="border-b border-gray-800">
+        <header className="border-b border-gray-800" >
             <div className="container mx-auto">
                 <div className="flex justify-between items-center py-4">
                     <Link href="/">
@@ -48,6 +93,78 @@ const Header = () => {
                     </nav>
                 </div>
             </div>
+            {
+                isConnected && !isRegistered.data && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+                        <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-8">
+                            <h2 className="text-2xl font-bold text-center mb-4">Inscription</h2>
+                            <p className="text-gray-600 text-center mb-6">
+                                Veuillez vous inscrire pour accéder à toutes les fonctionnalités.
+                            </p>
+                            <form className="space-y-4">
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                        onChange={(e) =>
+                                            setUser({ ...user, email: e.target.value, firstName: user?.firstName || '', lastName: user?.lastName || '' })
+                                        }
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                                        Prénom
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="firstName"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                        onChange={(e) =>
+                                            setUser({ ...user, firstName: e.target.value, email: user?.email || '', lastName: user?.lastName || '' })
+                                        }
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                                        Nom
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="lastName"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                        onChange={(e) =>
+                                            setUser({ ...user, lastName: e.target.value, email: user?.email || '', firstName: user?.firstName || '' })
+                                        }
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <button
+                                        type="button"
+                                        className="w-full bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                        onClick={registerUser}
+                                    >
+                                        S'inscrire
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                        onClick={() => {
+                                            forceDisconnect();
+                                            window.location.reload(); // Recharge la page, obligatoire car sinon bug avec raimbowkit
+                                        }}
+                                    >
+                                        Se déconnecter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )
+            }
         </header>
     )
 }
