@@ -8,6 +8,9 @@ import Link from 'next/link';
 
 import logo from '../../icons/ldrcut3.png';
 
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+
 const Header = () => {
     return (
         <header className="border-b border-gray-800">
@@ -39,7 +42,8 @@ const Header = () => {
                                 <li><Link href="/about">A PROPOS</Link></li>
                                 <li><Link href="/contact">CONTACT</Link></li>
                             </ul>
-                            <input type='button' value='Connexion' className='bg-black text-white px-4 py-2 rounded-md' />
+                            {/* <input type='button' value='Connexion' className='bg-black text-white px-4 py-2 rounded-md' /> */}
+                            <ConnectButton />
                         </div>
                     </nav>
                 </div>
