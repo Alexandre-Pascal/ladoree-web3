@@ -46,6 +46,9 @@ export function handleUserRegistered(event: UserRegisteredEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.user = event.params.user
+  entity.email = event.params.email
+  entity.firstName = event.params.firstName
+  entity.lastName = event.params.lastName
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

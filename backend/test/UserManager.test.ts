@@ -43,7 +43,7 @@ describe("UserManager", function () {
         it("Should emit UserRegistered event when a new user is registered", async function () {
             await expect(userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe"))
                 .to.emit(userManager, "UserRegistered")
-                .withArgs(user1.getAddress());
+                .withArgs(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
         });
 
         it("Should not allow to register the same user twice", async function () {

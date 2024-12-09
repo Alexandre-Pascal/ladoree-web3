@@ -19,6 +19,9 @@ type OwnershipTransferred @entity(immutable: true) {
 type UserRegistered @entity(immutable: true) {
   id: Bytes!
   user: Bytes! # address
+  email: String!
+  firstName: String!
+  lastName: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

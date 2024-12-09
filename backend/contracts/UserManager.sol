@@ -52,7 +52,12 @@ contract UserManager is Ownable {
     // ========================
     // ÉVÉNEMENTS
     // ========================
-    event UserRegistered(address indexed user); // Émis lorsqu'un utilisateur est enregistré
+    event UserRegistered(
+        address indexed user,
+        string email,
+        string firstName,
+        string lastName
+    ); // Émis lors de l'enregistrement d'un utilisateur
     event MintPermissionUpdated(address indexed user, bool canMint); // Émis lors de la mise à jour de permissions
 
     // ========================
@@ -191,7 +196,7 @@ contract UserManager is Ownable {
         setUserFirstName(user, firstName);
         setUserEmail(user, email);
         users[user].isRegistered = true;
-        emit UserRegistered(user);
+        emit UserRegistered(user, email, firstName, lastName);
     }
 
     // ========================
