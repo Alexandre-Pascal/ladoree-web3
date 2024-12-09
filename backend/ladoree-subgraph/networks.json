@@ -3,6 +3,18 @@
     "UserManager": {
       "address": "0x8859F9fDCf1678da0D51D185F62c8443ff77fF76",
       "startBlock": 15400825
+    },
+    "AuthenticityNFT": {
+      "address": "0x084f02553A49B6F8ECF608b8f988b0AEB0C76756"
+    },
+    "TokenDistribution": {
+      "address": "0x6a50f2634777938904B6718bF613c081e0F0F484"
+    },
+    "LDRToken": {
+      "address": "0xD442F656c41fbbd70eCC75E8CFd56bC84ea1b832"
+    },
+    "Contract": {
+      "address": "0xf7480A948a708aaE6d125238A56e79e7F9201780"
     }
   }
 }

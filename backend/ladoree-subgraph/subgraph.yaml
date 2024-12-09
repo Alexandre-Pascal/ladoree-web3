@@ -30,3 +30,135 @@ dataSources:
         - event: UserRegistered(indexed address)
           handler: handleUserRegistered
       file: ./src/user-manager.ts
+
+  - kind: ethereum
+    name: AuthenticityNFT
+    network: polygon-amoy
+    source:
+      address: "0x084f02553A49B6F8ECF608b8f988b0AEB0C76756"
+      abi: AuthenticityNFT
+      startBlock: 15400836
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ApprovalNFT
+        - ApprovalForAll
+        - BatchMetadataUpdate
+        - MetadataUpdate
+        - AuthenticityNFTOwnershipTransferred
+        - TransferNFT
+      abis:
+        - name: AuthenticityNFT
+          file: ./abis/AuthenticityNFT.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApprovalNFT
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: BatchMetadataUpdate(uint256,uint256)
+          handler: handleBatchMetadataUpdate
+        - event: MetadataUpdate(uint256)
+          handler: handleMetadataUpdate
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransferNFT
+      file: ./src/authenticity-nft.ts
+
+  - kind: ethereum
+    name: TokenDistribution
+    network: polygon-amoy
+    source:
+      address: "0x6a50f2634777938904B6718bF613c081e0F0F484"
+      abi: TokenDistribution
+      startBlock: 15400827
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - TokenDistributionOwnershipTransferred
+        - TokensDistributed
+      abis:
+        - name: TokenDistribution
+          file: ./abis/TokenDistribution.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: TokensDistributed(indexed address,uint256,uint256)
+          handler: handleTokensDistributed
+      file: ./src/token-distribution.ts
+
+  - kind: ethereum
+    name: LDRToken
+    network: polygon-amoy
+    source:
+      address: "0xD442F656c41fbbd70eCC75E8CFd56bC84ea1b832"
+      abi: LDRToken
+      startBlock: 15400830
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ApprovalToken
+        - BuyerDiscountBought
+        - MintAdjusted
+        - MintAttemptedWithMaxBalance
+        - LDRTokenOwnershipTransferred
+        - SellerDiscountBought
+        - TokenBurned
+        - TokensMinted
+        - LDRTokenTransfer
+      abis:
+        - name: LDRToken
+          file: ./abis/LDRToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApprovalToken
+        - event: BuyerDiscountBought(indexed address,uint256)
+          handler: handleBuyerDiscountBought
+        - event: MintAdjusted(indexed address,uint256,uint256)
+          handler: handleMintAdjusted
+        - event: MintAttemptedWithMaxBalance(indexed address,uint256)
+          handler: handleMintAttemptedWithMaxBalance
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: SellerDiscountBought(indexed address,uint256)
+          handler: handleSellerDiscountBought
+        - event: TokenBurned(indexed address,uint256)
+          handler: handleTokenBurned
+        - event: TokensMinted(indexed address,uint256)
+          handler: handleTokensMinted
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransferToken
+      file: ./src/ldr-token.ts
+
+  - kind: ethereum
+    name: Marketplace
+    network: polygon-amoy
+    source:
+      address: "0xf7480A948a708aaE6d125238A56e79e7F9201780"
+      abi: Marketplace
+      startBlock: 15400825
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ItemListed
+        - ItemSold
+        - MarketplaceOwnershipTransferred
+      abis:
+        - name: Marketplace
+          file: ./abis/Marketplace.json
+      eventHandlers:
+        - event: ItemListed(indexed uint256,indexed uint256,indexed address,uint256)
+          handler: handleItemListed
+        - event: ItemSold(indexed uint256,indexed address,uint256)
+          handler: handleItemSold
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/Marketplace.ts
