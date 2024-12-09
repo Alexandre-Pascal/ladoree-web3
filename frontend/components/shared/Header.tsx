@@ -14,6 +14,8 @@ import { useAccount, useReadContract, useWriteContract, useDisconnect } from "wa
 
 import { userManagerAddress, userManagerAbi } from "../../utils/abis";
 
+import { User } from 'lucide-react';
+
 
 import { user } from "../../utils/types";
 
@@ -89,6 +91,19 @@ const Header = () => {
                             </ul>
                             {/* <input type='button' value='Connexion' className='bg-black text-white px-4 py-2 rounded-md' /> */}
                             <ConnectButton />
+
+                            {isConnected && (
+                                <div className="relative ">
+                                    <Link href={'/profile'}>
+                                        <User
+                                            width={36}
+                                            height={36}
+                                            className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-600 cursor-pointer border border-gray-300 rounded-xl hover:bg-gray-50 p-1"
+                                        />
+                                    </Link>
+                                </div>
+                            )}
+
                         </div>
                     </nav>
                 </div>

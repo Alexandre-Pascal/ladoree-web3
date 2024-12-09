@@ -6,6 +6,8 @@ import Header from "@/components/shared/Header";
 
 import CustomRaimbowKitProvider from "./CustomRaimbowKitProvider";
 
+import Providers from './Providers';
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -43,7 +45,7 @@ export default function RootLayout({
         <CustomRaimbowKitProvider>
           <Header />
           <main className="flex-grow">
-            {children}
+            <Providers>{children}</Providers>
           </main>
           <Footer />
         </CustomRaimbowKitProvider>
