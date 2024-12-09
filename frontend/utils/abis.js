@@ -1,4 +1,4 @@
-export const userManagerAddress = "0x8859F9fDCf1678da0D51D185F62c8443ff77fF76"
+export const userManagerAddress = "0x097d42A51708Cd7DEaade9A80A836934DB7b7449"
 export const userManagerAbi = [
     {
         "inputs": [],

@@ -29,9 +29,10 @@ const Header = () => {
         args: [address],
     });
 
-    const { data, writeContract, error } = useWriteContract();
+    const { data, writeContract, error, isSuccess: registerIsSuccess, status: registerStatus } = useWriteContract();
 
     const [user, setUser] = useState<user | null>(null);
+
 
     const registerUser = async () => {
         writeContract({
@@ -51,10 +52,13 @@ const Header = () => {
 
     useEffect(() => {
         console.log('isRegistered', isRegistered)
-        if (isRegistered.isError) {
-            console.error('Error while checking if user is registered', isRegistered.error)
+        console.log('registerStatus', registerStatus)
+        if (registerIsSuccess) {
+            setTimeout(() => {
+                window.location.reload(); // Recharge la page pour mettre à jour l'état de connexion
+            }, 5000);
         }
-    }, [address, isRegistered.isPending, isRegistered.isError])
+    }, [registerIsSuccess, registerStatus])
 
 
 
