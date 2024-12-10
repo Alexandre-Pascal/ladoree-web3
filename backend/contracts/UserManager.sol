@@ -152,6 +152,14 @@ contract UserManager is Ownable {
         string memory email
     ) public onlyOwnerOf(user) {
         users[user].email = email;
+        if (users[user].isRegistered) {
+            emit UserRegistered(
+                user,
+                users[user].userName,
+                email,
+                users[user].bio
+            );
+        }
     }
 
     /**
@@ -164,6 +172,15 @@ contract UserManager is Ownable {
         string memory userName
     ) public onlyOwnerOf(user) {
         users[user].userName = userName;
+        //Si cette fonction est appelée après l'enregistrement de l'utilisateur, on émet un événement
+        if (users[user].isRegistered) {
+            emit UserRegistered(
+                user,
+                userName,
+                users[user].email,
+                users[user].bio
+            );
+        }
     }
 
     /**
@@ -176,6 +193,14 @@ contract UserManager is Ownable {
         string memory bio
     ) public onlyOwnerOf(user) {
         users[user].bio = bio;
+        if (users[user].isRegistered) {
+            emit UserRegistered(
+                user,
+                users[user].userName,
+                users[user].email,
+                bio
+            );
+        }
     }
 
     /**

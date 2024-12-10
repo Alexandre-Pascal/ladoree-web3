@@ -3,7 +3,13 @@ import { gql } from 'graphql-request';
 export const queries = {
   GET_USER_PROFILE: gql`
     query GetUserProfile($user: String!) {
-      userRegistereds(where: { user: $user }) {
+      userRegistereds(
+      orderBy: blockTimestamp
+      orderDirection: desc
+      first: 1
+      where: { user: $user }
+      ) 
+      {
         email
         userName
         bio
