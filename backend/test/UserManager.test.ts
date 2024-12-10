@@ -41,26 +41,38 @@ describe("UserManager", function () {
 
     describe("Register User", function () {
         it("Should emit UserRegistered event when a new user is registered", async function () {
-            await expect(userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe"))
+            await expect(userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "abcd@gmail.com", "Oui salut moi c'est John Doe"))
                 .to.emit(userManager, "UserRegistered")
-                .withArgs(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
+                .withArgs(user1.getAddress(), "John Doe", "abcd@gmail.com", "Oui salut moi c'est John Doe");
+        });
+
+        it("Should emit UserRegistered event even if userEmail is empty", async function () {
+            await expect(userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "", "Oui salut moi c'est John Doe"))
+                .to.emit(userManager, "UserRegistered")
+                .withArgs(user1.getAddress(), "John Doe", "", "Oui salut moi c'est John Doe");
+        });
+
+        it("Should emit UserRegistered event even if userBio is empty", async function () {
+            await expect(userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "", ""))
+                .to.emit(userManager, "UserRegistered")
+                .withArgs(user1.getAddress(), "John Doe", "", "");
         });
 
         it("Should not allow to register the same user twice", async function () {
-            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
+            await userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "abcd@gmail.com", "Oui salut moi c'est John Doe");
 
-            await expect(userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe"))
+            await expect(userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "abcd@gmail.com", "Oui salut moi c'est John Doe"))
                 .to.be.revertedWith("User already registered");
         });
 
         describe("Set each information", function () {
-            it("Should not allow to set the lastname if it's not his address", async function () {
-                await expect(userManager.connect(user1).setUserLastName(user2.getAddress(), "Doe"))
+            it("Should not allow to set the userName if it's not his address", async function () {
+                await expect(userManager.connect(user1).setUserName(user2.getAddress(), "John Doe"))
                     .to.be.revertedWith("User not the owner of the address");
             });
 
-            it("Should not allow to set the firstname if it's not his address", async function () {
-                await expect(userManager.connect(user1).setUserFirstName(user2.getAddress(), "John"))
+            it("Should not allow to set the bio if it's not his address", async function () {
+                await expect(userManager.connect(user1).setUserBio(user2.getAddress(), "Oui salut moi c'est John Doe"))
                     .to.be.revertedWith("User not the owner of the address");
             });
 
@@ -73,7 +85,7 @@ describe("UserManager", function () {
 
     describe("Update Last Mint Time", function () {
         beforeEach(async function () {
-            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
+            await userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "abcd@gmail.com", "Oui salut moi c'est John Doe");
         });
 
         it("Should allow the owner to update the last mint time of a user", async function () {
@@ -108,7 +120,7 @@ describe("UserManager", function () {
 
     describe("Reset Last Mint Time", function () {
         beforeEach(async function () {
-            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
+            await userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "abcd@gmail.com", "Oui salut moi c'est John Doe");
             await userManager.connect(owner).updateLastMintTime(user1.getAddress());
         });
 
@@ -160,7 +172,7 @@ describe("UserManager", function () {
 
     describe("Get Last Mint Time", function () {
         it("Should return the last mint time of a registered user", async function () {
-            await userManager.connect(user1).registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
+            await userManager.connect(user1).registerUser(user1.getAddress(), "John Doe", "abcd@gmail.com", "Oui salut moi c'est John Doe");
             await userManager.connect(owner).updateLastMintTime(user1.getAddress());
 
             const lastMintTime = await userManager.getLastMintTime(user1.getAddress());

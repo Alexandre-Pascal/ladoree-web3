@@ -36,9 +36,9 @@ contract UserManager is Ownable {
      * @dev Structure pour stocker les informations d'un utilisateur.
      */
     struct User {
+        string userName; // Prénom de l'utilisateur
         string email; // Adresse mail de l'utilisateur
-        string firstName; // Prénom de l'utilisateur
-        string lastName; // Nom de l'utilisateur
+        string bio; // Nom de l'utilisateur
         bool isRegistered; // Statut d'enregistrement de l'utilisateur
         uint256 lastMintTime; // Timestamp de la dernière opération de mint
     }
@@ -54,9 +54,9 @@ contract UserManager is Ownable {
     // ========================
     event UserRegistered(
         address indexed user,
+        string userName,
         string email,
-        string firstName,
-        string lastName
+        string bio
     ); // Émis lors de l'enregistrement d'un utilisateur
     event MintPermissionUpdated(address indexed user, bool canMint); // Émis lors de la mise à jour de permissions
 
@@ -157,46 +157,50 @@ contract UserManager is Ownable {
     /**
      * @notice Définit le prénom de l'utilisateur.
      * @param user Adresse de l'utilisateur.
-     * @param firstName Prénom de l'utilisateur.
+     * @param userName Prénom de l'utilisateur.
      */
-    function setUserFirstName(
+    function setUserName(
         address user,
-        string memory firstName
+        string memory userName
     ) public onlyOwnerOf(user) {
-        users[user].firstName = firstName;
+        users[user].userName = userName;
     }
 
     /**
      * @notice Définit le nom de l'utilisateur.
      * @param user Adresse de l'utilisateur.
-     * @param lastName Nom de l'utilisateur.
+     * @param bio Nom de l'utilisateur.
      */
-    function setUserLastName(
+    function setUserBio(
         address user,
-        string memory lastName
+        string memory bio
     ) public onlyOwnerOf(user) {
-        users[user].lastName = lastName;
+        users[user].bio = bio;
     }
 
     /**
      * @notice Enregistre un nouvel utilisateur avec ses informations.
      * @param user Adresse de l'utilisateur.
      * @param email Adresse mail de l'utilisateur.
-     * @param firstName Prénom de l'utilisateur.
-     * @param lastName Nom de l'utilisateur.
+     * @param userName Prénom de l'utilisateur.
+     * @param bio Nom de l'utilisateur.
      */
     function registerUser(
         address user,
+        string memory userName,
         string memory email,
-        string memory firstName,
-        string memory lastName
+        string memory bio
     ) external {
         require(!users[user].isRegistered, "User already registered");
-        setUserLastName(user, lastName);
-        setUserFirstName(user, firstName);
-        setUserEmail(user, email);
+        setUserName(user, userName);
+        if (bytes(email).length > 0) {
+            setUserEmail(user, email);
+        }
+        if (bytes(bio).length > 0) {
+            setUserBio(user, bio);
+        }
         users[user].isRegistered = true;
-        emit UserRegistered(user, email, firstName, lastName);
+        emit UserRegistered(user, userName, email, bio);
     }
 
     // ========================

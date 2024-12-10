@@ -10,9 +10,9 @@ export default function UserProfile() {
 
   type UserProfileData = {
     userRegistereds: {
+      userName: string;
       email: string;
-      firstName: string;
-      lastName: string;
+      bio: string;
     }[];
   };
 
@@ -29,7 +29,7 @@ export default function UserProfile() {
   if (error) return <p className="text-red-500">Erreur : {error.message}</p>;
 
   // Extraction des données utilisateur
-  const { email, firstName, lastName } = data?.userRegistereds?.[0] || {};
+  const { email, userName, bio } = data?.userRegistereds?.[0] || {};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,16 +42,16 @@ export default function UserProfile() {
           <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Prénom</label>
-                <p className="mt-1 text-gray-900">{firstName || 'Non renseigné'}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Nom</label>
-                <p className="mt-1 text-gray-900">{lastName || 'Non renseigné'}</p>
+                <label className="block text-sm font-medium text-gray-700">Nom Complet / Pseudonyme (Obligatoire)</label>
+                <p className="mt-1 text-gray-900">{userName || 'Non renseigné'}</p>
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-gray-700">Email</label>
                 <p className="mt-1 text-gray-900">{email || 'Non renseigné'}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Bio</label>
+                <textarea className="mt-1 text-gray-900">{bio || 'Non renseigné'}</textarea>
               </div>
             </div>
           </div>

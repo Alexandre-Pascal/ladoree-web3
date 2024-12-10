@@ -8,7 +8,7 @@ dataSources:
     name: UserManager
     network: polygon-amoy
     source:
-      address: "0x097d42A51708Cd7DEaade9A80A836934DB7b7449"
+      address: "0xD3D21b819dBa95cbC2Da5d60BC63dA3DE35B5861"
       abi: UserManager
       startBlock: 15400825
     mapping:

@@ -1,4 +1,4 @@
-export const userManagerAddress = "0x097d42A51708Cd7DEaade9A80A836934DB7b7449"
+export const userManagerAddress = "0xD3D21b819dBa95cbC2Da5d60BC63dA3DE35B5861"
 export const userManagerAbi = [
     {
         "inputs": [],
@@ -73,6 +73,24 @@ export const userManagerAbi = [
                 "internalType": "address",
                 "name": "user",
                 "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "userName",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "bio",
+                "type": "string"
             }
         ],
         "name": "UserRegistered",
@@ -151,17 +169,17 @@ export const userManagerAbi = [
             },
             {
                 "internalType": "string",
+                "name": "userName",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
                 "name": "email",
                 "type": "string"
             },
             {
                 "internalType": "string",
-                "name": "firstName",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "lastName",
+                "name": "bio",
                 "type": "string"
             }
         ],
@@ -212,6 +230,24 @@ export const userManagerAbi = [
             },
             {
                 "internalType": "string",
+                "name": "bio",
+                "type": "string"
+            }
+        ],
+        "name": "setUserBio",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
                 "name": "email",
                 "type": "string"
             }
@@ -230,29 +266,11 @@ export const userManagerAbi = [
             },
             {
                 "internalType": "string",
-                "name": "firstName",
+                "name": "userName",
                 "type": "string"
             }
         ],
-        "name": "setUserFirstName",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "user",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "lastName",
-                "type": "string"
-            }
-        ],
-        "name": "setUserLastName",
+        "name": "setUserName",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
