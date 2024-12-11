@@ -5,7 +5,6 @@ pragma solidity ^0.8.20;
 // IMPORTATIONS
 // ========================
 import "./AuthenticityNFT.sol";
-import "./LDRToken.sol";
 import "./TokenDistribution.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -45,7 +44,6 @@ contract Marketplace is IERC721Receiver, Ownable {
     }
 
     IAuthenticityNFT private nftContract; // Instance du contrat AuthenticityNFT
-    ILDRToken private ldrToken; // Instance du contrat LDRToken
     ITokenDistribution private tokenDistribution; // Instance du contrat TokenDistribution
     mapping(uint256 => Item) public itemsForSale; // Mapping des items mis en vente
     uint256 public itemCount; // Compteur pour générer des IDs d'items

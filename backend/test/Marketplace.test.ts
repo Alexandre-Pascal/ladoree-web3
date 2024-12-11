@@ -70,7 +70,8 @@ describe("Marketplace", function () {
         (await buyer.getAddress()).toLowerCase(),
         "azaz",
         "John",
-        "Doe"
+        "Doe",
+        false
       );
 
     await userManager
@@ -79,7 +80,8 @@ describe("Marketplace", function () {
         (await seller.getAddress()).toLowerCase(),
         "azaz",
         "John",
-        "Doe"
+        "Doe",
+        false
       );
   });
 

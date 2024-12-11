@@ -43,7 +43,7 @@ describe("LDRToken", function () {
       const addressUser1 = await user1.getAddress();
       await userManager
         .connect(user1)
-        .registerUser(addressUser1, "abcd@gmail.com", "John", "Doe");
+        .registerUser(addressUser1, "abcd@gmail.com", "John", "Doe", false);
       await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
     }
 
@@ -156,7 +156,7 @@ describe("LDRToken", function () {
       await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
       await userManager
         .connect(user1)
-        .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe");
+        .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe", false);
       await ldrToken.connect(owner).mint(user1.getAddress(), amount);
     }
 

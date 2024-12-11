@@ -19,6 +19,7 @@ interface IUserManager {
     function updateLastMintTime(address user) external;
     function isUserRegistered(address user) external view returns (bool);
     function setTokenContract(address tokenContract) external;
+    function isCreator(address user) external view returns (bool);
 }
 
 // ========================
@@ -40,6 +41,7 @@ contract UserManager is Ownable {
         string email; // Adresse mail de l'utilisateur
         string bio; // Nom de l'utilisateur
         bool isRegistered; // Statut d'enregistrement de l'utilisateur
+        bool isCreator; // Statut de créateur de contenu
         uint256 lastMintTime; // Timestamp de la dernière opération de mint
     }
 
@@ -56,7 +58,8 @@ contract UserManager is Ownable {
         address indexed user,
         string userName,
         string email,
-        string bio
+        string bio,
+        bool isCreator
     ); // Émis lors de l'enregistrement d'un utilisateur
     event MintPermissionUpdated(address indexed user, bool canMint); // Émis lors de la mise à jour de permissions
 
@@ -143,23 +146,12 @@ contract UserManager is Ownable {
     }
 
     /**
-     * @notice Définit l'adresse mail de l'utilisateur.
+     * @notice Vérifie si un utilisateur est un créateur.
      * @param user Adresse de l'utilisateur.
-     * @param email Adresse mail de l'utilisateur.
+     * @return isCreator Booléen indiquant si l'utilisateur est un créateur.
      */
-    function setUserEmail(
-        address user,
-        string memory email
-    ) public onlyOwnerOf(user) {
-        users[user].email = email;
-        if (users[user].isRegistered) {
-            emit UserRegistered(
-                user,
-                users[user].userName,
-                email,
-                users[user].bio
-            );
-        }
+    function isCreator(address user) external view returns (bool) {
+        return users[user].isCreator;
     }
 
     /**
@@ -170,17 +162,35 @@ contract UserManager is Ownable {
     function setUserName(
         address user,
         string memory userName
-    ) public onlyOwnerOf(user) {
+    ) public onlyOwnerOf(user) onlyRegisteredUser(user) {
         users[user].userName = userName;
         //Si cette fonction est appelée après l'enregistrement de l'utilisateur, on émet un événement
-        if (users[user].isRegistered) {
-            emit UserRegistered(
-                user,
-                userName,
-                users[user].email,
-                users[user].bio
-            );
-        }
+        emit UserRegistered(
+            user,
+            userName,
+            users[user].email,
+            users[user].bio,
+            users[user].isCreator
+        );
+    }
+
+    /**
+     * @notice Définit l'adresse mail de l'utilisateur.
+     * @param user Adresse de l'utilisateur.
+     * @param email Adresse mail de l'utilisateur.
+     */
+    function setUserEmail(
+        address user,
+        string memory email
+    ) public onlyOwnerOf(user) onlyRegisteredUser(user) {
+        users[user].email = email;
+        emit UserRegistered(
+            user,
+            users[user].userName,
+            email,
+            users[user].bio,
+            users[user].isCreator
+        );
     }
 
     /**
@@ -191,16 +201,33 @@ contract UserManager is Ownable {
     function setUserBio(
         address user,
         string memory bio
-    ) public onlyOwnerOf(user) {
+    ) public onlyOwnerOf(user) onlyRegisteredUser(user) {
         users[user].bio = bio;
-        if (users[user].isRegistered) {
-            emit UserRegistered(
-                user,
-                users[user].userName,
-                users[user].email,
-                bio
-            );
-        }
+        emit UserRegistered(
+            user,
+            users[user].userName,
+            users[user].email,
+            bio,
+            users[user].isCreator
+        );
+    }
+    /**
+     * @notice Définit le statut de créateur de contenu de l'utilisateur.
+     * @param user Adresse de l'utilisateur.
+     * @param isACreator Booléen indiquant si l'utilisateur est un créateur de contenu.
+     */
+    function setUserIsCreator(
+        address user,
+        bool isACreator
+    ) public onlyOwnerOf(user) onlyRegisteredUser(user) {
+        users[user].isCreator = isACreator;
+        emit UserRegistered(
+            user,
+            users[user].userName,
+            users[user].email,
+            users[user].bio,
+            isACreator
+        );
     }
 
     /**
@@ -214,9 +241,13 @@ contract UserManager is Ownable {
         address user,
         string memory userName,
         string memory email,
-        string memory bio
+        string memory bio,
+        bool isACreator
     ) external {
         require(!users[user].isRegistered, "User already registered");
+
+        users[user].isRegistered = true; // Enregistre l'utilisateur directement pour pouvoir appeler les fonctions de modification (Pour pouvoir bloquet les fonctions de modification si l'utilisateur n'est pas enregistré)
+
         setUserName(user, userName);
         if (bytes(email).length > 0) {
             setUserEmail(user, email);
@@ -224,8 +255,11 @@ contract UserManager is Ownable {
         if (bytes(bio).length > 0) {
             setUserBio(user, bio);
         }
-        users[user].isRegistered = true;
-        emit UserRegistered(user, userName, email, bio);
+        if (isACreator) {
+            setUserIsCreator(user, isACreator);
+        }
+
+        // emit UserRegistered(user, userName, email, bio, isACreator); Pas besoin d'émettre l'événement ici car il est déjà émis dans les fonctions de modification (peut etre pas le plus opti mais j'ai pas trouvé de solution)
     }
 
     // ========================
