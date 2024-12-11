@@ -13,6 +13,7 @@ export const queries = {
         email
         userName
         bio
+        isCreator
       }
     }
   `,
@@ -25,6 +26,19 @@ export const queries = {
   }
 }
 `,
+  GET_CREATORS: gql`
+    query GetCreators {
+      userRegistereds(
+        orderBy: blockTimestamp
+        orderDirection: desc
+        where: { isCreator: true }
+      ) {
+        email
+        userName
+        bio
+      }
+    }
+  `,
 };
 
 // URL du sous-graph

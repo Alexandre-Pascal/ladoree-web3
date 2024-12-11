@@ -8,6 +8,8 @@ import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { Pencil, Save } from 'lucide-react';
 import { userManagerAbi, userManagerAddress } from '@/utils/abis';
 import { toast } from 'react-hot-toast';
+import { Switch } from "@/components/ui/switch"
+
 
 export default function UserProfile() {
   const { address } = useAccount(); // Récupère l'adresse utilisateur connectée
@@ -17,6 +19,7 @@ export default function UserProfile() {
       userName: string;
       email: string;
       bio: string;
+      isCreator: boolean;
     }[];
   };
 
@@ -31,6 +34,7 @@ export default function UserProfile() {
   const { writeContract: updateUserName, isSuccess: updateUserNameIsSuccess, isError: updateUserNameIsError, isPending: updateUserNameIsPending } = useWriteContract();
   const { writeContract: updateEmail, isSuccess: updateEmailIsSuccess, isError: updateEmailIsError, isPending: updateEmailIsPending } = useWriteContract();
   const { writeContract: updateBio, isSuccess: updateBioIsSuccess, isError: updateBioIsError, isPending: updateBioIsPending } = useWriteContract();
+  const { writeContract: updateIsCreator, isSuccess: updateIsCreatorIsSuccess, isError: updateIsCreatorIsError, isPending: updateIsCreatorIsPending } = useWriteContract();
 
   // Mise à jour du userName
   const setUserName = (_userName: string) => {
@@ -112,6 +116,34 @@ export default function UserProfile() {
     }
   }, [updateBioIsPending, updateBioIsSuccess, updateBioIsError, isSuccessQuery]);
 
+
+  const setIsCreator = (_isCreator: boolean) => {
+    updateIsCreator({
+      address: userManagerAddress,
+      abi: userManagerAbi,
+      functionName: 'setUserIsCreator',
+      args: [address, _isCreator],
+    });
+  };
+
+  useEffect(() => {
+    let toastId: string = '';
+    if (updateIsCreatorIsPending) {
+      toastId = toast.loading('Mise à jour du statut de créateur...');
+    }
+
+    if (updateIsCreatorIsSuccess && isSuccessQuery) {
+      setTimeout(() => toast.success('Statut de créateur mis à jour avec succès !', { id: toastId }), 5000)
+      setTimeout(() => window.location.reload(), 7000);
+    }
+
+    if (updateIsCreatorIsError) {
+      toast.error('Erreur lors de la mise à jour du statut de créateur.', { id: toastId });
+    }
+  }, [updateIsCreatorIsPending, updateIsCreatorIsSuccess, updateIsCreatorIsError, isSuccessQuery]);
+
+
+
   // États locaux pour gérer l'édition
   const [isEditing, setIsEditing] = useState<{ userName: boolean; email: boolean; bio: boolean }>({
     userName: false,
@@ -158,7 +190,7 @@ export default function UserProfile() {
             <p className="text-gray-500">Gérez vos informations personnelles</p>
           </div>
           <div className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
               {/* Nom Complet / Pseudonyme */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Nom Complet / Pseudonyme (Obligatoire)</label>
@@ -217,6 +249,26 @@ export default function UserProfile() {
                   </button>
                 </div>
               </div>
+              {/* Créateur */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Êtes-vous un créateur ?</label>
+                <p className="mt-1 text-gray-900">
+                  Si vous êtes un créateur, vous pouvez apparaître dans la liste des créateurs.
+                </p>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={data?.userRegistereds?.[0]?.isCreator || false} // Synchronisation avec l'état
+                    onCheckedChange={(checked) => {
+                      console.log(checked);
+                      setIsCreator(checked); // Appelle updateIsCreator
+                    }}
+                  />
+                  <span className="text-gray-700">
+                    {data?.userRegistereds?.[0]?.isCreator ? "Vous êtes un créateur" : "Vous n'êtes pas un créateur"}
+                  </span>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
