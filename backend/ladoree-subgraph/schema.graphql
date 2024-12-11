@@ -22,6 +22,7 @@ type UserRegistered @entity(immutable: true) {
   userName: String!
   email: String
   bio: String
+  isCreator: Boolean
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

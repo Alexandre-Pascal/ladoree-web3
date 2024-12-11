@@ -49,6 +49,7 @@ export function handleUserRegistered(event: UserRegisteredEvent): void {
   entity.userName = event.params.userName
   entity.email = event.params.email
   entity.bio = event.params.bio
+  entity.isCreator = event.params.isCreator
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

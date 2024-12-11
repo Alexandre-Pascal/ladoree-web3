@@ -102,6 +102,32 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "getAuthenticityNFTContractAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTokenDistributionContractAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -271,7 +297,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "nftContractAddress",
+        "name": "authenticityNftAddress",
         "type": "address"
       }
     ],
