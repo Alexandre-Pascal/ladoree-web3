@@ -1,5 +1,7 @@
 require("@nomicfoundation/hardhat-verify");
 require("@nomicfoundation/hardhat-toolbox");
+import "@nomicfoundation/hardhat-chai-matchers";
+
 require("dotenv").config();
 
 module.exports = {

@@ -1,4 +1,4 @@
-export const userManagerAddress = "0x569fAaE374232F280B2AaaF434a15E9b7DE5Acf5"
+export const userManagerAddress = "0x38A0b9b52B37105C863C2211d199FAc7dFCC6a48"
 export const userManagerAbi = [
     {
         "inputs": [],
@@ -97,6 +97,12 @@ export const userManagerAbi = [
                 "internalType": "bool",
                 "name": "isCreator",
                 "type": "bool"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "profileImage",
+                "type": "string"
             }
         ],
         "name": "UserRegistered",
@@ -224,6 +230,11 @@ export const userManagerAbi = [
                 "internalType": "bool",
                 "name": "isACreator",
                 "type": "bool"
+            },
+            {
+                "internalType": "string",
+                "name": "profileImage",
+                "type": "string"
             }
         ],
         "name": "registerUser",
@@ -332,6 +343,24 @@ export const userManagerAbi = [
             }
         ],
         "name": "setUserName",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "ipfsHash",
+                "type": "string"
+            }
+        ],
+        "name": "setUserProfileImage",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

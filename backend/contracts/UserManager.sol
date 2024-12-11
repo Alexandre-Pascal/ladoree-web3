@@ -43,6 +43,7 @@ contract UserManager is Ownable {
         bool isRegistered; // Statut d'enregistrement de l'utilisateur
         bool isCreator; // Statut de créateur de contenu
         uint256 lastMintTime; // Timestamp de la dernière opération de mint
+        string profileImage; // Hash IPFS de l'image de profil
     }
 
     // ========================
@@ -59,7 +60,8 @@ contract UserManager is Ownable {
         string userName,
         string email,
         string bio,
-        bool isCreator
+        bool isCreator,
+        string profileImage
     ); // Émis lors de l'enregistrement d'un utilisateur
     event MintPermissionUpdated(address indexed user, bool canMint); // Émis lors de la mise à jour de permissions
 
@@ -170,7 +172,8 @@ contract UserManager is Ownable {
             userName,
             users[user].email,
             users[user].bio,
-            users[user].isCreator
+            users[user].isCreator,
+            users[user].profileImage
         );
     }
 
@@ -189,7 +192,8 @@ contract UserManager is Ownable {
             users[user].userName,
             email,
             users[user].bio,
-            users[user].isCreator
+            users[user].isCreator,
+            users[user].profileImage
         );
     }
 
@@ -208,7 +212,8 @@ contract UserManager is Ownable {
             users[user].userName,
             users[user].email,
             bio,
-            users[user].isCreator
+            users[user].isCreator,
+            users[user].profileImage
         );
     }
     /**
@@ -220,13 +225,43 @@ contract UserManager is Ownable {
         address user,
         bool isACreator
     ) public onlyOwnerOf(user) onlyRegisteredUser(user) {
+        // Il doit avoir toutes les informations pour être un créateur
+        require(
+            bytes(users[user].userName).length > 0 &&
+                bytes(users[user].email).length > 0 &&
+                bytes(users[user].bio).length > 0 &&
+                bytes(users[user].profileImage).length > 0,
+            "User must have all information to be a creator"
+        );
+
         users[user].isCreator = isACreator;
         emit UserRegistered(
             user,
             users[user].userName,
             users[user].email,
             users[user].bio,
-            isACreator
+            isACreator,
+            users[user].profileImage
+        );
+    }
+
+    /**
+     * @notice Définit ou met à jour l'image de profil d'un utilisateur.
+     * @param user Adresse de l'utilisateur.
+     * @param ipfsHash Hash IPFS de l'image de profil.
+     */
+    function setUserProfileImage(
+        address user,
+        string memory ipfsHash
+    ) public onlyOwnerOf(user) onlyRegisteredUser(user) {
+        users[user].profileImage = ipfsHash;
+        emit UserRegistered(
+            user,
+            users[user].userName,
+            users[user].email,
+            users[user].bio,
+            users[user].isCreator,
+            ipfsHash
         );
     }
 
@@ -242,7 +277,8 @@ contract UserManager is Ownable {
         string memory userName,
         string memory email,
         string memory bio,
-        bool isACreator
+        bool isACreator,
+        string memory profileImage
     ) external {
         require(!users[user].isRegistered, "User already registered");
 
@@ -255,6 +291,11 @@ contract UserManager is Ownable {
         if (bytes(bio).length > 0) {
             setUserBio(user, bio);
         }
+        if (bytes(profileImage).length > 0) {
+            setUserProfileImage(user, profileImage);
+        }
+
+        // En dernier pour éviter les erreurs de vérification
         if (isACreator) {
             setUserIsCreator(user, isACreator);
         }

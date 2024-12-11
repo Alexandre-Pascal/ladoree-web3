@@ -74,7 +74,8 @@ describe("Marketplace", function () {
         "azaz",
         "John",
         "Doe",
-        false
+        false,
+        ""
       );
 
     await userManager
@@ -84,7 +85,8 @@ describe("Marketplace", function () {
         "azaz",
         "John",
         "Doe",
-        false
+        false,
+        ""
       );
   });
 

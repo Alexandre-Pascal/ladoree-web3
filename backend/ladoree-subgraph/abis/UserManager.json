@@ -96,6 +96,12 @@
         "internalType": "bool",
         "name": "isCreator",
         "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "profileImage",
+        "type": "string"
       }
     ],
     "name": "UserRegistered",
@@ -223,6 +229,11 @@
         "internalType": "bool",
         "name": "isACreator",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "profileImage",
+        "type": "string"
       }
     ],
     "name": "registerUser",
@@ -331,6 +342,24 @@
       }
     ],
     "name": "setUserName",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "setUserProfileImage",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
