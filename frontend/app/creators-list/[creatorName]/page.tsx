@@ -1,17 +1,13 @@
 'use client';
 
 // app/creators-list/[creatorName]/page.tsx
-import React, { useEffect } from 'react';
-import { artistsData, artworksData } from '../../../data/artistsData'; // ou le bon chemin d'accès à vos données
-import ArtCard from '@/components/shared/ArtCard';
-import { Creator, CreatorData } from '@/utils/types';
+import React from 'react';
+import { CreatorData } from '@/utils/types';
 import { request } from 'graphql-request';
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { useQuery } from '@tanstack/react-query';
 import user from "@/icons/user.png";
 import Image from 'next/image';
-
-
 
 interface ArtistDetailPageProps {
     params: {
@@ -19,27 +15,12 @@ interface ArtistDetailPageProps {
     };
 }
 
-
-type Creators = {
-    creators: {
-        name: string;
-        profileImage: string;
-        bio: string;
-        email: string;
-    }[];
-}
-
-
-
 const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
-
-
     const { creatorName } = params;
 
     const decodedcreatorName = decodeURIComponent(creatorName);
 
-    console.log("decodedcreatorName", decodedcreatorName);
-    const { data, isLoading, error, isSuccess: isSuccessQuery } = useQuery<CreatorData>({
+    const { data } = useQuery<CreatorData>({
         queryKey: ['creator', decodedcreatorName],
         queryFn: () => {
             return request(GRAPHQL_URL, queries.GET_CREATOR, {
@@ -49,15 +30,6 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
     });
 
     const { userName, email, bio } = data?.userRegistereds[0] || {};
-
-    // Décoder le nom de l'artiste dans l'URL
-
-    useEffect(() => {
-        if (isSuccessQuery && data) {
-            console.log("data", data);
-        }
-    }, [isSuccessQuery, data]);
-
 
     if (!data) {
         return <p>Artiste non trouvé.</p>;
@@ -74,6 +46,7 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
                 />
                 <div className="ml-8">
                     <p className="text-xl text-gray-600">{bio}</p>
+                    <p className="text-gray-600 mt-2">Email : {email}</p>
                     <h2 className="text-lg font-semibold text-gray-800 mt-4">Œuvres notables</h2>
                     <ul className="list-disc pl-6 mt-2">
                         {/* {artist.notableWorks.map((work, index) => (
