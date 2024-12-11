@@ -1,23 +1,47 @@
-// app/artists-list/[artistName]/page.tsx
+// app/creators-list/[creatorName]/page.tsx
 import React from 'react';
 import { artistsData, artworksData } from '../../../data/artistsData'; // ou le bon chemin d'accès à vos données
 import ArtCard from '@/components/shared/ArtCard';
+import { creator } from '@/utils/types';
+
+import { request } from 'graphql-request';
+import { GRAPHQL_URL, queries } from '@/utils/graphQL';
+
 
 interface ArtistDetailPageProps {
     params: {
-        artistName: string;
+        creatorName: string;
     };
 }
 
 
+type Creators = {
+    creators: {
+        name: string;
+        profileImage: string;
+        bio: string;
+        email: string;
+    }[];
+}
+
+
+
 const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
-    const { artistName } = params;
+    const { creatorName } = params;
 
     // Décoder le nom de l'artiste dans l'URL
-    const decodedArtistName = decodeURIComponent(artistName);
+    const decodedcreatorName = decodeURIComponent(creatorName);
 
     // Trouver l'artiste en utilisant une comparaison insensible à la casse
-    const artist = artistsData.find(a => a.name.toLowerCase() === decodedArtistName.toLowerCase());
+    const artist = artistsData.find(a => a.name.toLowerCase() === decodedcreatorName.toLowerCase());
+
+    const { data, isLoading, error, isSuccess: isSuccessQuery } = useQuery<Creators>({
+        queryKey: ['userProfile'], // Clé unique pour l'utilisateur
+        queryFn: () => {
+            return request(GRAPHQL_URL, queries.GET_CREATORS, { user: address });
+        },
+        enabled: !!address, // Exécute la requête uniquement si une adresse est disponible
+    });
 
     if (!artist) {
         return <p>Artiste non trouvé.</p>;

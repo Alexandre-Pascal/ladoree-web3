@@ -13,7 +13,7 @@ const Footer = () => {
                     <div className="flex justify-center space-x-8">
                         <a href="/about" className="text-gray-600 hover:underline">A propos</a>
                         {/* <a href="#" className="text-gray-600 hover:underline">Expositions</a> */}
-                        <a href="/artists-list" className="text-gray-600 hover:underline">Artistes</a>
+                        <a href="/creators-list" className="text-gray-600 hover:underline">Artistes</a>
                         <a href="/contact" className="text-gray-600 hover:underline">Contact</a>
                     </div>
 

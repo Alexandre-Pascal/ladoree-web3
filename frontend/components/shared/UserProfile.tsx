@@ -269,7 +269,6 @@ export default function UserProfile() {
                   </span>
                 </div>
               </div>
-
             </div>
           </div>
         </div>

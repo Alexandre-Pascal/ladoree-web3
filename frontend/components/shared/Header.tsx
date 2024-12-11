@@ -92,7 +92,7 @@ const Header = () => {
                             <ul className="flex space-x-6 text-sm">
                                 <li><Link href="/">ACCUEIL</Link></li>
                                 <li><Link href="/artworks-list">OEUVRES</Link></li>
-                                <li><Link href="/artists-list">CRÉATEURS</Link></li>
+                                <li><Link href="/creators-list">CRÉATEURS</Link></li>
                                 <li><Link href="/about">A PROPOS</Link></li>
                                 <li><Link href="/contact">CONTACT</Link></li>
                             </ul>

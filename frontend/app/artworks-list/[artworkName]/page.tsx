@@ -44,7 +44,7 @@ const ArtworkDetailPage: React.FC<ArtworkDetailPageProps> = ({ params }) => {
                                 className="w-10 h-10 object-cover rounded-full"
                             />
                         )}
-                        <Link href={`/artists-list/${encodeURIComponent(artwork.artist)}`}>
+                        <Link href={`/creators-list/${encodeURIComponent(artwork.artist)}`}>
                             <p className="text-gray-600 hover:underline">{artwork.artist}</p>
                         </Link>
                     </div>

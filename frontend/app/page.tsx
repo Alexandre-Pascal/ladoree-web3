@@ -66,7 +66,7 @@ const HomePage = () => {
                   className="w-16 h-16 object-cover rounded-full"
                 />
                 <div>
-                  <Link href={`/artists-list/${encodeURIComponent(artist.name)}`}>
+                  <Link href={`/creators-list/${encodeURIComponent(artist.name)}`}>
                     <h4
                       className="text-lg font-medium text-gray-800 cursor-pointer">
                       {artist.name}
