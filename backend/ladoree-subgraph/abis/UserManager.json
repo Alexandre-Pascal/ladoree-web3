@@ -215,7 +215,7 @@
         "type": "address"
       }
     ],
-    "name": "setTokenContract",
+    "name": "setLDRTokenContract",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -22,9 +22,9 @@ describe("UserManager", function () {
         ldrToken = (await LDRTokenFactory.deploy()) as LDRToken;
 
         // Set LDRToken contract in UserManager
-        await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+        await userManager.connect(owner).setLDRTokenContract(ldrToken.getAddress());
 
-        userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+        userManager.connect(owner).setLDRTokenContract(ldrToken.getAddress());
     });
 
     describe("Deployment", function () {
@@ -132,7 +132,7 @@ describe("UserManager", function () {
             // await userManager.connect(owner).registerUser(user2.getAddress());
             await userManager
                 .connect(owner)
-                .setTokenContract(ldrToken.getAddress());
+                .setLDRTokenContract(ldrToken.getAddress());
 
             await userManager.connect(owner).updateLastMintTime(user1.getAddress());
             const lastMintTime = await userManager.getLastMintTime(user1.getAddress());
@@ -165,7 +165,7 @@ describe("UserManager", function () {
         });
 
         it("Should allow the LDRToken contract to reset the last mint time", async function () {
-            await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+            await userManager.connect(owner).setLDRTokenContract(ldrToken.getAddress());
             await userManager.connect(owner).resetLastMintTime(user1.getAddress());;
 
             const lastMintTime = await userManager.getLastMintTime(user1.getAddress());
@@ -188,7 +188,7 @@ describe("UserManager", function () {
     describe("Set Token Contract", function () {
         it("Should allow the owner to set the token contract", async function () {
             const newTokenAddress = ethers.Wallet.createRandom().address;
-            await userManager.connect(owner).setTokenContract(newTokenAddress);
+            await userManager.connect(owner).setLDRTokenContract(newTokenAddress);
             expect(await userManager.ldrToken()).to.equal(newTokenAddress);
         });
 
@@ -196,7 +196,7 @@ describe("UserManager", function () {
             const newTokenAddress = ethers.Wallet.createRandom().address;
 
             try {
-                await userManager.connect(user1).setTokenContract(newTokenAddress)
+                await userManager.connect(user1).setLDRTokenContract(newTokenAddress)
             } catch (error: any) {
                 // Vérifie que le message d'erreur inclut "OwnableUnauthorizedAccount"
                 expect(error.message).to.include("OwnableUnauthorizedAccount");
@@ -222,7 +222,7 @@ describe("UserManager", function () {
 
     describe("Get address of contracts", function () {
         it("Should return the address of the LDRToken contract", async function () {
-            expect(await userManager.getTokenContract()).to.equal(await ldrToken.getAddress());
+            expect(await userManager.getLDRTokenContractAddress()).to.equal(await ldrToken.getAddress());
         });
     });
 });

@@ -19,7 +19,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  */
 interface ITokenDistribution {
     function distributeTokens(address user, uint256 amountSpent) external;
-    function setMarketplace(address _ldrTokenAddress) external;
+    function setMarketplaceContract(address _ldrTokenAddress) external;
 }
 
 // ========================
@@ -120,7 +120,7 @@ contract TokenDistribution is Ownable {
      * @notice Définit l'adresse du contrat LDRToken.
      * @param _ldrTokenAddress Adresse du contrat LDRToken.
      */
-    function setLDRToken(address _ldrTokenAddress) external onlyOwner {
+    function setLDRTokenContract(address _ldrTokenAddress) external onlyOwner {
         ldrToken = ILDRToken(_ldrTokenAddress);
     }
 
@@ -128,7 +128,9 @@ contract TokenDistribution is Ownable {
      * @notice Définit l'adresse du contrat UserManager.
      * @param _userManagerAddress Adresse du contrat UserManager.
      */
-    function setUserManager(address _userManagerAddress) external onlyOwner {
+    function setUserManagerContract(
+        address _userManagerAddress
+    ) external onlyOwner {
         userManager = IUserManager(_userManagerAddress);
     }
 
@@ -136,7 +138,9 @@ contract TokenDistribution is Ownable {
      * @notice Définit l'adresse du contrat Marketplace.
      * @param _marketplaceAddress Adresse du contrat Marketplace.
      */
-    function setMarketplace(address _marketplaceAddress) external onlyOwner {
+    function setMarketplaceContract(
+        address _marketplaceAddress
+    ) external onlyOwner {
         marketplace = IMarketplace(_marketplaceAddress);
     }
 
@@ -147,7 +151,7 @@ contract TokenDistribution is Ownable {
      * @notice Récupère l'adresse du contrat LDRToken.
      * @return Adresse du contrat LDRToken.
      */
-    function getLDRTokenAddress() external view returns (address) {
+    function getLDRTokenContractAddress() external view returns (address) {
         return address(ldrToken);
     }
 
@@ -155,7 +159,7 @@ contract TokenDistribution is Ownable {
      * @notice Récupère l'adresse du contrat UserManager.
      * @return Adresse du contrat UserManager.
      */
-    function getUserManagerAddress() external view returns (address) {
+    function getUserManagerContractAddress() external view returns (address) {
         return address(userManager);
     }
 
@@ -163,7 +167,7 @@ contract TokenDistribution is Ownable {
      * @notice Récupère l'adresse du contrat Marketplace.
      * @return Adresse du contrat Marketplace.
      */
-    function getMarketplaceAddress() external view returns (address) {
+    function getMarketplaceContractAddress() external view returns (address) {
         return address(marketplace);
     }
 }

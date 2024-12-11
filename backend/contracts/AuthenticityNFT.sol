@@ -170,7 +170,9 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
      * @notice Définit l'adresse du contrat Marketplace associé.
      * @param marketplace Adresse du contrat Marketplace.
      */
-    function setMarketplaceContract(address marketplace) external onlyOwner {
+    function setMarketplaceContractContract(
+        address marketplace
+    ) external onlyOwner {
         require(marketplace != address(0), "Invalid marketplace address");
         marketplaceContract = IMarketplace(marketplace);
     }

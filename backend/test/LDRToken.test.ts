@@ -25,11 +25,11 @@ describe("LDRToken", function () {
     [owner, user1, user2] = await ethers.getSigners();
     ldrToken = (await LDRTokenFactory.deploy()) as LDRToken;
 
-    await ldrToken.connect(owner).setTokenDistribution(tokenDistribution.getAddress());
-    await ldrToken.connect(owner).setUserManager(userManager.getAddress());
-    // await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
-    // await tokenDistribution.connect(owner).setLDRToken(ldrToken.getAddress());
-    // await tokenDistribution.connect(owner).setUserManager(userManager.getAddress());
+    await ldrToken.connect(owner).setTokenDistributionContract(tokenDistribution.getAddress());
+    await ldrToken.connect(owner).setUserManagerContract(userManager.getAddress());
+    // await userManager.connect(owner).setLDRTokenContract(ldrToken.getAddress());
+    // await tokenDistribution.connect(owner).setLDRTokenContract(ldrToken.getAddress());
+    // await tokenDistribution.connect(owner).setUserManagerContract(userManager.getAddress());
 
   });
 
@@ -40,19 +40,19 @@ describe("LDRToken", function () {
       expect(await ldrToken.owner()).to.equal(await owner.getAddress());
     });
 
-    it("Should not initialize setTokenDistribution if not called by the owner", async function () {
+    it("Should not initialize setTokenDistributionContract if not called by the owner", async function () {
       try {
         await ldrToken
           .connect(user1)
-          .setTokenDistribution(tokenDistribution.getAddress());
+          .setTokenDistributionContract(tokenDistribution.getAddress());
       } catch (error: any) {
         expect(error.message).to.include("OwnableUnauthorizedAccount");
       }
     });
 
-    it("Should not initialize setUserManager if not called by the owner", async function () {
+    it("Should not initialize setUserManagerContract if not called by the owner", async function () {
       try {
-        await ldrToken.connect(user1).setUserManager(userManager.getAddress());
+        await ldrToken.connect(user1).setUserManagerContract(userManager.getAddress());
       } catch (error: any) {
         expect(error.message).to.include("OwnableUnauthorizedAccount");
       };
@@ -65,7 +65,7 @@ describe("LDRToken", function () {
       await userManager
         .connect(user1)
         .registerUser(addressUser1, "abcd@gmail.com", "John", "Doe", false);
-      await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+      await userManager.connect(owner).setLDRTokenContract(ldrToken.getAddress());
     }
 
     context("Successful Minting", function () {
@@ -174,7 +174,7 @@ describe("LDRToken", function () {
   describe("Token Usage", function () {
     // Common setup for token usage tests
     async function setupUserWithTokens(amount: number = 70) {
-      await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+      await userManager.connect(owner).setLDRTokenContract(ldrToken.getAddress());
       await userManager
         .connect(user1)
         .registerUser(user1.getAddress(), "abcd@gmail.com", "John", "Doe", false);
@@ -254,11 +254,11 @@ describe("LDRToken", function () {
 
   describe("Get address of contracts", function () {
     it("Should return the address of the UserManager contract", async function () {
-      expect(await ldrToken.getUserManagerAddress()).to.equal(await userManager.getAddress());
+      expect(await ldrToken.getUserManagerContractAddress()).to.equal(await userManager.getAddress());
     });
 
     it("Should return the address of the TokenDistribution contract", async function () {
-      expect(await ldrToken.getTokenDistributionAddress()).to.equal(
+      expect(await ldrToken.getTokenDistributionContractAddress()).to.equal(
         await tokenDistribution.getAddress()
       );
     });

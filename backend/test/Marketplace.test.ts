@@ -39,34 +39,34 @@ describe("Marketplace", function () {
 
     await tokenDistribution
       .connect(owner)
-      .setMarketplace(marketplace.getAddress());
+      .setMarketplaceContract(marketplace.getAddress());
 
     //Set address of AuthenticityNFT contract in Marketplace
     await nftContract
       .connect(owner)
-      .setMarketplaceContract(marketplace.getAddress());
+      .setMarketplaceContractContract(marketplace.getAddress());
 
-    await marketplace.connect(owner).setAuthenticityNFT(nftContract.getAddress());
+    await marketplace.connect(owner).setAuthenticityNFTContract(nftContract.getAddress());
 
     await marketplace
       .connect(owner)
-      .setTokenDistribution(tokenDistribution.getAddress());
+      .setTokenDistributionContract(tokenDistribution.getAddress());
 
     const userManagerFactory = await ethers.getContractFactory("UserManager");
     userManager = await userManagerFactory.deploy();
 
-    tokenDistribution.setUserManager(userManager.getAddress());
+    tokenDistribution.setUserManagerContract(userManager.getAddress());
 
     const LDRToken = await ethers.getContractFactory("LDRToken");
     ldrToken = (await LDRToken.deploy()) as LDRToken;
 
-    await ldrToken.setTokenDistribution(tokenDistribution.getAddress());
-    await ldrToken.setUserManager(userManager.getAddress());
+    await ldrToken.setTokenDistributionContract(tokenDistribution.getAddress());
+    await ldrToken.setUserManagerContract(userManager.getAddress());
 
-    await marketplace.setTokenDistribution(tokenDistribution.getAddress());
-    await marketplace.setAuthenticityNFT(nftContract.getAddress());
+    await marketplace.setTokenDistributionContract(tokenDistribution.getAddress());
+    await marketplace.setAuthenticityNFTContract(nftContract.getAddress());
 
-    tokenDistribution.setLDRToken(ldrToken.getAddress());
+    tokenDistribution.setLDRTokenContract(ldrToken.getAddress());
     await userManager
       .connect(buyer)
       .registerUser(
@@ -93,7 +93,7 @@ describe("Marketplace", function () {
       try {
         await tokenDistribution
           .connect(seller)
-          .setMarketplace(nftContract.getAddress());
+          .setMarketplaceContract(nftContract.getAddress());
       } catch (error: any) {
         expect(error.message).to.include("OwnableUnauthorizedAccount");
       }
@@ -103,7 +103,7 @@ describe("Marketplace", function () {
       try {
         await marketplace
           .connect(seller)
-          .setAuthenticityNFT(nftContract.getAddress());
+          .setAuthenticityNFTContract(nftContract.getAddress());
       }
       catch (error: any) {
         expect(error.message).to.include("OwnableUnauthorizedAccount");
@@ -114,7 +114,7 @@ describe("Marketplace", function () {
       try {
         await marketplace
           .connect(seller)
-          .setTokenDistribution(tokenDistribution.getAddress());
+          .setTokenDistributionContract(tokenDistribution.getAddress());
       }
       catch (error: any) {
         expect(error.message).to.include("OwnableUnauthorizedAccount");
@@ -490,13 +490,13 @@ describe("Marketplace", function () {
 
   describe("Get address of contracts", function () {
     it("Should return the address of the tokenDistribution contract", async function () {
-      expect(await marketplace.getTokenDistributionAddress()).to.equal(
+      expect(await marketplace.getTokenDistributionContractAddress()).to.equal(
         await tokenDistribution.getAddress()
       );
     });
 
     it("Should return the address of the AuthenticityNFT contract", async function () {
-      expect(await marketplace.getAuthenticityNFTAddress()).to.equal(
+      expect(await marketplace.getAuthenticityNFTContractAddress()).to.equal(
         await nftContract.getAddress()
       );
     });

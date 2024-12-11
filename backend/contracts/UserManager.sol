@@ -18,7 +18,7 @@ interface IUserManager {
     function getLastMintTime(address user) external view returns (uint256);
     function updateLastMintTime(address user) external;
     function isUserRegistered(address user) external view returns (bool);
-    function setTokenContract(address tokenContract) external;
+    function setLDRTokenContract(address tokenContract) external;
     function isCreator(address user) external view returns (bool);
 }
 
@@ -269,7 +269,7 @@ contract UserManager is Ownable {
      * @notice Définit le contrat LDRToken.
      * @param tokenContract Adresse du contrat LDRToken.
      */
-    function setTokenContract(address tokenContract) external onlyOwner {
+    function setLDRTokenContract(address tokenContract) external onlyOwner {
         ldrToken = ILDRToken(tokenContract);
     }
 
@@ -280,7 +280,7 @@ contract UserManager is Ownable {
      * @notice Récupère l'adresse du contrat LDRToken.
      * @return Adresse du contrat LDRToken.
      */
-    function getTokenContract() external view returns (address) {
+    function getLDRTokenContractAddress() external view returns (address) {
         return address(ldrToken);
     }
 }

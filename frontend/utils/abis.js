@@ -216,7 +216,7 @@ export const userManagerAbi = [
                 "type": "address"
             }
         ],
-        "name": "setTokenContract",
+        "name": "setLDRTokenContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -467,7 +467,7 @@ export const tokenDistributionAbi = [
                 "type": "address"
             }
         ],
-        "name": "setLDRToken",
+        "name": "setLDRTokenContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -480,7 +480,7 @@ export const tokenDistributionAbi = [
                 "type": "address"
             }
         ],
-        "name": "setMarketplace",
+        "name": "setMarketplaceContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -493,7 +493,7 @@ export const tokenDistributionAbi = [
                 "type": "address"
             }
         ],
-        "name": "setUserManager",
+        "name": "setUserManagerContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1401,7 +1401,7 @@ export const marketplaceAbi = [
                 "type": "address"
             }
         ],
-        "name": "setAuthenticityNFT",
+        "name": "setAuthenticityNFTContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1414,7 +1414,7 @@ export const marketplaceAbi = [
                 "type": "address"
             }
         ],
-        "name": "setTokenDistribution",
+        "name": "setTokenDistributionContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1996,7 +1996,7 @@ export const authenticityNftAbi = [
                 "type": "address"
             }
         ],
-        "name": "setMarketplaceContract",
+        "name": "setMarketplaceContractContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

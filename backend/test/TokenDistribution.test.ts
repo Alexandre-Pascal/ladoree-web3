@@ -34,23 +34,23 @@ describe("TokenDistribution", function () {
     marketplace = (await MarketplaceFactory.deploy()) as Marketplace;
 
     // Initialize LDRToken and UserManager in TokenDistribution
-    await tokenDistribution.setLDRToken(ldrToken.getAddress());
-    await tokenDistribution.setUserManager(userManager.getAddress());
-    await tokenDistribution.setMarketplace(marketplace.getAddress());
+    await tokenDistribution.setLDRTokenContract(ldrToken.getAddress());
+    await tokenDistribution.setUserManagerContract(userManager.getAddress());
+    await tokenDistribution.setMarketplaceContract(marketplace.getAddress());
   });
 
   describe("Deployment", function () {
     it("Should initialize the contract with correct parameters", async function () {
       // Initialize LDRToken and UserManager in TokenDistribution
-      await tokenDistribution.setLDRToken(ldrToken.getAddress());
-      await tokenDistribution.setUserManager(userManager.getAddress());
+      await tokenDistribution.setLDRTokenContract(ldrToken.getAddress());
+      await tokenDistribution.setUserManagerContract(userManager.getAddress());
     });
 
     it("Should revert if its not the owner who tries to initialize the LDRToken", async function () {
       try {
         await tokenDistribution
           .connect(user1)
-          .setLDRToken(ldrToken.getAddress());
+          .setLDRTokenContract(ldrToken.getAddress());
       } catch (error: any) {
         // Vérifie que le message d'erreur inclut "OwnableUnauthorizedAccount"
         expect(error.message).to.include("OwnableUnauthorizedAccount");
@@ -61,7 +61,7 @@ describe("TokenDistribution", function () {
       try {
         await tokenDistribution
           .connect(user1)
-          .setUserManager(userManager.getAddress());
+          .setUserManagerContract(userManager.getAddress());
       } catch (error: any) {
         // Vérifie que le message d'erreur inclut "OwnableUnauthorizedAccount"
         expect(error.message).to.include("OwnableUnauthorizedAccount");
@@ -118,8 +118,8 @@ describe("TokenDistribution", function () {
 
   describe("Distribute Tokens", async function () {
     // Initialize LDRToken and UserManager in TokenDistribution
-    await tokenDistribution.setLDRToken(ldrToken.getAddress());
-    await tokenDistribution.setUserManager(userManager.getAddress());
+    await tokenDistribution.setLDRTokenContract(ldrToken.getAddress());
+    await tokenDistribution.setUserManagerContract(userManager.getAddress());
 
     it("Should only allow the NFT contract to call distributeTokens", async function () {
       const amountSpent = 50;
@@ -134,19 +134,19 @@ describe("TokenDistribution", function () {
 
   describe("Get address of contracts", function () {
     it("Should return the address of the LDRToken contract", async function () {
-      expect(await tokenDistribution.getLDRTokenAddress()).to.equal(
+      expect(await tokenDistribution.getLDRTokenContractAddress()).to.equal(
         await ldrToken.getAddress()
       );
     });
 
     it("Should return the address of the UserManager contract", async function () {
-      expect(await tokenDistribution.getUserManagerAddress()).to.equal(
+      expect(await tokenDistribution.getUserManagerContractAddress()).to.equal(
         await userManager.getAddress()
       );
     });
 
     it("Should return the address of the TokenDistribution contract", async function () {
-      expect(await tokenDistribution.getMarketplaceAddress()).to.equal(
+      expect(await tokenDistribution.getMarketplaceContractAddress()).to.equal(
         await marketplace.getAddress()
       );
     });

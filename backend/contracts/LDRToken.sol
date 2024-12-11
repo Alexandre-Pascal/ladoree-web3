@@ -216,7 +216,9 @@ contract LDRToken is ERC20, Ownable {
      * @notice Définit l'adresse du contrat UserManager.
      * @param _userManagerAddress Adresse du contrat UserManager.
      */
-    function setUserManager(address _userManagerAddress) external onlyOwner {
+    function setUserManagerContract(
+        address _userManagerAddress
+    ) external onlyOwner {
         userManager = IUserManager(_userManagerAddress);
     }
 
@@ -224,7 +226,7 @@ contract LDRToken is ERC20, Ownable {
      * @notice Définit l'adresse du contrat TokenDistribution.
      * @param _tokenDistributionAddress Adresse du contrat TokenDistribution.
      */
-    function setTokenDistribution(
+    function setTokenDistributionContract(
         address _tokenDistributionAddress
     ) external onlyOwner {
         tokenDistribution = ITokenDistribution(_tokenDistributionAddress);
@@ -237,7 +239,7 @@ contract LDRToken is ERC20, Ownable {
      * @notice Récupère l'adresse du contrat UserManager.
      * @return Adresse du contrat UserManager.
      */
-    function getUserManagerAddress() external view returns (address) {
+    function getUserManagerContractAddress() external view returns (address) {
         return address(userManager);
     }
 
@@ -245,7 +247,11 @@ contract LDRToken is ERC20, Ownable {
      * @notice Récupère l'adresse du contrat TokenDistribution.
      * @return Adresse du contrat TokenDistribution.
      */
-    function getTokenDistributionAddress() external view returns (address) {
+    function getTokenDistributionContractAddress()
+        external
+        view
+        returns (address)
+    {
         return address(tokenDistribution);
     }
 }

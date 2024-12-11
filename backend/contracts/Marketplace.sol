@@ -172,17 +172,19 @@ contract Marketplace is IERC721Receiver, Ownable {
     // ========================
     /**
      * @notice Définit l'adresse du contrat AuthenticityNFT.
-     * @param nftContractAddress Adresse du contrat AuthenticityNFT.
+     * @param authenticityNftAddress Adresse du contrat AuthenticityNFT.
      */
-    function setAuthenticityNFT(address nftContractAddress) external onlyOwner {
-        nftContract = IAuthenticityNFT(nftContractAddress);
+    function setAuthenticityNFTContract(
+        address authenticityNftAddress
+    ) external onlyOwner {
+        nftContract = IAuthenticityNFT(authenticityNftAddress);
     }
 
     /**
      * @notice Définit l'adresse du contrat TokenDistribution.
      * @param tokenDistributionAddress Adresse du contrat TokenDistribution.
      */
-    function setTokenDistribution(
+    function setTokenDistributionContract(
         address tokenDistributionAddress
     ) external onlyOwner {
         tokenDistribution = ITokenDistribution(tokenDistributionAddress);
@@ -195,7 +197,11 @@ contract Marketplace is IERC721Receiver, Ownable {
      * @notice Récupère l'adresse du contrat TokenDistribution.
      * @return Adresse du contrat TokenDistribution.
      */
-    function getTokenDistributionAddress() external view returns (address) {
+    function getTokenDistributionContractAddress()
+        external
+        view
+        returns (address)
+    {
         return address(tokenDistribution);
     }
 
@@ -203,7 +209,11 @@ contract Marketplace is IERC721Receiver, Ownable {
      * @notice Récupère l'adresse du contrat AuthenticityNFT.
      * @return Adresse du contrat AuthenticityNFT.
      */
-    function getAuthenticityNFTAddress() external view returns (address) {
+    function getAuthenticityNFTContractAddress()
+        external
+        view
+        returns (address)
+    {
         return address(nftContract);
     }
 }
