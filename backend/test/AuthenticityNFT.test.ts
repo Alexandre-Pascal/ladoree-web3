@@ -1,10 +1,11 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Signer, ZeroAddress } from "ethers";
-import { AuthenticityNFT } from "../typechain-types";
+import { AuthenticityNFT, Marketplace } from "../typechain-types";
 
 describe("AuthenticityNFT", function () {
   let nftContract: AuthenticityNFT;
+  let marketplaceContract: Marketplace;
   let owner: Signer;
   let recipient: Signer;
   let royaltyRecipient: Signer;
@@ -14,7 +15,13 @@ describe("AuthenticityNFT", function () {
 
     const AuthenticityNFT = await ethers.getContractFactory("AuthenticityNFT");
     nftContract = (await AuthenticityNFT.deploy()) as AuthenticityNFT;
+
+    const Marketplace = await ethers.getContractFactory("Marketplace");
+    marketplaceContract = (await Marketplace.deploy()) as Marketplace;
+
+    await nftContract.setMarketplaceContract(marketplaceContract.getAddress());
   });
+
 
   describe("Deployment", function () {
     it("Should support ERC721 and EIP-2981 interfaces", async function () {
@@ -183,6 +190,14 @@ describe("AuthenticityNFT", function () {
       await expect(
         nftContract.connect(owner).setMarketplaceContract(ZeroAddress)
       ).to.be.revertedWith("Invalid marketplace address");
+    });
+  });
+
+  describe("Get address of contracts", function () {
+    it("Should return the address of the marketplace", async function () {
+      expect(await nftContract.getMarketplaceContractAddress()).to.equal(
+        await marketplaceContract.getAddress()
+      );
     });
   });
 });

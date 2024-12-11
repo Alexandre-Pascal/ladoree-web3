@@ -272,4 +272,15 @@ contract UserManager is Ownable {
     function setTokenContract(address tokenContract) external onlyOwner {
         ldrToken = ILDRToken(tokenContract);
     }
+
+    // ===============================================================
+    // FONCTIONS DE RÉCUPÉRATION DES ADDRESSES DES CONTRATS DÉPENDANTS
+    // ===============================================================
+    /**
+     * @notice Récupère l'adresse du contrat LDRToken.
+     * @return Adresse du contrat LDRToken.
+     */
+    function getTokenContract() external view returns (address) {
+        return address(ldrToken);
+    }
 }

@@ -187,4 +187,23 @@ contract Marketplace is IERC721Receiver, Ownable {
     ) external onlyOwner {
         tokenDistribution = ITokenDistribution(tokenDistributionAddress);
     }
+
+    // ===============================================================
+    // FONCTIONS DE RÉCUPÉRATION DES ADDRESSES DES CONTRATS DÉPENDANTS
+    // ===============================================================
+    /**
+     * @notice Récupère l'adresse du contrat TokenDistribution.
+     * @return Adresse du contrat TokenDistribution.
+     */
+    function getTokenDistributionAddress() external view returns (address) {
+        return address(tokenDistribution);
+    }
+
+    /**
+     * @notice Récupère l'adresse du contrat AuthenticityNFT.
+     * @return Adresse du contrat AuthenticityNFT.
+     */
+    function getAuthenticityNFTAddress() external view returns (address) {
+        return address(nftContract);
+    }
 }

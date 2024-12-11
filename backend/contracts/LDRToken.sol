@@ -62,16 +62,8 @@ contract LDRToken is ERC20, Ownable {
     // ========================
     /**
      * @notice Initialise le contrat avec les adresses des dépendances.
-     * @param _userManagerAddress Adresse du contrat UserManager.
-     * @param _tokenDistribution Adresse du contrat TokenDistribution.
      */
-    constructor(
-        address _userManagerAddress,
-        address _tokenDistribution
-    ) ERC20("Ladoree Token", "LDR") Ownable(msg.sender) {
-        userManager = IUserManager(_userManagerAddress);
-        tokenDistribution = ITokenDistribution(_tokenDistribution);
-    }
+    constructor() ERC20("Ladoree Token", "LDR") Ownable(msg.sender) {}
 
     // ========================
     // MODIFICATEURS
@@ -215,5 +207,45 @@ contract LDRToken is ERC20, Ownable {
         require(amount > 0, "LDRToken: Amount to burn must be greater than 0");
         _burn(msg.sender, amount);
         emit TokenBurned(msg.sender, amount);
+    }
+
+    // ========================
+    // FONCTIONS ADMIN
+    // ========================
+    /**
+     * @notice Définit l'adresse du contrat UserManager.
+     * @param _userManagerAddress Adresse du contrat UserManager.
+     */
+    function setUserManager(address _userManagerAddress) external onlyOwner {
+        userManager = IUserManager(_userManagerAddress);
+    }
+
+    /**
+     * @notice Définit l'adresse du contrat TokenDistribution.
+     * @param _tokenDistributionAddress Adresse du contrat TokenDistribution.
+     */
+    function setTokenDistribution(
+        address _tokenDistributionAddress
+    ) external onlyOwner {
+        tokenDistribution = ITokenDistribution(_tokenDistributionAddress);
+    }
+
+    // ===============================================================
+    // FONCTIONS DE RÉCUPÉRATION DES ADDRESSES DES CONTRATS DÉPENDANTS
+    // ===============================================================
+    /**
+     * @notice Récupère l'adresse du contrat UserManager.
+     * @return Adresse du contrat UserManager.
+     */
+    function getUserManagerAddress() external view returns (address) {
+        return address(userManager);
+    }
+
+    /**
+     * @notice Récupère l'adresse du contrat TokenDistribution.
+     * @return Adresse du contrat TokenDistribution.
+     */
+    function getTokenDistributionAddress() external view returns (address) {
+        return address(tokenDistribution);
     }
 }

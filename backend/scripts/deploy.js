@@ -15,7 +15,7 @@ async function main() {
 
     // Déployer LDRToken avec des arguments
     const LDRToken = await hre.ethers.getContractFactory("LDRToken");
-    const ldrToken = await LDRToken.deploy(userManager.address, tokenDistribution.address);
+    const ldrToken = await LDRToken.deploy();
     await ldrToken.deployed();
     console.log("LDRToken déployé à :", ldrToken.address);
 

@@ -23,10 +23,14 @@ describe("LDRToken", function () {
 
     const LDRTokenFactory = await ethers.getContractFactory("LDRToken");
     [owner, user1, user2] = await ethers.getSigners();
-    ldrToken = (await LDRTokenFactory.deploy(
-      userManager.getAddress(),
-      tokenDistribution.getAddress()
-    )) as LDRToken;
+    ldrToken = (await LDRTokenFactory.deploy()) as LDRToken;
+
+    await ldrToken.connect(owner).setTokenDistribution(tokenDistribution.getAddress());
+    await ldrToken.connect(owner).setUserManager(userManager.getAddress());
+    // await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+    // await tokenDistribution.connect(owner).setLDRToken(ldrToken.getAddress());
+    // await tokenDistribution.connect(owner).setUserManager(userManager.getAddress());
+
   });
 
   describe("Deployment", function () {
@@ -35,8 +39,25 @@ describe("LDRToken", function () {
       expect(await ldrToken.symbol()).to.equal("LDR");
       expect(await ldrToken.owner()).to.equal(await owner.getAddress());
     });
-  });
 
+    it("Should not initialize setTokenDistribution if not called by the owner", async function () {
+      try {
+        await ldrToken
+          .connect(user1)
+          .setTokenDistribution(tokenDistribution.getAddress());
+      } catch (error: any) {
+        expect(error.message).to.include("OwnableUnauthorizedAccount");
+      }
+    });
+
+    it("Should not initialize setUserManager if not called by the owner", async function () {
+      try {
+        await ldrToken.connect(user1).setUserManager(userManager.getAddress());
+      } catch (error: any) {
+        expect(error.message).to.include("OwnableUnauthorizedAccount");
+      };
+    });
+  });
   describe("Token Minting", function () {
     // Common setup for minting tests
     async function setupUserForMinting() {
@@ -228,6 +249,18 @@ describe("LDRToken", function () {
       await expect(
         ldrToken.connect(user1).mintReward(user2.getAddress(), amountToMint)
       ).to.be.revertedWith("LDRToken: Unauthorized caller");
+    });
+  });
+
+  describe("Get address of contracts", function () {
+    it("Should return the address of the UserManager contract", async function () {
+      expect(await ldrToken.getUserManagerAddress()).to.equal(await userManager.getAddress());
+    });
+
+    it("Should return the address of the TokenDistribution contract", async function () {
+      expect(await ldrToken.getTokenDistributionAddress()).to.equal(
+        await tokenDistribution.getAddress()
+      );
     });
   });
 });

@@ -1,12 +1,13 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { TokenDistribution, LDRToken, UserManager } from "../typechain-types";
+import { TokenDistribution, LDRToken, UserManager, Marketplace } from "../typechain-types";
 import { Signer } from "ethers";
 
 describe("TokenDistribution", function () {
   let tokenDistribution: TokenDistribution;
   let ldrToken: LDRToken;
   let userManager: UserManager;
+  let marketplace: Marketplace;
   let owner: Signer;
   let user1: Signer;
 
@@ -15,10 +16,7 @@ describe("TokenDistribution", function () {
 
     // Deploy LDRToken mock
     const LDRTokenFactory = await ethers.getContractFactory("LDRToken");
-    ldrToken = (await LDRTokenFactory.deploy(
-      ethers.ZeroAddress,
-      ethers.ZeroAddress
-    )) as LDRToken;
+    ldrToken = (await LDRTokenFactory.deploy()) as LDRToken;
 
     // Deploy UserManager mock
     const UserManagerFactory = await ethers.getContractFactory("UserManager");
@@ -30,6 +28,15 @@ describe("TokenDistribution", function () {
     );
     tokenDistribution =
       (await TokenDistributionFactory.deploy()) as TokenDistribution;
+
+    // Deploy Marketplace
+    const MarketplaceFactory = await ethers.getContractFactory("Marketplace");
+    marketplace = (await MarketplaceFactory.deploy()) as Marketplace;
+
+    // Initialize LDRToken and UserManager in TokenDistribution
+    await tokenDistribution.setLDRToken(ldrToken.getAddress());
+    await tokenDistribution.setUserManager(userManager.getAddress());
+    await tokenDistribution.setMarketplace(marketplace.getAddress());
   });
 
   describe("Deployment", function () {
@@ -123,5 +130,26 @@ describe("TokenDistribution", function () {
         "TokenDistribution: Caller is not the Marketplace contract"
       );
     });
+  });
+
+  describe("Get address of contracts", function () {
+    it("Should return the address of the LDRToken contract", async function () {
+      expect(await tokenDistribution.getLDRTokenAddress()).to.equal(
+        await ldrToken.getAddress()
+      );
+    });
+
+    it("Should return the address of the UserManager contract", async function () {
+      expect(await tokenDistribution.getUserManagerAddress()).to.equal(
+        await userManager.getAddress()
+      );
+    });
+
+    it("Should return the address of the TokenDistribution contract", async function () {
+      expect(await tokenDistribution.getMarketplaceAddress()).to.equal(
+        await marketplace.getAddress()
+      );
+    });
+
   });
 });

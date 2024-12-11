@@ -139,4 +139,31 @@ contract TokenDistribution is Ownable {
     function setMarketplace(address _marketplaceAddress) external onlyOwner {
         marketplace = IMarketplace(_marketplaceAddress);
     }
+
+    // ===============================================================
+    // FONCTIONS DE RÉCUPÉRATION DES ADDRESSES DES CONTRATS DÉPENDANTS
+    // ===============================================================
+    /**
+     * @notice Récupère l'adresse du contrat LDRToken.
+     * @return Adresse du contrat LDRToken.
+     */
+    function getLDRTokenAddress() external view returns (address) {
+        return address(ldrToken);
+    }
+
+    /**
+     * @notice Récupère l'adresse du contrat UserManager.
+     * @return Adresse du contrat UserManager.
+     */
+    function getUserManagerAddress() external view returns (address) {
+        return address(userManager);
+    }
+
+    /**
+     * @notice Récupère l'adresse du contrat Marketplace.
+     * @return Adresse du contrat Marketplace.
+     */
+    function getMarketplaceAddress() external view returns (address) {
+        return address(marketplace);
+    }
 }

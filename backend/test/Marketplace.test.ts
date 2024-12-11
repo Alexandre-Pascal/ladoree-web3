@@ -58,10 +58,13 @@ describe("Marketplace", function () {
     tokenDistribution.setUserManager(userManager.getAddress());
 
     const LDRToken = await ethers.getContractFactory("LDRToken");
-    ldrToken = (await LDRToken.deploy(
-      userManager.getAddress(),
-      tokenDistribution.getAddress()
-    )) as LDRToken;
+    ldrToken = (await LDRToken.deploy()) as LDRToken;
+
+    await ldrToken.setTokenDistribution(tokenDistribution.getAddress());
+    await ldrToken.setUserManager(userManager.getAddress());
+
+    await marketplace.setTokenDistribution(tokenDistribution.getAddress());
+    await marketplace.setAuthenticityNFT(nftContract.getAddress());
 
     tokenDistribution.setLDRToken(ldrToken.getAddress());
     await userManager
@@ -482,6 +485,20 @@ describe("Marketplace", function () {
           .connect(owner)
           .itemBuyed(0, await notRegistered.getAddress())
       ).to.be.revertedWith("User is not registered with UserManager");
+    });
+  });
+
+  describe("Get address of contracts", function () {
+    it("Should return the address of the tokenDistribution contract", async function () {
+      expect(await marketplace.getTokenDistributionAddress()).to.equal(
+        await tokenDistribution.getAddress()
+      );
+    });
+
+    it("Should return the address of the AuthenticityNFT contract", async function () {
+      expect(await marketplace.getAuthenticityNFTAddress()).to.equal(
+        await nftContract.getAddress()
+      );
     });
   });
 });

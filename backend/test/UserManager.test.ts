@@ -19,13 +19,12 @@ describe("UserManager", function () {
 
         // Deploy LDRToken mock
         const LDRTokenFactory = await ethers.getContractFactory("LDRToken");
-        ldrToken = (await LDRTokenFactory.deploy(
-            userManager.getAddress(),
-            ethers.ZeroAddress
-        )) as LDRToken;
+        ldrToken = (await LDRTokenFactory.deploy()) as LDRToken;
 
         // Set LDRToken contract in UserManager
         await userManager.connect(owner).setTokenContract(ldrToken.getAddress());
+
+        userManager.connect(owner).setTokenContract(ldrToken.getAddress());
     });
 
     describe("Deployment", function () {
@@ -221,5 +220,9 @@ describe("UserManager", function () {
         });
     });
 
-
+    describe("Get address of contracts", function () {
+        it("Should return the address of the LDRToken contract", async function () {
+            expect(await userManager.getTokenContract()).to.equal(await ldrToken.getAddress());
+        });
+    });
 });
