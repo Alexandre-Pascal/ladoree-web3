@@ -1,4 +1,4 @@
-export const userManagerAddress = "0x2fd220A4f364ecf1CB6eced989E30dBAd48b8794"
+export const userManagerAddress = "0x569fAaE374232F280B2AaaF434a15E9b7DE5Acf5"
 export const userManagerAbi = [
     {
         "inputs": [],
@@ -91,10 +91,29 @@ export const userManagerAbi = [
                 "internalType": "string",
                 "name": "bio",
                 "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "isCreator",
+                "type": "bool"
             }
         ],
         "name": "UserRegistered",
         "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "getLDRTokenContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "inputs": [
@@ -110,6 +129,25 @@ export const userManagerAbi = [
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "isCreator",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -181,6 +219,11 @@ export const userManagerAbi = [
                 "internalType": "string",
                 "name": "bio",
                 "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "isACreator",
+                "type": "bool"
             }
         ],
         "name": "registerUser",
@@ -265,6 +308,24 @@ export const userManagerAbi = [
                 "type": "address"
             },
             {
+                "internalType": "bool",
+                "name": "isACreator",
+                "type": "bool"
+            }
+        ],
+        "name": "setUserIsCreator",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
                 "internalType": "string",
                 "name": "userName",
                 "type": "string"
@@ -303,7 +364,7 @@ export const userManagerAbi = [
     }
 ]
 
-export const tokenDistribution = "0x6a50f2634777938904B6718bF613c081e0F0F484"
+export const tokenDistribution = "0x8D0b0d855EeCA6f137A799F7326fd35E423bCe47"
 export const tokenDistributionAbi = [
     {
         "inputs": [],
@@ -441,6 +502,45 @@ export const tokenDistributionAbi = [
     },
     {
         "inputs": [],
+        "name": "getLDRTokenContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getMarketplaceContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getUserManagerContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "owner",
         "outputs": [
             {
@@ -513,21 +613,10 @@ export const tokenDistributionAbi = [
     }
 ]
 
-export const ldrTokenAddress = "0x4f0d6f3b6f6c7e7c4f5b1b2e1d0f1e4f7e2d0d5c"
+export const ldrTokenAddress = "0x9AC1c3b6Cff352332485DCc50139e92AD2628d68"
 export const ldrTokenAbi = [
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_userManagerAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "_tokenDistribution",
-                "type": "address"
-            }
-        ],
+        "inputs": [],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
@@ -935,6 +1024,32 @@ export const ldrTokenAbi = [
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getTokenDistributionContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getUserManagerContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -999,6 +1114,32 @@ export const ldrTokenAbi = [
     {
         "inputs": [],
         "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_tokenDistributionAddress",
+                "type": "address"
+            }
+        ],
+        "name": "setTokenDistributionContract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_userManagerAddress",
+                "type": "address"
+            }
+        ],
+        "name": "setUserManagerContract",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1123,7 +1264,7 @@ export const ldrTokenAbi = [
     }
 ]
 
-export const marketplaceAddress = "0xf7480A948a708aaE6d125238A56e79e7F9201780"
+export const marketplaceAddress = "0x5D6b16F39840f26e1c5A3828BD0C64f17BB82907"
 export const marketplaceAbi = [
     {
         "inputs": [],
@@ -1226,6 +1367,32 @@ export const marketplaceAbi = [
         ],
         "name": "OwnershipTransferred",
         "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "getAuthenticityNFTContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getTokenDistributionContractAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "inputs": [
@@ -1397,7 +1564,7 @@ export const marketplaceAbi = [
         "inputs": [
             {
                 "internalType": "address",
-                "name": "nftContractAddress",
+                "name": "authenticityNftAddress",
                 "type": "address"
             }
         ],
@@ -1434,7 +1601,7 @@ export const marketplaceAbi = [
     }
 ]
 
-export const authenticityNftAddress = "0x084f02553A49B6F8ECF608b8f988b0AEB0C76756"
+export const authenticityNftAddress = "0x7020c5d58fA9fB9A92efaB2cd447A00E3EBF1E33"
 export const authenticityNftAbi = [
     {
         "inputs": [],
@@ -1738,6 +1905,19 @@ export const authenticityNftAbi = [
             }
         ],
         "name": "getApproved",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getMarketplaceContractAddress",
         "outputs": [
             {
                 "internalType": "address",
