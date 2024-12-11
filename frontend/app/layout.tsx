@@ -4,6 +4,8 @@ import "./globals.css";
 import Footer from "@/components/shared/Footer";
 import Header from "@/components/shared/Header";
 
+import { Toaster } from 'react-hot-toast';
+
 import CustomRaimbowKitProvider from "./CustomRaimbowKitProvider";
 
 import Providers from './Providers';
@@ -45,6 +47,7 @@ export default function RootLayout({
         <CustomRaimbowKitProvider>
           <Header />
           <main className="flex-grow">
+            <Toaster />
             <Providers>{children}</Providers>
           </main>
           <Footer />

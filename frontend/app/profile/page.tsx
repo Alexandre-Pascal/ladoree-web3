@@ -1,5 +1,3 @@
-'use client';
-
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { request } from 'graphql-request';
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';

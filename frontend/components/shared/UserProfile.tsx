@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAccount, useWriteContract } from 'wagmi';
 import { request } from 'graphql-request';
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { Pencil, Save } from 'lucide-react';
 import { userManagerAbi, userManagerAddress } from '@/utils/abis';
+import { toast } from 'react-hot-toast';
 
 export default function UserProfile() {
   const { address } = useAccount(); // Récupère l'adresse utilisateur connectée
@@ -19,20 +20,20 @@ export default function UserProfile() {
     }[];
   };
 
-  const { data, isLoading, error } = useQuery<UserProfileData>({
+  const { data, isLoading, error, isSuccess: isSuccessQuery } = useQuery<UserProfileData>({
     queryKey: ['userProfile', address], // Clé unique pour l'utilisateur
-    queryFn: async () => {
-      return await request(GRAPHQL_URL, queries.GET_USER_PROFILE, { user: address });
+    queryFn: () => {
+      return request(GRAPHQL_URL, queries.GET_USER_PROFILE, { user: address });
     },
     enabled: !!address, // Exécute la requête uniquement si une adresse est disponible
   });
 
-  const { writeContract: updateUserName } = useWriteContract();
-  const { writeContract: updateEmail } = useWriteContract();
-  const { writeContract: updateBio } = useWriteContract();
+  const { writeContract: updateUserName, isSuccess: updateUserNameIsSuccess, isError: updateUserNameIsError, isPending: updateUserNameIsPending } = useWriteContract();
+  const { writeContract: updateEmail, isSuccess: updateEmailIsSuccess, isError: updateEmailIsError, isPending: updateEmailIsPending } = useWriteContract();
+  const { writeContract: updateBio, isSuccess: updateBioIsSuccess, isError: updateBioIsError, isPending: updateBioIsPending } = useWriteContract();
 
   // Mise à jour du userName
-  const setUserName = async (_userName: string) => {
+  const setUserName = (_userName: string) => {
     updateUserName({
       address: userManagerAddress,
       abi: userManagerAbi,
@@ -41,8 +42,25 @@ export default function UserProfile() {
     });
   };
 
+  useEffect(() => {
+    let toastId: string = '';
+    if (updateUserNameIsPending) {
+      toastId = toast.loading('Mise à jour du nom...');
+    }
+
+    if (updateUserNameIsSuccess && isSuccessQuery) {
+      setTimeout(() => toast.success('Nom mis à jour avec succès !', { id: toastId }), 5000)
+      setTimeout(() => window.location.reload(), 7000);
+    }
+
+    if (updateUserNameIsError) {
+      toast.error('Erreur lors de la mise à jour du nom.', { id: toastId });
+
+    }
+  }, [updateUserNameIsPending, updateUserNameIsSuccess, updateUserNameIsError, isSuccessQuery]);
+
   // Mise à jour de l'email
-  const setEmail = async (_email: string) => {
+  const setEmail = (_email: string) => {
     updateEmail({
       address: userManagerAddress,
       abi: userManagerAbi,
@@ -51,8 +69,25 @@ export default function UserProfile() {
     });
   };
 
+
+  useEffect(() => {
+    let toastId: string = '';
+    if (updateEmailIsPending) {
+      toastId = toast.loading('Mise à jour de l\'email...');
+    }
+
+    if (updateEmailIsSuccess && isSuccessQuery) {
+      setTimeout(() => toast.success('Email mis à jour avec succès !', { id: toastId }), 5000)
+      setTimeout(() => window.location.reload(), 7000);
+    }
+
+    if (updateEmailIsError) {
+      toast.error('Erreur lors de la mise à jour de l\'email.', { id: toastId });
+    }
+  }, [updateEmailIsPending, updateEmailIsSuccess, updateEmailIsError, isSuccessQuery]);
+
   // Mise à jour de la bio
-  const setBio = async (_bio: string) => {
+  const setBio = (_bio: string) => {
     updateBio({
       address: userManagerAddress,
       abi: userManagerAbi,
@@ -60,6 +95,22 @@ export default function UserProfile() {
       args: [address, _bio],
     });
   };
+
+  useEffect(() => {
+    let toastId: string = '';
+    if (updateBioIsPending) {
+      toastId = toast.loading('Mise à jour de la bio...');
+    }
+
+    if (updateBioIsSuccess && isSuccessQuery) {
+      setTimeout(() => toast.success('Bio mise à jour avec succès !', { id: toastId }), 5000)
+      setTimeout(() => window.location.reload(), 7000);
+    }
+
+    if (updateBioIsError) {
+      toast.error('Erreur lors de la mise à jour de la bio.', { id: toastId });
+    }
+  }, [updateBioIsPending, updateBioIsSuccess, updateBioIsError, isSuccessQuery]);
 
   // États locaux pour gérer l'édition
   const [isEditing, setIsEditing] = useState<{ userName: boolean; email: boolean; bio: boolean }>({
@@ -86,7 +137,7 @@ export default function UserProfile() {
     setFormData({ userName: userName || '', email: email || '', bio: bio || '' }); // Préremplit les champs avec les valeurs actuelles
   };
 
-  const handleSave = async (field: string) => {
+  const handleSave = (field: string) => {
     if (field === 'userName') {
       setUserName(formData.userName);
     } else if (field === 'email') {
