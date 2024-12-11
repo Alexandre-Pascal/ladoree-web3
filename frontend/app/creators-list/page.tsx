@@ -12,7 +12,7 @@ const CreatorsPage = () => {
 
     // Requête GraphQL pour récupérer les créateurs
     const { data, isLoading, error, isSuccess: isSuccessQuery } = useQuery<CreatorData>({
-        queryKey: ['creator'],
+        queryKey: ['creators'],
         queryFn: () => {
             return request(GRAPHQL_URL, queries.GET_CREATORS);
         },

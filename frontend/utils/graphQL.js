@@ -39,6 +39,20 @@ export const queries = {
       }
     }
   `,
+  GET_CREATOR: gql`
+  query GetCreators($userName: String!) {
+  userRegistereds(
+    orderBy: blockTimestamp
+    orderDirection: desc
+    first: 1
+    where: {isCreator: true, userName: $userName}
+  ) {
+    email
+    userName
+    bio
+  }
+}
+  `,
 };
 
 // URL du sous-graph

@@ -49,9 +49,9 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Section Artistes et Acheteurs les plus influents */}
+      {/* Section Créateurs et Acheteurs les plus influents */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-        {/* Top Artistes */}
+        {/* Top Créateurs */}
         <section className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-2xl font-semibold mb-6 text-gray-900 underline">Meilleurs vendeurs</h3>
           <div className="divide-y divide-gray-200">
