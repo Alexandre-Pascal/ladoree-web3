@@ -1,39 +1,36 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, User } from 'lucide-react';
 import Image from 'next/image';
-
 import Link from 'next/link';
-
 import logo from '../../icons/ldrcut3.png';
-
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-
 import { useAccount, useReadContract, useWriteContract, useDisconnect } from "wagmi";
-
 import { userManagerAddress, userManagerAbi } from "../../utils/abis";
-
-import { User } from 'lucide-react';
-
 import { user } from "../../utils/types";
+import { Switch } from "@/components/ui/switch"
+import { toast } from 'react-hot-toast';
 
 const Header = () => {
-    const { isConnected, address, status } = useAccount();
+    const { isConnected, address } = useAccount();
 
-    const isRegistered = useReadContract({
+    const { data: isRegistered } = useReadContract({
         address: userManagerAddress,
         abi: userManagerAbi,
         functionName: "isUserRegistered",
         args: [address],
     });
 
-    const { data, writeContract, error, isSuccess: registerIsSuccess, status: registerStatus } = useWriteContract();
+    const { writeContract, error, isSuccess: registerIsSuccess } = useWriteContract();
 
     const [user, setUser] = useState<user | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    let toastId: string = '';
 
     const registerUser = async () => {
+        toastId = toast.loading('Inscription en cours...');
+
         if (!user?.userName || user.userName.trim() === '') {
             setErrorMessage("Vous devez obligatoirement renseigner ce champ");
             return;
@@ -44,7 +41,7 @@ const Header = () => {
             address: userManagerAddress,
             abi: userManagerAbi,
             functionName: "registerUser",
-            args: [address, user.userName, user.email || '', user.bio || ''],
+            args: [address, user.userName, user.email || '', user.bio || '', user.isCreator || false],
         });
     };
 
@@ -55,12 +52,21 @@ const Header = () => {
     };
 
     useEffect(() => {
+        console.log("registerIsSuccess", registerIsSuccess);
         if (registerIsSuccess) {
+            setTimeout(() => toast.success('Inscription réussie', { id: toastId }), 3000)
             setTimeout(() => {
                 window.location.reload(); // Recharge la page pour mettre à jour l'état de connexion
             }, 5000);
         }
-    }, [registerIsSuccess, registerStatus]);
+        if (error) {
+            setTimeout(() => toast.error('Erreur lors de l\'inscription', { id: toastId }), 3000)
+        }
+    }, [registerIsSuccess]);
+
+    useEffect(() => {
+        console.log("user", user);
+    }, [user]);
 
     return (
         <header className="border-b border-gray-800">
@@ -86,7 +92,7 @@ const Header = () => {
                             <ul className="flex space-x-6 text-sm">
                                 <li><Link href="/">ACCUEIL</Link></li>
                                 <li><Link href="/artworks-list">OEUVRES</Link></li>
-                                <li><Link href="/artists-list">ARTISTES</Link></li>
+                                <li><Link href="/artists-list">CRÉATEURS</Link></li>
                                 <li><Link href="/about">A PROPOS</Link></li>
                                 <li><Link href="/contact">CONTACT</Link></li>
                             </ul>
@@ -106,7 +112,7 @@ const Header = () => {
                     </nav>
                 </div>
             </div>
-            {isConnected && !isRegistered.data && (
+            {isConnected && !isRegistered && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
                     <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-8">
                         <h2 className="text-2xl font-bold text-center mb-4">Inscription</h2>
@@ -124,7 +130,7 @@ const Header = () => {
                                     id="userName"
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
                                     onChange={(e) =>
-                                        setUser({ ...user, userName: e.target.value, email: user?.email || '', bio: user?.bio || '' })
+                                        setUser({ ...user, userName: e.target.value, email: user?.email || '', bio: user?.bio || '', isCreator: user?.isCreator || false })
                                     }
                                 />
                                 {errorMessage && (
@@ -140,7 +146,7 @@ const Header = () => {
                                     id="email"
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
                                     onChange={(e) =>
-                                        setUser({ ...user, email: e.target.value, userName: user?.userName || '', bio: user?.bio || '' })
+                                        setUser({ ...user, email: e.target.value, userName: user?.userName || '', bio: user?.bio || '', isCreator: user?.isCreator || false })
                                     }
                                 />
                             </div>
@@ -153,10 +159,26 @@ const Header = () => {
                                     rows={4}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
                                     onChange={(e) =>
-                                        setUser({ ...user, bio: e.target.value, email: user?.email || '', userName: user?.userName || '' })
+                                        setUser({ ...user, bio: e.target.value, email: user?.email || '', userName: user?.userName || '', isCreator: user?.isCreator || false })
                                     }
                                 />
                             </div>
+                            <div>
+                                <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+                                    Êtes-vous un créateur ?
+                                </label>
+                                <Switch onCheckedChange={(checked) => {
+                                    setUser({
+                                        ...user,
+                                        isCreator: checked,
+                                        email: user?.email || '',
+                                        userName: user?.userName || '',
+                                        bio: user?.bio || '',
+                                    });
+                                }}
+                                />
+                            </div>
+
                             <div className="space-y-4">
                                 <button
                                     type="button"

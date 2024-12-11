@@ -47,6 +47,7 @@ export default function UserProfile() {
   };
 
   useEffect(() => {
+    console.log(updateUserNameIsPending, updateUserNameIsSuccess, updateUserNameIsError, isSuccessQuery);
     let toastId: string = '';
     if (updateUserNameIsPending) {
       toastId = toast.loading('Mise à jour du nom...');
