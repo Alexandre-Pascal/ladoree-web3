@@ -52,6 +52,11 @@ const nextConfig = {
                 hostname: 'www.connaissancedesarts.com',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'indigo-hidden-meerkat-77.mypinata.cloud',
+                pathname: '/**',
+            }
         ],
     },
 }

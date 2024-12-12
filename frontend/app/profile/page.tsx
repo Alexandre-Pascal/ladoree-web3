@@ -9,6 +9,9 @@ import { Pencil, Save } from 'lucide-react';
 import { userManagerAbi, userManagerAddress } from '@/utils/abis';
 import { toast } from 'react-hot-toast';
 import { Switch } from "@/components/ui/switch"
+import { Input } from "@/components/ui/input"
+import { User } from 'lucide-react';
+import Image from 'next/image';
 
 
 export default function UserProfile() {
@@ -20,6 +23,7 @@ export default function UserProfile() {
             email: string;
             bio: string;
             isCreator: boolean;
+            profileImage: string;
         }[];
     };
 
@@ -35,6 +39,7 @@ export default function UserProfile() {
     const { writeContract: updateEmail, isSuccess: updateEmailIsSuccess, isError: updateEmailIsError, isPending: updateEmailIsPending } = useWriteContract();
     const { writeContract: updateBio, isSuccess: updateBioIsSuccess, isError: updateBioIsError, isPending: updateBioIsPending } = useWriteContract();
     const { writeContract: updateIsCreator, isSuccess: updateIsCreatorIsSuccess, isError: updateIsCreatorIsError, isPending: updateIsCreatorIsPending } = useWriteContract();
+    const { writeContract: updateProfileImage, isSuccess: updateProfileImageIsSuccess, isError: updateProfileImageIsError, isPending: updateProfileImageIsPending, error: updateProfileImageError } = useWriteContract();
 
     // Mise à jour du userName
     const setUserName = (_userName: string) => {
@@ -142,19 +147,92 @@ export default function UserProfile() {
         }
     }, [updateIsCreatorIsPending, updateIsCreatorIsSuccess, updateIsCreatorIsError, isSuccessQuery]);
 
+    let toastId: string = '';
+
+    const setImageProfile = async () => {
+        toastId = toast.loading('Mise à jour de la photo de profil...');
+
+        const url = await uploadFileAndReturnIpfsURL();
+        updateProfileImage({
+            address: userManagerAddress,
+            abi: userManagerAbi,
+            functionName: 'setUserProfileImage',
+            args: [address, url],
+        });
+    };
+
+    useEffect(() => {
+        if (updateProfileImageIsSuccess && isSuccessQuery) {
+            setTimeout(() => toast.success('Photo de profil mise à jour avec succès !', { id: toastId }), 5000)
+            setTimeout(() => window.location.reload(), 7000);
+        }
+
+        if (updateProfileImageIsError) {
+            toast.error('Erreur lors de la mise à jour de la photo de profil.', { id: toastId });
+            console.log("updateProfileImageIsError", updateProfileImageError);
+        }
+    }, [updateProfileImageIsPending, updateProfileImageIsSuccess, updateProfileImageIsError, isSuccessQuery]);
+
+
+    const [file, setFile] = useState<File>();
+
+
+
+    const uploadFileAndReturnIpfsURL = async () => {
+        try {
+            if (!file) {
+                alert("No file selected");
+                return;
+            }
+            const data = new FormData();
+            data.set("file", file);
+            const uploadRequest = await fetch("/api/files", {
+                method: "POST",
+                body: data,
+            });
+            const ipfsUrl = await uploadRequest.json();
+            return ipfsUrl;
+
+        } catch (e) {
+            console.log(e);
+            alert("Trouble uploading file");
+        }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.files?.[0]);
+        handleFileChange(e);
+        setFile(e.target?.files?.[0]);
+    };
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null); // Prévisualisation
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0] || null;
+
+        if (selectedFile) {
+            const preview = URL.createObjectURL(selectedFile);
+            setPreviewUrl(preview);
+            console.log("preview", preview);
+        } else {
+            setPreviewUrl(null);
+            console.log("preview", null);
+        }
+    };
 
 
     // États locaux pour gérer l'édition
-    const [isEditing, setIsEditing] = useState<{ userName: boolean; email: boolean; bio: boolean }>({
+    const [isEditing, setIsEditing] = useState<{ userName: boolean; email: boolean; bio: boolean, profileImage: boolean }>({
         userName: false,
         email: false,
         bio: false,
+        profileImage: false
     });
 
-    const [formData, setFormData] = useState<{ userName: string; email: string; bio: string }>({
+    const [formData, setFormData] = useState<{ userName: string; email: string; bio: string, profileImage: string }>({
         userName: '',
         email: '',
         bio: '',
+        profileImage: ''
     });
 
     if (!address) return <p>Veuillez connecter votre portefeuille pour accéder à votre profil.</p>;
@@ -164,9 +242,9 @@ export default function UserProfile() {
     // Extraction des données utilisateur
     const { email, userName, bio } = data?.userRegistereds?.[0] || {};
 
-    const handleEdit = (field: 'userName' | 'email' | 'bio') => {
+    const handleEdit = (field: 'userName' | 'email' | 'bio' | 'profileImage') => {
         setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
-        setFormData({ userName: userName || '', email: email || '', bio: bio || '' }); // Préremplit les champs avec les valeurs actuelles
+        setFormData({ userName: userName || '', email: email || '', bio: bio || '', profileImage: '' });
     };
 
     const handleSave = (field: string) => {
@@ -177,9 +255,13 @@ export default function UserProfile() {
         } else if (field === 'bio') {
             setBio(formData.bio);
         }
+        else if (field === 'profileImage') {
+            setImageProfile();
+        }
 
         setIsEditing((prev) => ({ ...prev, [field]: false }));
     };
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -189,7 +271,7 @@ export default function UserProfile() {
                         <h1 className="text-2xl font-bold text-gray-800">Profil Utilisateur</h1>
                         <p className="text-gray-500">Gérez vos informations personnelles</p>
                     </div>
-                    <div className="p-6">
+                    <div className="p-6 flex flex-row space-y-6">
                         <div className="flex flex-col gap-6">
                             {/* Nom Complet / Pseudonyme */}
                             <div>
@@ -266,6 +348,40 @@ export default function UserProfile() {
                                     <span className="text-gray-700">
                                         {data?.userRegistereds?.[0]?.isCreator ? "Vous êtes un créateur" : "Vous n'êtes pas un créateur"}
                                     </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-6">
+                            <div className="flex flex-col gap-2">
+                                <h2 className="text-lg font-bold text-gray-800">Photo de profil</h2>
+                                <div className="space-x-4 flex flex-row items-center">
+                                    <div className="w-100 h-100 m-r-4">
+                                        {isEditing.profileImage ? (
+                                            <div className="space-x-4 flex flex-row items-center">
+                                                {previewUrl ?
+                                                    <Image src={previewUrl} alt="Prévisualisation" className="object-cover rounded-full" width="100" height="100" />
+                                                    : data?.userRegistereds?.[0]?.profileImage ? (
+                                                        <Image src={data?.userRegistereds?.[0]?.profileImage} alt="Photo de profil" className="object-cover rounded-full" width="100" height="100" />
+                                                    ) : (
+                                                        <User className="object-cover" width="100" height="100" />
+                                                    )
+                                                }
+                                                <Input type="file" accept="image/*" onChange={handleChange} className='mt-0' />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                {data?.userRegistereds?.[0]?.profileImage ? (
+                                                    <Image src={data?.userRegistereds?.[0]?.profileImage} alt="Photo de profil" className="object-cover rounded-full" width="100" height="100" />
+                                                ) : (
+                                                    <User className="object-cover" width="100" height="100" />
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <button onClick={() => (isEditing.profileImage ? handleSave('profileImage') : handleEdit('profileImage'))}>
+                                        {isEditing.profileImage ? <Save className="w-5 h-5 text-green-500" /> : <Pencil className="w-5 h-5 text-gray-500" />}
+                                    </button>
+
                                 </div>
                             </div>
                         </div>

@@ -4,8 +4,7 @@ import user from "@/icons/user.png";
 import { Creator } from '@/utils/types';
 
 export default function CreatorCard({ creator }: { creator: Creator }) {
-    const { email, userName, bio } = creator;
-    console.log(email, userName, bio, "zzezez");
+    const { userName, profileImage } = creator;
 
     return (
         <div className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
@@ -13,7 +12,7 @@ export default function CreatorCard({ creator }: { creator: Creator }) {
         >
             <div className="relative h-48">
                 <Image
-                    src={user}
+                    src={profileImage}
                     alt={userName}
                     fill={true}
                     style={{ objectFit: 'cover' }}

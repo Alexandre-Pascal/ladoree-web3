@@ -29,7 +29,7 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
         },
     });
 
-    const { userName, email, bio } = data?.userRegistereds[0] || {};
+    const { userName, email, bio, profileImage } = data?.userRegistereds[0] || {};
 
     if (!data) {
         return <p>Artiste non trouvé.</p>;
@@ -40,8 +40,10 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
             <h1 className="text-5xl font-bold text-center text-gray-800">{userName}</h1>
             <div className="flex items-center mt-8">
                 <Image
-                    src={user}
+                    src={profileImage || user}
                     alt={userName ? userName : "user"}
+                    width={192}
+                    height={192}
                     className="w-48 h-48 object-cover rounded-full border-2 border-gray-200"
                 />
                 <div className="ml-8">

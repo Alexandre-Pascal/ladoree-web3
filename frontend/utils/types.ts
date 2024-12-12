@@ -9,11 +9,13 @@ export type Creator = {
     email: string;
     userName: string;
     bio: string;
+    profileImage: string;
 }
 export type CreatorData = {
     userRegistereds: {
         email: string;
         userName: string;
         bio: string;
+        profileImage: string;
     }[];
 };

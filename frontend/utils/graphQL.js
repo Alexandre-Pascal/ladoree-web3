@@ -14,6 +14,7 @@ export const queries = {
         userName
         bio
         isCreator
+        profileImage
       }
     }
   `,
@@ -36,6 +37,7 @@ export const queries = {
         email
         userName
         bio
+        profileImage
       }
     }
   `,
@@ -50,8 +52,24 @@ export const queries = {
     email
     userName
     bio
+    profileImage
   }
 }
+  `,
+
+  GET_USER_ARTWORKS: gql`
+    query GetUserPosts($user: String!) {
+      posts(
+        orderBy: blockTimestamp
+        orderDirection: desc
+        where: { user: $user }
+      ) {
+        id
+        title
+        content
+        user
+      }
+    }
   `,
 };
 
