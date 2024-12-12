@@ -117,13 +117,12 @@ const RegisterForm = () => {
                 <form className="space-y-4">
                     <div className="space-x-4 flex flex-row items-center">
                         <div className="rounded-full w-50 h-50 border m-r-4">
-
                             {previewUrl ?
                                 <Image src={previewUrl} alt="Prévisualisation" className="object-cover rounded-full" width="60" height="60" />
                                 : <User className="object-cover" width="50" height="50" />
                             }
                         </div>
-                        <Input type="file" accept="image/*" onChange={handleChange} className='mt-0' />
+                        <Input type="file" accept="image/*" onChange={handleChange} className='mt-0 cursor-pointer' />
                     </div>
 
                     <div>
