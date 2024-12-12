@@ -1630,7 +1630,7 @@ export const marketplaceAbi = [
     }
 ]
 
-export const authenticityNftAddress = "0x7020c5d58fA9fB9A92efaB2cd447A00E3EBF1E33"
+export const authenticityNftAddress = "0xF8CF34c9854bE11a0b1d7BD62f71bC7111D2b038"
 export const authenticityNftAbi = [
     {
         "inputs": [],
@@ -1849,6 +1849,31 @@ export const authenticityNftAbi = [
         "inputs": [
             {
                 "indexed": true,
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "tokenURI",
+                "type": "string"
+            }
+        ],
+        "name": "NFTMinted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
                 "internalType": "address",
                 "name": "previousOwner",
                 "type": "address"
@@ -2022,7 +2047,7 @@ export const authenticityNftAbi = [
             },
             {
                 "internalType": "string",
-                "name": "metadataURI",
+                "name": "tokenURI",
                 "type": "string"
             },
             {

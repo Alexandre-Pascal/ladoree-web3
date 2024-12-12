@@ -5,6 +5,7 @@ import {
   MetadataUpdate as MetadataUpdateEvent,
   OwnershipTransferred as OwnershipTransferredEvent,
   Transfer as TransferEvent,
+  NFTMinted as NFTMintedEvent,
 } from "../generated/AuthenticityNFT/AuthenticityNFT"
 import {
   ApprovalNFT,
@@ -13,6 +14,7 @@ import {
   MetadataUpdate,
   OwnershipTransferred,
   TransferNFT,
+  NFTMinted,
 } from "../generated/schema"
 
 export function handleApprovalNFT(event: ApprovalEvent): void {
@@ -97,6 +99,21 @@ export function handleTransferNFT(event: TransferEvent): void {
   entity.from = event.params.from
   entity.to = event.params.to
   entity.tokenId = event.params.tokenId
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+
+export function handleNFTMinted(event: NFTMintedEvent): void {
+  let entity = new NFTMinted(
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
+  )
+  entity.tokenId = event.params.tokenId
+  entity.owner = event.params.owner
+  entity.tokenURI = event.params.tokenURI
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

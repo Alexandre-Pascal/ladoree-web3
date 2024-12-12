@@ -28,6 +28,7 @@ type UserRegistered @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
 type ApprovalNFT @entity(immutable: true) {
   id: Bytes!
   owner: Bytes! # address
@@ -98,6 +99,16 @@ type TransferNFT @entity(immutable: true) {
   from: Bytes! # address
   to: Bytes! # address
   tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type NFTMinted @entity(immutable: true) {
+  id: Bytes!
+  tokenId: BigInt! # uint256
+  owner: Bytes! # address
+  tokenURI: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

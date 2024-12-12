@@ -35,7 +35,7 @@ dataSources:
     name: AuthenticityNFT
     network: polygon-amoy
     source:
-      address: "0x7020c5d58fA9fB9A92efaB2cd447A00E3EBF1E33"
+      address: "0xF8CF34c9854bE11a0b1d7BD62f71bC7111D2b038"
       abi: AuthenticityNFT
       startBlock: 15400836
     mapping:
@@ -65,6 +65,8 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransferNFT
+        - event: NFTMinted(indexed uint256,indexed address,string)
+          handler: handleNFTMinted
       file: ./src/authenticity-nft.ts
 
   - kind: ethereum

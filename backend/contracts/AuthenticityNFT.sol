@@ -50,11 +50,18 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
         uint96 fee; // Taux de royalties en basis points (e.g., 500 = 5%)
     }
 
-    uint256 private _tokenIdCounter = 1; // Compteur pour générer des IDs uniques
+    uint256 private _tokenIdCounter; // Compteur pour générer des IDs uniques
     mapping(uint256 => RoyaltyInfo) private _royalties; // Mapping des royalties par NFT
     mapping(string => uint256) private _metadataToTokenId; // Mapping des URI vers token IDs
 
     IMarketplace public marketplaceContract; // Contrat Marketplace associé
+
+    // Event emitted when a new NFT is minted
+    event NFTMinted(
+        uint256 indexed tokenId,
+        address indexed owner,
+        string tokenURI
+    );
 
     // ========================
     // CONSTRUCTEUR
@@ -62,7 +69,9 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
     /**
      * @notice Initialise le contrat avec un nom et un symbole.
      */
-    constructor() ERC721("AuthenticityNFT", "ANFT") Ownable(msg.sender) {}
+    constructor() ERC721("AuthenticityNFT", "AUTH") Ownable(msg.sender) {
+        _tokenIdCounter = 1; // Start IDs at 1
+    }
 
     // ========================
     // MODIFICATEURS
@@ -84,14 +93,14 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
     /**
      * @notice Mint un nouveau NFT avec des métadonnées et des royalties.
      * @param recipient Adresse du destinataire du NFT.
-     * @param metadataURI URI des métadonnées du NFT.
+     * @param tokenURI URI des métadonnées du NFT.
      * @param royaltyRecipient Adresse recevant les royalties.
      * @param royaltyFee Taux de royalties (en basis points, max 10000).
      * @return tokenId L'identifiant du NFT minté.
      */
     function mintNFT(
         address recipient,
-        string memory metadataURI,
+        string memory tokenURI,
         address royaltyRecipient,
         uint96 royaltyFee
     ) external onlyOwnerOrMarketplace returns (uint256) {
@@ -101,15 +110,16 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
 
         // Mint le NFT
         _safeMint(recipient, tokenId);
-        _setTokenURI(tokenId, metadataURI);
+        _setTokenURI(tokenId, tokenURI);
 
         // Associe l'URI au token ID
-        _metadataToTokenId[metadataURI] = tokenId;
+        _metadataToTokenId[tokenURI] = tokenId;
 
         // Enregistre les royalties
         _royalties[tokenId] = RoyaltyInfo(royaltyRecipient, royaltyFee);
 
         _tokenIdCounter += 1;
+        emit NFTMinted(tokenId, recipient, tokenURI); // Emit event
 
         return tokenId;
     }
