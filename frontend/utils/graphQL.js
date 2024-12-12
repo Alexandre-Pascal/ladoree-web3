@@ -71,6 +71,16 @@ export const queries = {
       }
     }
   `,
+  GET_ARTWORKS: gql`
+  query {
+    creations {
+      id
+      creator
+      nftTokenId
+      price
+      isSold
+    }
+  }`,
 };
 
 // URL du sous-graph
