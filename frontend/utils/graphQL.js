@@ -81,6 +81,12 @@ export const queries = {
       isSold
     }
   }`,
+  GET_METADATAS: gql`
+  query GetMetadas {
+  nftminteds {
+    tokenURI
+  }
+}`,
 };
 
 // URL du sous-graph
