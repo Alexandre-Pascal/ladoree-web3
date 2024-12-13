@@ -132,11 +132,9 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
     function getTokenIdByMetadata(
         string memory metadataURI
     ) public view returns (uint256) {
-        require(
-            _metadataToTokenId[metadataURI] != 0,
-            "Token does not exist for this URI"
-        );
-        return _metadataToTokenId[metadataURI];
+        uint256 tokenId = _metadataToTokenId[metadataURI];
+        // Retourne 0 si le token n'existe pas
+        return tokenId;
     }
 
     /**

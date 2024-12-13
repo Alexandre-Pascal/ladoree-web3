@@ -42,9 +42,13 @@ contract Marketplace is IERC721Receiver, Ownable {
     // STRUCTURES ET VARIABLES
     // ========================
     struct Item {
+        string name;
+        string description;
+        string kind;
+        uint256 price;
+        uint256 creationDate;
         uint256 tokenId; // NFT associé à l'objet
         address seller; // Adresse du vendeur
-        uint256 price; // Prix de l'objet en euros (ou équivalent)
         bool isSold; // Statut de l'objet (vendu ou non)
     }
 
@@ -138,9 +142,13 @@ contract Marketplace is IERC721Receiver, Ownable {
         }
 
         itemsForSale[_itemIdCounter] = Item({
+            name: name,
+            description: description,
+            kind: kind,
+            price: price,
+            creationDate: creationDate,
             tokenId: tokenId,
             seller: msg.sender,
-            price: price,
             isSold: false
         });
 
@@ -187,11 +195,7 @@ contract Marketplace is IERC721Receiver, Ownable {
      * @return bool Vrai si le NFT existe, faux sinon.
      */
     function nftExists(string memory metadataURI) public view returns (bool) {
-        try nftContract.getTokenIdByMetadata(metadataURI) {
-            return true;
-        } catch {
-            return false;
-        }
+        return nftContract.getTokenIdByMetadata(metadataURI) != 0;
     }
 
     // ========================

@@ -53,8 +53,8 @@ const Marketplace: React.FC = () => {
 
 
 
-    if (isLoading) return <p>Loading metadata...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (isLoading) return <p>Chargement des oeuvres...</p>;
+    if (error) return <p>Erreur lors du chargement des oeuvres: {error}</p>;
 
     return (
         <>
@@ -66,7 +66,7 @@ const Marketplace: React.FC = () => {
                     />
                 ))
             ) : (
-                <p>No metadata available</p>
+                <p>Pas d'oeuvre en vente pour le moment</p>
             )}
         </>
     );

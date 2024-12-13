@@ -1293,7 +1293,7 @@ export const ldrTokenAbi = [
     }
 ]
 
-export const marketplaceAddress = "0x271Fe327b686cC84bA8459e343685243Dc17A02d"
+export const marketplaceAddress = "0x0F95AcD1EdED68382E8d25d8828fF5E8A943Cd86"
 export const marketplaceAbi = [
     {
         "inputs": [],
@@ -1488,6 +1488,31 @@ export const marketplaceAbi = [
         "name": "itemsForSale",
         "outputs": [
             {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "kind",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "creationDate",
+                "type": "uint256"
+            },
+            {
                 "internalType": "uint256",
                 "name": "tokenId",
                 "type": "uint256"
@@ -1496,11 +1521,6 @@ export const marketplaceAbi = [
                 "internalType": "address",
                 "name": "seller",
                 "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "price",
-                "type": "uint256"
             },
             {
                 "internalType": "bool",
@@ -1678,7 +1698,7 @@ export const marketplaceAbi = [
     }
 ]
 
-export const authenticityNftAddress = "0x26B0c82819be8439788D558F733E4BDeA96642FB"
+export const authenticityNftAddress = "0x59F32e75069200F292D952E99605c6A17Ef636Ca"
 export const authenticityNftAbi = [
     {
         "inputs": [],
