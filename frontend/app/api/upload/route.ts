@@ -8,6 +8,8 @@ export async function POST(request: NextRequest) {
         const name = data.get("name") as string;
         const description = data.get("description") as string;
         const price = data.get("price") as string;
+        const creationDate = data.get("creationDate") as string;
+        const artType = data.get("artType") as string;
 
         // Upload file to Pinata
         const uploadData = await pinata.upload.file(file);
@@ -17,8 +19,10 @@ export async function POST(request: NextRequest) {
         const metadata = {
             name,
             description,
-            image: `ipfs://${uploadData.IpfsHash}`,
-            price,
+            firstPrice: price,
+            image: imageUrl,
+            creationDate,
+            artType,
         };
 
         const metadataUploadData = await pinata.upload.json(metadata);

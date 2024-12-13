@@ -15,8 +15,13 @@ import "hardhat/console.sol";
 // ========================
 interface IMarketplace {
     function listItem(
-        string memory metadataURI,
+        string memory name,
+        string memory description,
+        string memory kind,
         uint256 price,
+        uint256 creationDate,
+        string memory imageURI,
+        string memory metadataURI,
         address royaltyRecipient,
         uint96 royaltyFee
     ) external;

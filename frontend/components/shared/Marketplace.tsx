@@ -42,7 +42,7 @@ const Marketplace: React.FC = () => {
 
     return (
         <>
-            {metadataList.length > 0 ? (
+            {/* {metadataList.length > 0 ? (
                 metadataList.map((metadata, index) => (
                     <ArtCard
                         key={index}
@@ -51,7 +51,7 @@ const Marketplace: React.FC = () => {
                 ))
             ) : (
                 <p>No metadata available</p>
-            )}
+            )} */}
         </>
     );
 };

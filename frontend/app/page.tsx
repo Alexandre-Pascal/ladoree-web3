@@ -108,9 +108,9 @@ const HomePage = () => {
         <h3 className="text-3xl font-semibold text-gray-800 mb-6">Recommandations pour vous</h3>
         <div className="flex flex-wrap gap-8">
           {/* Affichage d'œuvres d'art sous forme de cartes */}
-          <ArtCard artwork={artworksData[0]} />
+          {/* <ArtCard artwork={artworksData[0]} />
           <ArtCard artwork={artworksData[1]} />
-          <ArtCard artwork={artworksData[2]} />
+          <ArtCard artwork={artworksData[2]} /> */}
         </div>
       </section>
     </div>
