@@ -25,25 +25,30 @@ interface GraphQLResponseItemSold {
     }[];
 }
 
-const ListItems: React.FC = () => {
+export default function ListItems({ items }: { items?: Item[] }) {
+    // Liste des items en vente, si aucun item n'est passé en paramètre, on récupère tous les items en vente
+
     const [itemList, setItemList] = useState<Item[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log("Fetching items...");
         const fetchItemListeds = async () => {
             setIsLoading(true);
             setError(null);
 
             try {
-                // Récupération des items en vente
-                const listedData: GraphQLResponseItemListed = await request(GRAPHQL_URL, queries.GET_ARTWORKS);
-                console.log("Fetched items:", listedData);
+                let listedData: GraphQLResponseItemListed = { itemListeds: [] };
+                if (items) {
+                    listedData.itemListeds = items;
+                }
+                else {
+                    // Récupération des items en vente
+                    listedData = await request(GRAPHQL_URL, queries.GET_ARTWORKS);
+                }
 
                 // Récupération des items vendus
                 const soldData: GraphQLResponseItemSold = await request(GRAPHQL_URL, queries.GET_ITEMS_SOLD);
-                console.log("Fetched sold items:", soldData);
 
                 // Transforme les items vendus en un Set pour une recherche rapide
                 const soldItemIds = new Set(soldData.itemSolds.map((sold) => sold.itemId));
@@ -54,7 +59,6 @@ const ListItems: React.FC = () => {
                 // Ne pas afficher les items qui ont une imageURI qui commence par un truc différent de "indigo"
                 const itemFiltered = unsoldItems.filter((item) => item.imageURI.startsWith("indigo")); // À supprimer au prochain déploiement
 
-                console.log("Filtered items:", itemFiltered);
                 setItemList(itemFiltered);
             } catch (err: any) {
                 console.error("Error fetching metadata:", err);
@@ -85,4 +89,3 @@ const ListItems: React.FC = () => {
     );
 };
 
-export default ListItems;

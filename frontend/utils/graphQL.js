@@ -97,7 +97,65 @@ export const queries = {
       itemId
     }
   }
-`
+`,
+  GET_USER_BY_ADDRESS: gql`
+  query GetUserByAddress($user: Bytes!) {
+  userRegistereds(
+    first: 1
+    orderBy: blockTimestamp
+    orderDirection: desc
+    where: {user: $user}
+  ) {
+    email
+    userName
+    bio
+    profileImage
+  }
+}
+`,
+  GET_ARTWORK_BY_NAME: gql`
+  query GetArtworkByName($name: String!) {
+  itemListeds(
+    first: 1
+    orderBy: blockTimestamp
+    orderDirection: desc
+    where: {name: $name}
+  ) {
+    name
+    description
+    imageURI
+    price
+    kind
+    creationDate
+    seller
+    creator
+    tokenId
+    itemId
+  }
+}`,
+
+  // on veut toutes les oeuvres d'un artiste sauf celle qui est passée en paramètre
+  GET_OTHERS_ARTWORK_BY_SELLER: gql`
+  query GetArtworksByCreator($seller: String!, $name: String!) {
+  itemListeds(
+    orderBy: blockTimestamp
+    orderDirection: desc
+    where: {seller: $seller, name_not: $name}
+  ) {
+    name
+    description
+    imageURI
+    price
+    kind
+    creationDate
+    seller
+    creator
+    tokenId
+    itemId
+  }
+}
+`,
+
 };
 
 // URL du sous-graph

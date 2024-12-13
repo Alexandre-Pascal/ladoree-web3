@@ -200,7 +200,6 @@ export default function UserProfile() {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.files?.[0]);
         handleFileChange(e);
         setFile(e.target?.files?.[0]);
     };
@@ -212,10 +211,8 @@ export default function UserProfile() {
         if (selectedFile) {
             const preview = URL.createObjectURL(selectedFile);
             setPreviewUrl(preview);
-            console.log("preview", preview);
         } else {
             setPreviewUrl(null);
-            console.log("preview", null);
         }
     };
 
@@ -341,7 +338,6 @@ export default function UserProfile() {
                                     <Switch
                                         checked={data?.userRegistereds?.[0]?.isCreator || false} // Synchronisation avec l'état
                                         onCheckedChange={(checked) => {
-                                            console.log(checked);
                                             setIsCreator(checked); // Appelle updateIsCreator
                                         }}
                                     />
