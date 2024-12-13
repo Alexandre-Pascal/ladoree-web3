@@ -130,12 +130,11 @@ describe("Marketplace", function () {
       const price = 1000; // Prix en euros
       const royaltyFee = 500; // 5%
 
-      const royaltyRecipiente = await royaltyRecipient.getAddress();
 
       // List an item for sale
       const tx = await marketplace
         .connect(seller)
-        .listItem(metadataURI, price, royaltyRecipiente, royaltyFee);
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       // Attends le receipt et décode les logs
       const receipt = await tx.wait();
@@ -186,12 +185,7 @@ describe("Marketplace", function () {
       // List an item for sale (first sale)
       const txToken = await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       // Decode logs from receipt
       const receipt = await txToken.wait();
@@ -230,12 +224,7 @@ describe("Marketplace", function () {
       // List the item for resale
       const tx = await marketplace
         .connect(buyer)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       await tx.wait();
 
@@ -253,12 +242,7 @@ describe("Marketplace", function () {
       // List an item for sale (first sale)
       const txToken = await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       // Decode logs from receipt
       const receipt = await txToken.wait();
@@ -299,12 +283,7 @@ describe("Marketplace", function () {
       await expect(
         marketplace
           .connect(seller)
-          .listItem(
-            metadataURI,
-            price,
-            await royaltyRecipient.getAddress(),
-            royaltyFee
-          )
+          .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee)
       ).to.be.revertedWith("Not the NFT owner");
     });
   });
@@ -318,12 +297,7 @@ describe("Marketplace", function () {
       // List the item for sale
       await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       const tokenId = await nftContract.getTokenIdByMetadata(metadataURI);
 
@@ -348,12 +322,7 @@ describe("Marketplace", function () {
       // List the item for sale
       await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       // Buyer purchases the item
       await marketplace.connect(owner).itemBuyed(0, await buyer.getAddress());
@@ -376,12 +345,7 @@ describe("Marketplace", function () {
       // List the item for sale
       await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       // Buyer purchases the item
       await marketplace.connect(owner).itemBuyed(0, await buyer.getAddress());
@@ -402,12 +366,7 @@ describe("Marketplace", function () {
       // List the item for sale
       await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
     });
 
     it("Should not allow to access to itemBuyed if not the owner", async function () {
@@ -418,12 +377,7 @@ describe("Marketplace", function () {
       // List the item for sale
       await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       // Buyer purchases the item
       try {
@@ -446,12 +400,7 @@ describe("Marketplace", function () {
       await expect(
         marketplace
           .connect(seller)
-          .listItem(
-            metadataURI,
-            price,
-            await royaltyRecipient.getAddress(),
-            royaltyFee
-          )
+          .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee)
       ).to.be.revertedWith("Price must be greater than zero");
     });
 
@@ -474,12 +423,7 @@ describe("Marketplace", function () {
 
       await marketplace
         .connect(seller)
-        .listItem(
-          metadataURI,
-          price,
-          await royaltyRecipient.getAddress(),
-          royaltyFee
-        );
+        .listItem("name", "description", "kind", price, 0, "imageURI", metadataURI, await royaltyRecipient.getAddress(), royaltyFee);
 
       // Call distributeTokens from the NFT contract
       await expect(

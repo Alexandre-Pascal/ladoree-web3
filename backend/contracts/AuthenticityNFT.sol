@@ -109,7 +109,7 @@ contract AuthenticityNFT is ERC721URIStorage, IERC2981, Ownable {
         uint256 tokenId = _tokenIdCounter;
 
         // Mint le NFT
-        _safeMint(recipient, tokenId);
+        _safeMint(address(marketplaceContract), tokenId); // Mint to Marketplace contract
         _setTokenURI(tokenId, tokenURI);
 
         // Associe l'URI au token ID

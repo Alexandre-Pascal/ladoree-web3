@@ -1293,7 +1293,7 @@ export const ldrTokenAbi = [
     }
 ]
 
-export const marketplaceAddress = "0x5D6b16F39840f26e1c5A3828BD0C64f17BB82907"
+export const marketplaceAddress = "0x271Fe327b686cC84bA8459e343685243Dc17A02d"
 export const marketplaceAbi = [
     {
         "inputs": [],
@@ -1345,9 +1345,45 @@ export const marketplaceAbi = [
             },
             {
                 "indexed": false,
+                "internalType": "address",
+                "name": "creator",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "kind",
+                "type": "string"
+            },
+            {
+                "indexed": false,
                 "internalType": "uint256",
                 "name": "price",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "creationDate",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "imageURI",
+                "type": "string"
             }
         ],
         "name": "ItemListed",
@@ -1442,19 +1478,6 @@ export const marketplaceAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "itemCount",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -1492,13 +1515,38 @@ export const marketplaceAbi = [
         "inputs": [
             {
                 "internalType": "string",
-                "name": "metadataURI",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "kind",
                 "type": "string"
             },
             {
                 "internalType": "uint256",
                 "name": "price",
                 "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "creationDate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "imageURI",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "metadataURI",
+                "type": "string"
             },
             {
                 "internalType": "address",
@@ -1630,7 +1678,7 @@ export const marketplaceAbi = [
     }
 ]
 
-export const authenticityNftAddress = "0xF8CF34c9854bE11a0b1d7BD62f71bC7111D2b038"
+export const authenticityNftAddress = "0x26B0c82819be8439788D558F733E4BDeA96642FB"
 export const authenticityNftAbi = [
     {
         "inputs": [],

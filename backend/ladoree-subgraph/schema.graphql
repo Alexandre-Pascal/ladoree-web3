@@ -220,7 +220,13 @@ type ItemListed @entity(immutable: true) {
   itemId: BigInt! # uint256
   tokenId: BigInt! # uint256
   seller: Bytes! # address
-  price: BigInt! # uint256
+  creator: Bytes! #address
+  name: String!
+  description: String!
+  kind: String!
+  price: BigInt! #uint256
+  creationDate: BigInt! #uint256
+  imageURI: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

@@ -65,7 +65,7 @@ describe("AuthenticityNFT", function () {
         const tokenId = Number(parsedEvent.args?.tokenId);
 
         expect(await nftContract.ownerOf(tokenId)).to.equal(
-          await recipient.getAddress()
+          await marketplaceContract.getAddress()
         );
         expect(await nftContract.tokenURI(tokenId)).to.equal(metadataURI);
       });

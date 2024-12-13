@@ -46,7 +46,7 @@ contract Marketplace is IERC721Receiver, Ownable {
     IAuthenticityNFT private nftContract; // Instance du contrat AuthenticityNFT
     ITokenDistribution private tokenDistribution; // Instance du contrat TokenDistribution
     mapping(uint256 => Item) public itemsForSale; // Mapping des items mis en vente
-    uint256 public itemCount; // Compteur pour générer des IDs d'items
+    uint256 private _itemIdCounter; // Compteur pour générer des IDs d'items
 
     // ========================
     // ÉVÉNEMENTS
@@ -55,7 +55,13 @@ contract Marketplace is IERC721Receiver, Ownable {
         uint256 indexed itemId,
         uint256 indexed tokenId,
         address indexed seller,
-        uint256 price
+        address creator,
+        string name,
+        string description,
+        string kind,
+        uint256 price,
+        uint256 creationDate,
+        string imageURI
     );
     event ItemSold(
         uint256 indexed itemId,
@@ -94,8 +100,13 @@ contract Marketplace is IERC721Receiver, Ownable {
      * @param royaltyFee Taux des royalties en basis points.
      */
     function listItem(
-        string memory metadataURI,
+        string memory name,
+        string memory description,
+        string memory kind,
         uint256 price,
+        uint256 creationDate,
+        string memory imageURI,
+        string memory metadataURI,
         address royaltyRecipient,
         uint96 royaltyFee
     ) external {
@@ -106,7 +117,7 @@ contract Marketplace is IERC721Receiver, Ownable {
         if (!nftExists(metadataURI)) {
             // Mint le NFT si c'est une première vente
             tokenId = nftContract.mintNFT(
-                address(this),
+                msg.sender,
                 metadataURI,
                 royaltyRecipient,
                 royaltyFee
@@ -121,15 +132,26 @@ contract Marketplace is IERC721Receiver, Ownable {
             nftContract.safeTransferFrom(msg.sender, address(this), tokenId);
         }
 
-        itemsForSale[itemCount] = Item({
+        itemsForSale[_itemIdCounter] = Item({
             tokenId: tokenId,
             seller: msg.sender,
             price: price,
             isSold: false
         });
 
-        emit ItemListed(itemCount, tokenId, msg.sender, price);
-        itemCount++;
+        emit ItemListed(
+            _itemIdCounter,
+            tokenId,
+            msg.sender,
+            royaltyRecipient,
+            name,
+            description,
+            kind,
+            price,
+            creationDate,
+            imageURI
+        );
+        _itemIdCounter++;
     }
 
     /**

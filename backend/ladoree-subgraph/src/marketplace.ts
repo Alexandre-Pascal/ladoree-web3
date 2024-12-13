@@ -10,9 +10,17 @@ export function handleItemListed(event: ItemListedEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32()),
   )
   entity.itemId = event.params.itemId
+
   entity.tokenId = event.params.tokenId
   entity.seller = event.params.seller
+  entity.creator = event.params.creator
+  entity.name = event.params.name
+  entity.description = event.params.description
+  entity.kind = event.params.kind
   entity.price = event.params.price
+  entity.creationDate = event.params.creationDate
+  entity.imageURI = event.params.imageURI
+
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
