@@ -17,5 +17,6 @@ export type CreatorData = {
         userName: string;
         bio: string;
         profileImage: string;
+        user: user;
     }[];
 };

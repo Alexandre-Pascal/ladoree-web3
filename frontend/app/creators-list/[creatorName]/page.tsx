@@ -1,24 +1,42 @@
 'use client';
 
 // app/creators-list/[creatorName]/page.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CreatorData } from '@/utils/types';
 import { request } from 'graphql-request';
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { useQuery } from '@tanstack/react-query';
-import user from "@/icons/user.png";
+import userIcon from "@/icons/user.png";
 import Image from 'next/image';
+import ListItems from '@/components/shared/ListItems';
 
 interface ArtistDetailPageProps {
     params: {
         creatorName: string;
     };
 }
+interface Item {
+    name: string;
+    description: string;
+    imageURI: string;
+    price: string;
+    kind: string;
+    seller: string;
+    creator: string;
+    tokenId: string;
+    itemId: string;
+}
+
+interface GraphQLResponse {
+    itemListeds: Item[];
+}
 
 const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
     const { creatorName } = params;
 
     const decodedcreatorName = decodeURIComponent(creatorName);
+
+    const [artworksData, setArtworksData] = React.useState<Item[]>([]);
 
     const { data } = useQuery<CreatorData>({
         queryKey: ['creator', decodedcreatorName],
@@ -29,7 +47,22 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
         },
     });
 
-    const { userName, email, bio, profileImage } = data?.userRegistereds[0] || {};
+    const { userName, email, bio, profileImage, user } = data?.userRegistereds[0] || {};
+
+    useEffect(() => {
+        console.log(data);
+        if (!user) return;
+        const fetchItems = async () => {
+            try {
+                const itemsData: GraphQLResponse = await request(GRAPHQL_URL, queries.GET_ARTWORKS_BY_CREATOR, { creator: user });
+                setArtworksData(itemsData.itemListeds);
+                console.log(itemsData.itemListeds);
+            } catch (err: any) {
+                console.error("Error fetching items:", err);
+            }
+        };
+        fetchItems();
+    }, [user, data]);
 
     if (!data) {
         return <p>Artiste non trouvé.</p>;
@@ -40,7 +73,7 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
             <h1 className="text-5xl font-bold text-center text-gray-800">{userName}</h1>
             <div className="flex items-center mt-8">
                 <Image
-                    src={profileImage || user}
+                    src={profileImage || userIcon}
                     alt={userName ? userName : "user"}
                     width={192}
                     height={192}
@@ -59,11 +92,12 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
             </div>
             <h2 className="text-2xl font-semibold text-gray-800 mt-8">Œuvres de {userName}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-4">
-                {/* {artworksData
-                    .filter(artwork => artwork.artist === userName)
-                    .map(artwork => (
-                        <ArtCard key={artwork.title} artwork={artwork} />
-                    ))} */}
+                {artworksData.length > 0 ? (
+                    <ListItems items={artworksData} />
+                ) : (
+                    <p>Pas d'œuvre disponible pour le moment</p>
+                )
+                }
             </div>
         </div>
     );

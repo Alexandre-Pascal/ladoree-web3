@@ -53,6 +53,7 @@ export const queries = {
     userName
     bio
     profileImage
+    user
   }
 }
   `,
@@ -155,6 +156,26 @@ export const queries = {
   }
 }
 `,
+
+  GET_ARTWORKS_BY_CREATOR: gql`
+  query GetArtworksByCreator($creator: String!) {
+  itemListeds(
+    orderBy: blockTimestamp
+    orderDirection: desc
+    where: {creator: $creator}
+  ) {
+    name
+    description
+    imageURI
+    price
+    kind
+    creationDate
+    seller
+    creator
+    tokenId
+    itemId
+  }
+}`,
 
 };
 

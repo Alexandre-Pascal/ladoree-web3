@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { request } from 'graphql-request';
-import { set } from 'react-hook-form';
 
 interface Item {
     name: string;
