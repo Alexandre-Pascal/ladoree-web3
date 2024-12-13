@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import ArtCard from "./ArtCard";
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { request } from 'graphql-request';
-import { useAccount, useWriteContract } from 'wagmi';
-import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
 
 interface Item {
     name: string;
@@ -27,13 +25,10 @@ interface GraphQLResponseItemSold {
     }[];
 }
 
-
-const Marketplace: React.FC = () => {
+const ListItems: React.FC = () => {
     const [itemList, setItemList] = useState<Item[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-
-
 
     useEffect(() => {
         console.log("Fetching items...");
@@ -71,9 +66,6 @@ const Marketplace: React.FC = () => {
         fetchItemListeds();
     }, []);
 
-
-
-
     if (isLoading) return <p>Chargement des oeuvres...</p>;
     if (error) return <p>Erreur lors du chargement des oeuvres: {error}</p>;
 
@@ -93,4 +85,4 @@ const Marketplace: React.FC = () => {
     );
 };
 
-export default Marketplace;
+export default ListItems;
