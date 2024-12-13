@@ -111,7 +111,7 @@ const UploadForm: React.FC = () => {
             <h1 className="text-2xl font-semibold mb-6 text-center">Mettre en vente une œuvre</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <Label htmlFor="name">Name:</Label>
+                    <Label htmlFor="name">Nom:</Label>
                     <Input
                         id="name"
                         type="text"

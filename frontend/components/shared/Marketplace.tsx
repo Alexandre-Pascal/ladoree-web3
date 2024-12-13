@@ -3,6 +3,7 @@ import ArtCard from "./ArtCard";
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { request } from 'graphql-request';
 import { useAccount, useWriteContract } from 'wagmi';
+import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
 
 interface Item {
     name: string;
@@ -16,16 +17,23 @@ interface Item {
     itemId: string;
 }
 
-interface GraphQLResponse {
+interface GraphQLResponseItemListed {
     itemListeds: Item[];
+}
+
+interface GraphQLResponseItemSold {
+    itemSolds: {
+        itemId: string;
+    }[];
 }
 
 
 const Marketplace: React.FC = () => {
     const [itemList, setItemList] = useState<Item[]>([]);
-    const [itemListNotSold, setItemListNotSold] = useState<Item[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+
+
 
     useEffect(() => {
         console.log("Fetching items...");
@@ -34,11 +42,25 @@ const Marketplace: React.FC = () => {
             setError(null);
 
             try {
-                const data: GraphQLResponse = await request(GRAPHQL_URL, queries.GET_ARTWORKS);
-                console.log("Fetched items:", data);
+                // Récupération des items en vente
+                const listedData: GraphQLResponseItemListed = await request(GRAPHQL_URL, queries.GET_ARTWORKS);
+                console.log("Fetched items:", listedData);
 
+                // Récupération des items vendus
+                const soldData: GraphQLResponseItemSold = await request(GRAPHQL_URL, queries.GET_ITEMS_SOLD);
+                console.log("Fetched sold items:", soldData);
 
-                setItemList(data.itemListeds);
+                // Transforme les items vendus en un Set pour une recherche rapide
+                const soldItemIds = new Set(soldData.itemSolds.map((sold) => sold.itemId));
+
+                // Filtre les items en vente qui ne sont pas dans la liste des items vendus
+                const unsoldItems = listedData.itemListeds.filter((item) => !soldItemIds.has(item.itemId));
+
+                // Ne pas afficher les items qui ont une imageURI qui commence par un truc différent de "indigo"
+                const itemFiltered = unsoldItems.filter((item) => item.imageURI.startsWith("indigo")); // À supprimer au prochain déploiement
+
+                console.log("Filtered items:", itemFiltered);
+                setItemList(itemFiltered);
             } catch (err: any) {
                 console.error("Error fetching metadata:", err);
                 setError(err.message || "Unknown error occurred");
@@ -49,7 +71,6 @@ const Marketplace: React.FC = () => {
         fetchItemListeds();
     }, []);
 
-    const { writeContract: checkIsSold } = useWriteContract();
 
 
 

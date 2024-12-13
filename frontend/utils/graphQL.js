@@ -91,6 +91,13 @@ export const queries = {
     tokenURI
   }
 }`,
+  GET_ITEMS_SOLD: gql`
+  query GetItemsSold {
+    itemSolds {
+      itemId
+    }
+  }
+`
 };
 
 // URL du sous-graph
