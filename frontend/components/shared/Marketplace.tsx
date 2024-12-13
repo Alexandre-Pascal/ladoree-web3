@@ -1,31 +1,44 @@
 import React, { useEffect, useState } from "react";
 import ArtCard from "./ArtCard";
+import { GRAPHQL_URL, queries } from '@/utils/graphQL';
+import { request } from 'graphql-request';
+import { useAccount, useWriteContract } from 'wagmi';
 
-interface Metadata {
+interface Item {
     name: string;
     description: string;
-    image: string;
+    imageURI: string;
     price: string;
+    kind: string;
+    seller: string;
+    creator: string;
+    tokenId: string;
+    itemId: string;
 }
 
+interface GraphQLResponse {
+    itemListeds: Item[];
+}
+
+
 const Marketplace: React.FC = () => {
-    const [metadataList, setMetadataList] = useState<Metadata[]>([]);
+    const [itemList, setItemList] = useState<Item[]>([]);
+    const [itemListNotSold, setItemListNotSold] = useState<Item[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchMetadata = async () => {
+        console.log("Fetching items...");
+        const fetchItemListeds = async () => {
             setIsLoading(true);
             setError(null);
 
             try {
-                const response = await fetch("/api/metadata");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch metadata");
-                }
+                const data: GraphQLResponse = await request(GRAPHQL_URL, queries.GET_ARTWORKS);
+                console.log("Fetched items:", data);
 
-                const data: Metadata[] = await response.json();
-                setMetadataList(data);
+
+                setItemList(data.itemListeds);
             } catch (err: any) {
                 console.error("Error fetching metadata:", err);
                 setError(err.message || "Unknown error occurred");
@@ -33,25 +46,28 @@ const Marketplace: React.FC = () => {
                 setIsLoading(false);
             }
         };
-
-        fetchMetadata();
+        fetchItemListeds();
     }, []);
+
+    const { writeContract: checkIsSold } = useWriteContract();
+
+
 
     if (isLoading) return <p>Loading metadata...</p>;
     if (error) return <p>Error: {error}</p>;
 
     return (
         <>
-            {/* {metadataList.length > 0 ? (
-                metadataList.map((metadata, index) => (
+            {itemList.length > 0 ? (
+                itemList.map((item, index) => (
                     <ArtCard
                         key={index}
-                        metadata={metadata}
+                        item={item}
                     />
                 ))
             ) : (
                 <p>No metadata available</p>
-            )} */}
+            )}
         </>
     );
 };

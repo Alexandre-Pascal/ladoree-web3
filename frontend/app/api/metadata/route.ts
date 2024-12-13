@@ -1,18 +1,6 @@
 import { NextResponse } from "next/server";
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
-import { useQuery } from '@tanstack/react-query';
 import { request } from 'graphql-request';
-
-async function fetchMetadata(url: string) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch metadata");
-        return await response.json();
-    } catch (error) {
-        console.error("Error fetching metadata:", error);
-        return null;
-    }
-}
 
 interface NFTMinted {
     tokenURI: string;

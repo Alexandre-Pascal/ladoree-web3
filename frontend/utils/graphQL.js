@@ -72,15 +72,19 @@ export const queries = {
     }
   `,
   GET_ARTWORKS: gql`
-  query {
-    creations {
-      id
-      creator
-      nftTokenId
-      price
-      isSold
-    }
-  }`,
+  query MyQuery {
+  itemListeds {
+    name
+    description
+    imageURI
+    price
+    kind
+    seller
+    creator
+    tokenId
+    itemId
+  }
+}`,
   GET_METADATAS: gql`
   query GetMetadas {
   nftminteds {
