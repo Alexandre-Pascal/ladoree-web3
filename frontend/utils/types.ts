@@ -20,3 +20,19 @@ export type CreatorData = {
         user: user;
     }[];
 };
+
+
+export interface OrderItem {
+    name: string;
+    description: string;
+    imageURI: string;
+}
+
+export interface OrderDetails {
+    id: string;
+    amount_total: number; // Montant total en euros
+    currency: string; // Devise (par ex. "eur")
+    customer_name: string; // Nom du client
+    customer_email: string; // Email du client
+    item: OrderItem; // Article acheté
+}

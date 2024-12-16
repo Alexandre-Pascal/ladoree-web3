@@ -1,0 +1,12 @@
+{
+  "id": "cs_test_a19EZvmLIinBI1KOWT3tOKkjLx975oeq1rmXNGdakkeUzhzQEdDckdGNm6",
+  "amount_total": 1000,
+  "currency": "eur",
+  "customer_name": "Alexandre Pascal",
+  "customer_email": "alexandre.pascal.ep@gmail.com",
+  "item": {
+    "name": "aaaaaaaaaaaaa",
+    "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "imageURI": "indigo-hidden-meerkat-77.mypinata.cloud/ipfs/bafkreig35bjvvrbo4ugstpnok2ogqr7zbpozu7vwits6jvmnrjcgjb3txu"
+  }
+}
