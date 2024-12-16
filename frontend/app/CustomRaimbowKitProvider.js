@@ -6,7 +6,6 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
 import {
-    hardhat,
     polygonAmoy
 } from 'wagmi/chains';
 import {
@@ -17,9 +16,9 @@ import {
 //e423921fcdb854a1edf8da0f1a65ccff
 
 const config = getDefaultConfig({
-    appName: 'blockchain-bank',
+    appName: 'Ladroree',
     projectId: 'e423921fcdb854a1edf8da0f1a65ccff',
-    chains: [polygonAmoy, hardhat],
+    chains: [polygonAmoy],
     ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
