@@ -9,6 +9,7 @@ import { Label } from '@/components/ui';
 import dayjs from "dayjs";
 import ListItems from '@/components/shared/ListItems';
 import BuyButton from '@/components/shared/BuyButton';
+import { useAccount } from 'wagmi';
 
 
 interface ItemDetailPageProps {
@@ -69,6 +70,7 @@ const ItemDetailPage: React.FC<ItemDetailPageProps> = ({ params }) => {
 
     const decodeItemTitle = decodeURIComponent(artworkName);
 
+    const { address } = useAccount();
 
 
     const [artist, setArtist] = React.useState<User>();
@@ -230,7 +232,11 @@ const ItemDetailPage: React.FC<ItemDetailPageProps> = ({ params }) => {
                         {item.price} €
                     </p>
                     <div className="mt-6 flex flex-col gap-4">
-                        <BuyButton item={item} />
+                        {address ? (
+                            <BuyButton item={item} buyer={address} />
+                        ) :
+                            <button className="bg-black text-white px-4 py-2 rounded-sm cursor-not-allowed" disabled>Connectez-vous pour acheter</button>
+                        }
                         <button className="bg-white text-black px-4 py-2 rounded-sm border border-black">FAIRE UNE OFFRE (Bientôt possible)</button>
                     </div>
 

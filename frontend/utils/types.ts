@@ -26,6 +26,8 @@ export interface OrderItem {
     name: string;
     description: string;
     imageURI: string;
+    itemId: string;
+    buyer: string;
 }
 
 export interface OrderDetails {

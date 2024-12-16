@@ -14,8 +14,8 @@ interface Item {
     tokenId: string;
     itemId: string;
 }
-
-const BuyButton = ({ item }: { item: Item }) => {
+'`0x${string}` | undefined'
+const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefined }) => {
     const handleBuyNow = async () => {
         const stripe = await stripePromise;
 
@@ -36,6 +36,8 @@ const BuyButton = ({ item }: { item: Item }) => {
                     description: item.description, // Description de l'article
                     imageURI: item.imageURI, // Image de l'article
                     price: item.price, // Prix de l'article
+                    itemId: item.itemId, // ID de l'article
+                    buyer: buyer, // Adresse Ethereum de l'acheteur
                 }),
             });
             // Vérifie que la réponse est correcte

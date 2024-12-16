@@ -3,8 +3,18 @@ import nodemailer from 'nodemailer';
 import type { OrderDetails } from '@/utils/types';
 import path from 'path';
 import fs from 'fs';
+import { ethers } from 'ethers';
+import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
 
 const stripe = new Stripe(process.env.STRIPE_API_SECRET! || '');
+
+// Configuration d'Ethers.js
+const provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL!); // URL RPC (Infura, Alchemy, etc.)
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider); // Ton wallet pour signer les transactions
+const contractAddress = marketplaceAddress!; // Adresse du contrat Marketplace
+const contractABI = marketplaceAbi; // ABI du contrat Marketplace
+const marketplaceContract = new ethers.Contract(contractAddress, contractABI, wallet);
+
 
 export async function POST(req: Request): Promise<Response> {
     const sig = req.headers.get('stripe-signature')!;
@@ -34,6 +44,8 @@ export async function POST(req: Request): Promise<Response> {
                 name: session.metadata?.name || 'Article inconnu',
                 description: session.metadata?.description || 'Pas de description disponible',
                 imageURI: session.metadata?.imageURI || '',
+                itemId: session.metadata?.itemId || '0',
+                buyer: session.metadata?.buyer || '0x',
             },
         };
 
@@ -43,7 +55,22 @@ export async function POST(req: Request): Promise<Response> {
 
         // Envoie un email de confirmation
         await sendOrderConfirmationEmail(orderDetails);
+
         console.log("Commande enregistrée :", orderDetails);
+
+        // Appel à la fonction `itemBuyed` du contrat
+        try {
+            console.log("Appel à itemBuyed sur la blockchain...");
+            const tx = await marketplaceContract.itemBuyed(orderDetails.item.itemId, orderDetails.item.buyer);
+            console.log("Transaction envoyée :", tx.hash);
+
+            // Optionnel : Attendre la confirmation de la transaction
+            const receipt = await tx.wait();
+            console.log("Transaction confirmée :", receipt.transactionHash);
+        } catch (err) {
+            console.error("Erreur lors de l'appel à itemBuyed :", err);
+            return new Response(`Erreur blockchain : ${(err as Error).message}`, { status: 500 });
+        }
     }
 
     return new Response('Webhook reçu avec succès', { status: 200 });
