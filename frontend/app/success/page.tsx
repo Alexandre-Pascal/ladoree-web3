@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 interface OrderItem {
@@ -18,7 +18,7 @@ interface OrderDetails {
     item: OrderItem;
 }
 
-const SuccessPage = () => {
+const SuccessPageContent = () => {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session_id');
     const [order, setOrder] = useState<OrderDetails | null>(null);
@@ -45,15 +45,12 @@ const SuccessPage = () => {
         fetchOrder();
     }, [sessionId]);
 
-    if (!order) return (
-        <div className="h-screen flex items-center justify-center bg-gray-50">
-            <p className="text-lg text-gray-500">Chargement des détails de votre commande...</p>
-        </div>
-    );
+    if (!order) {
+        return <p className="text-lg text-gray-500">Chargement des détails de la commande...</p>;
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-            {/* Header */}
             <div className="max-w-4xl w-full bg-white shadow-md rounded-lg p-6 md:p-10">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold text-gray-800 mb-2">🎉 Paiement Confirmé !</h1>
@@ -61,10 +58,7 @@ const SuccessPage = () => {
                         Merci pour votre achat, <span className="font-semibold">{order.customer_name}</span> !
                     </p>
                 </div>
-
-                {/* Order Details */}
                 <div className="flex flex-col md:flex-row items-center gap-8">
-                    {/* Image */}
                     <div className="w-full md:w-1/2">
                         <img
                             src={`https://${order.item.imageURI}`}
@@ -72,12 +66,9 @@ const SuccessPage = () => {
                             className="w-full rounded-lg shadow-md object-cover"
                         />
                     </div>
-
-                    {/* Item Info */}
                     <div className="w-full md:w-1/2">
                         <h2 className="text-2xl font-semibold text-gray-700 mb-4">{order.item.name}</h2>
                         <p className="text-gray-600 mb-4 leading-relaxed">{order.item.description}</p>
-
                         <div className="flex justify-between items-center border-t pt-4">
                             <span className="text-lg font-medium text-gray-700">Montant payé :</span>
                             <span className="text-2xl font-bold text-green-600">
@@ -87,16 +78,12 @@ const SuccessPage = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Confirmation Message */}
             <div className="mt-6 text-center">
                 <p className="text-gray-600">
                     Un email de confirmation a été envoyé à : <br />
                     <span className="text-gray-800 font-medium">{order.customer_email}</span>
                 </p>
             </div>
-
-            {/* Return Button */}
             <div className="mt-8">
                 <a
                     href="/"
@@ -106,6 +93,14 @@ const SuccessPage = () => {
                 </a>
             </div>
         </div>
+    );
+};
+
+const SuccessPage = () => {
+    return (
+        <Suspense fallback={<p className="text-lg text-gray-500">Chargement...</p>}>
+            <SuccessPageContent />
+        </Suspense>
     );
 };
 
