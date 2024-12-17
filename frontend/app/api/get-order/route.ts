@@ -1,13 +1,36 @@
-import fs from 'fs';
-import path from 'path';
+import Stripe from 'stripe';
 
-export async function GET(): Promise<Response> {
+const stripe = new Stripe(process.env.STRIPE_API_SECRET!);
+
+export async function POST(req: Request): Promise<Response> {
     try {
-        const filePath = path.resolve(process.cwd(), 'order.json');
-        const data = fs.readFileSync(filePath, 'utf-8');
-        return new Response(data, { status: 200 });
-    } catch (err) {
-        console.error("Erreur lors de la récupération de la commande :", err);
-        return new Response('Commande introuvable', { status: 404 });
+        const { sessionId } = await req.json();
+
+        if (!sessionId) {
+            return new Response("Session ID manquant", { status: 400 });
+        }
+
+        // Récupère la session Stripe
+        const session = await stripe.checkout.sessions.retrieve(sessionId, {
+            expand: ['line_items', 'customer_details'],
+        });
+
+        const orderDetails = {
+            id: session.id,
+            amount_total: session.amount_total! / 100,
+            currency: session.currency,
+            customer_name: session.customer_details?.name || 'Client',
+            customer_email: session.customer_details?.email || 'unknown@example.com',
+            item: {
+                name: session.metadata?.name || 'Article inconnu',
+                description: session.metadata?.description || 'Pas de description',
+                imageURI: session.metadata?.imageURI || '',
+            },
+        };
+
+        return new Response(JSON.stringify(orderDetails), { status: 200 });
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la commande :", error);
+        return new Response("Erreur serveur", { status: 500 });
     }
 }

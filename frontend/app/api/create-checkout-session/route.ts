@@ -22,7 +22,7 @@ export async function POST(req: Request): Promise<Response> {
             },
         ],
         mode: 'payment',
-        success_url: `${req.headers.get('origin')}/success`,
+        success_url: `${req.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.get('origin')}/cancel`,
         metadata: { name, description, imageURI, itemId, buyer },
     });
