@@ -8,7 +8,7 @@ dataSources:
     name: UserManager
     network: polygon-amoy
     source:
-      address: "0x38A0b9b52B37105C863C2211d199FAc7dFCC6a48"
+      address: "0xeaeCB9909c85f6CA96EF09a325D36C736D4B8187"
       abi: UserManager
       startBlock: 15400825
     mapping:
@@ -35,7 +35,7 @@ dataSources:
     name: AuthenticityNFT
     network: polygon-amoy
     source:
-      address: "0x59F32e75069200F292D952E99605c6A17Ef636Ca"
+      address: "0x342DcDfB60D4310F6fcb8aF0e757B0B522A7946E"
       abi: AuthenticityNFT
       startBlock: 15400836
     mapping:
@@ -73,7 +73,7 @@ dataSources:
     name: TokenDistribution
     network: polygon-amoy
     source:
-      address: "0x8D0b0d855EeCA6f137A799F7326fd35E423bCe47"
+      address: "0xe9C15FF93291F0D590E9DFC46Aac6b20C6C1b187"
       abi: TokenDistribution
       startBlock: 15400827
     mapping:
@@ -97,7 +97,7 @@ dataSources:
     name: LDRToken
     network: polygon-amoy
     source:
-      address: "0x9AC1c3b6Cff352332485DCc50139e92AD2628d68"
+      address: "0xA3F902784618aee85114F86d5EB39ff2905fa158"
       abi: LDRToken
       startBlock: 15400830
     mapping:
@@ -142,7 +142,7 @@ dataSources:
     name: Marketplace
     network: polygon-amoy
     source:
-      address: "0x0F95AcD1EdED68382E8d25d8828fF5E8A943Cd86"
+      address: "0xcCB0c26038eD5B608f0eBf2Cdc2C0346b5f88Ab0"
       abi: Marketplace
       startBlock: 15400825
     mapping:
