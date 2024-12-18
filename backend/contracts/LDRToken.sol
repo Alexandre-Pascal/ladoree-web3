@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./UserManager.sol";
 import "./TokenDistribution.sol";
-import "hardhat/console.sol";
 
 // ========================
 // INTERFACES
@@ -24,6 +23,12 @@ interface ILDRToken {
      * @param amountToMint Montant de tokens à mint.
      */
     function mintReward(address to, uint256 amountToMint) external;
+}
+
+struct Discount {
+    uint256 id; // Identifiant de la réduction
+    uint256 amount; // Montant payé pour la réduction
+    bool isUsed; // Statut : utilisée ou non
 }
 
 // ========================
@@ -43,19 +48,23 @@ contract LDRToken is ERC20, Ownable {
         uint256 originalAmount,
         uint256 adjustedAmount
     );
-    event MintAttemptedWithMaxBalance(
-        address indexed to,
-        uint256 currentBalance
-    );
+
     event TokenBurned(address indexed from, uint256 amount);
-    event BuyerDiscountBought(address indexed from, uint256 amount);
-    event SellerDiscountBought(address indexed from, uint256 amount);
+    event BuyerDiscountBought(address indexed from, uint256 id, uint256 amount);
+    event SellerDiscountBought(
+        address indexed from,
+        uint256 id,
+        uint256 amount
+    );
+    event DiscountUsed(address indexed user, uint256 id);
 
     // ========================
     // VARIABLES
     // ========================
     IUserManager public userManager;
     ITokenDistribution public tokenDistribution;
+    mapping(address => Discount[]) public userDiscounts;
+    uint256 public discountCounter; // Compteur global des réductions
 
     // ========================
     // CONSTRUCTEUR
@@ -68,20 +77,6 @@ contract LDRToken is ERC20, Ownable {
     // ========================
     // MODIFICATEURS
     // ========================
-    /**
-     * @dev Vérifie que le montant total après mint ne dépasse pas 200 tokens.
-     */
-    modifier checkMinAndMax200Tokens(address _to, uint256 amountToMint) {
-        require(
-            amountToMint > 0,
-            "LDRToken: Amount to mint must be greater than 0"
-        );
-        if (balanceOf(_to) >= 200) {
-            emit MintAttemptedWithMaxBalance(_to, balanceOf(_to));
-        }
-        _;
-    }
-
     /**
      * @dev Restreint l'accès aux appels provenant du contrat TokenDistribution.
      */
@@ -110,9 +105,8 @@ contract LDRToken is ERC20, Ownable {
     /**
      * @notice Mint mensuel limité à une fois par mois pour une adresse donnée.
      * @param to Adresse du destinataire des tokens.
-     * @param amountToMint Montant de tokens à mint.
      */
-    function mint(address to, uint256 amountToMint) public {
+    function monthlyMint(address to) public {
         require(to != address(0), "LDRToken: Invalid address");
         require(
             block.timestamp - userManager.getLastMintTime(to) >= 30 days,
@@ -120,7 +114,7 @@ contract LDRToken is ERC20, Ownable {
         );
 
         userManager.updateLastMintTime(to);
-        _mintTokens(to, amountToMint);
+        _mintTokens(to, 10);
     }
 
     /**
@@ -143,7 +137,11 @@ contract LDRToken is ERC20, Ownable {
         uint256 amountToUse
     ) public canBuyDiscount(amountToUse) {
         _burnTokens(amountToUse);
-        emit BuyerDiscountBought(msg.sender, amountToUse);
+        userDiscounts[msg.sender].push(
+            Discount(discountCounter, amountToUse, false)
+        );
+        emit BuyerDiscountBought(msg.sender, discountCounter, amountToUse);
+        discountCounter++;
     }
 
     /**
@@ -154,7 +152,47 @@ contract LDRToken is ERC20, Ownable {
         uint256 amountToUse
     ) public canBuyDiscount(amountToUse) {
         _burnTokens(amountToUse);
-        emit SellerDiscountBought(msg.sender, amountToUse);
+        userDiscounts[msg.sender].push(
+            Discount(discountCounter, amountToUse, false)
+        );
+        emit SellerDiscountBought(msg.sender, discountCounter, amountToUse);
+        discountCounter++;
+    }
+
+    /**
+     * @notice Utilise une réduction pour une transaction.
+     * @param discountId Index de la réduction à utiliser.
+     */
+    function useDiscount(uint256 discountId) public {
+        Discount[] storage discounts = userDiscounts[msg.sender];
+        bool found = false;
+        for (uint i = 0; i < discounts.length; i++) {
+            if (discounts[i].id == discountId && !discounts[i].isUsed) {
+                discounts[i].isUsed = true;
+                emit DiscountUsed(msg.sender, discountId);
+                found = true;
+                break;
+            }
+        }
+
+        require(found, "Invalid or already used discount");
+    }
+
+    /**
+     * @notice Récupère toutes les réductions d'un utilisateur.
+     * @param user Adresse de l'utilisateur.
+     */
+    function getUserDiscounts(
+        address user
+    ) public view returns (Discount[] memory) {
+        return userDiscounts[user];
+    }
+
+    /**
+     * @notice Fonction qui détermine le nombre de décimales utilisées pour le token.
+     */
+    function decimals() public view virtual override returns (uint8) {
+        return 0;
     }
 
     // ========================
@@ -186,10 +224,7 @@ contract LDRToken is ERC20, Ownable {
      * @param to Adresse du destinataire.
      * @param amountToMint Montant à mint.
      */
-    function _mintTokens(
-        address to,
-        uint256 amountToMint
-    ) private checkMinAndMax200Tokens(to, amountToMint) {
+    function _mintTokens(address to, uint256 amountToMint) private {
         require(
             userManager.isUserRegistered(to),
             "User is not registered with UserManager"

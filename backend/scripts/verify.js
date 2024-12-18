@@ -5,27 +5,27 @@ async function main() {
 
     // Vérifier UserManager
     await hre.run("verify:verify", {
-        address: "0xeaeCB9909c85f6CA96EF09a325D36C736D4B8187", // Adresse du contrat UserManager
+        address: "0x468fBa9DaC4A48923C33783E3d0903925729Ac1E", // Adresse du contrat UserManager
     });
 
     // Vérifier TokenDistribution
     await hre.run("verify:verify", {
-        address: "0xe9C15FF93291F0D590E9DFC46Aac6b20C6C1b187", // Adresse du contrat TokenDistribution
+        address: "0x366c8901bec9093b77F9B1A6493D18C52Fbc9719", // Adresse du contrat TokenDistribution
     });
 
     // Vérifier LDRToken
     await hre.run("verify:verify", {
-        address: "0xA3F902784618aee85114F86d5EB39ff2905fa158", // Adresse du contrat LDRToken
+        address: "0x89B9Cb8D0EDfE3681fA01B217D73592F2C05cc85", // Adresse du contrat LDRToken
     });
 
     // Vérifier Marketplace
     await hre.run("verify:verify", {
-        address: "0xcCB0c26038eD5B608f0eBf2Cdc2C0346b5f88Ab0", // Adresse du contrat Marketplace
+        address: "0x440A2eBAD487ECF8158F76B9F72dAF5B2a6Ef858", // Adresse du contrat Marketplace
     });
 
     // Vérifier AuthenticityNFT
     await hre.run("verify:verify", {
-        address: "0x342DcDfB60D4310F6fcb8aF0e757B0B522A7946E", // Adresse du contrat AuthenticityNFT
+        address: "0x45B782Fb1B1363c92CEC532D312e6F42039AB9C1", // Adresse du contrat AuthenticityNFT
     });
 
     console.log("Vérification terminée !");

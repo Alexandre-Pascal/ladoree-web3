@@ -8,7 +8,7 @@ dataSources:
     name: UserManager
     network: polygon-amoy
     source:
-      address: "0xeaeCB9909c85f6CA96EF09a325D36C736D4B8187"
+      address: "0x468fBa9DaC4A48923C33783E3d0903925729Ac1E"
       abi: UserManager
       startBlock: 15400825
     mapping:
@@ -29,13 +29,15 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: UserRegistered(indexed address,string,string,string,bool,string)
           handler: handleUserRegistered
+        - event: UserHasMinted(indexed address,uint256)
+          handler: handleUserHasMinted
       file: ./src/user-manager.ts
 
   - kind: ethereum
     name: AuthenticityNFT
     network: polygon-amoy
     source:
-      address: "0x342DcDfB60D4310F6fcb8aF0e757B0B522A7946E"
+      address: "0x45B782Fb1B1363c92CEC532D312e6F42039AB9C1"
       abi: AuthenticityNFT
       startBlock: 15400836
     mapping:
@@ -73,7 +75,7 @@ dataSources:
     name: TokenDistribution
     network: polygon-amoy
     source:
-      address: "0xe9C15FF93291F0D590E9DFC46Aac6b20C6C1b187"
+      address: "0x366c8901bec9093b77F9B1A6493D18C52Fbc9719"
       abi: TokenDistribution
       startBlock: 15400827
     mapping:
@@ -97,7 +99,7 @@ dataSources:
     name: LDRToken
     network: polygon-amoy
     source:
-      address: "0xA3F902784618aee85114F86d5EB39ff2905fa158"
+      address: "0x89B9Cb8D0EDfE3681fA01B217D73592F2C05cc85"
       abi: LDRToken
       startBlock: 15400830
     mapping:
@@ -120,16 +122,16 @@ dataSources:
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApprovalToken
-        - event: BuyerDiscountBought(indexed address,uint256)
+        - event: BuyerDiscountBought(indexed address,uint256,uint256)
           handler: handleBuyerDiscountBought
         - event: MintAdjusted(indexed address,uint256,uint256)
           handler: handleMintAdjusted
-        - event: MintAttemptedWithMaxBalance(indexed address,uint256)
-          handler: handleMintAttemptedWithMaxBalance
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event: SellerDiscountBought(indexed address,uint256)
+        - event: SellerDiscountBought(indexed address,uint256,uint256)
           handler: handleSellerDiscountBought
+        - event: DiscountUsed(indexed address,uint256)
+          handler: handleDiscountUsed 
         - event: TokenBurned(indexed address,uint256)
           handler: handleTokenBurned
         - event: TokensMinted(indexed address,uint256)
@@ -142,7 +144,7 @@ dataSources:
     name: Marketplace
     network: polygon-amoy
     source:
-      address: "0xcCB0c26038eD5B608f0eBf2Cdc2C0346b5f88Ab0"
+      address: "0x440A2eBAD487ECF8158F76B9F72dAF5B2a6Ef858"
       abi: Marketplace
       startBlock: 15400825
     mapping:

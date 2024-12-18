@@ -2,23 +2,23 @@ import {
   Approval as ApprovalEvent,
   BuyerDiscountBought as BuyerDiscountBoughtEvent,
   MintAdjusted as MintAdjustedEvent,
-  MintAttemptedWithMaxBalance as MintAttemptedWithMaxBalanceEvent,
   OwnershipTransferred as OwnershipTransferredEvent,
   SellerDiscountBought as SellerDiscountBoughtEvent,
   TokenBurned as TokenBurnedEvent,
   TokensMinted as TokensMintedEvent,
   Transfer as TransferEvent,
+  DiscountUsed as DiscountUsedEvent,
 } from "../generated/LDRToken/LDRToken"
 import {
   ApprovalToken,
   BuyerDiscountBought,
   MintAdjusted,
-  MintAttemptedWithMaxBalance,
   OwnershipTransferred,
   SellerDiscountBought,
   TokenBurned,
   TokensMinted,
   TransferToken,
+  DiscountUsed,
 } from "../generated/schema"
 
 export function handleApprovalToken(event: ApprovalEvent): void {
@@ -44,6 +44,7 @@ export function handleBuyerDiscountBought(
   )
   entity.from = event.params.from
   entity.amount = event.params.amount
+  entity.discountId = event.params.id
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -59,22 +60,6 @@ export function handleMintAdjusted(event: MintAdjustedEvent): void {
   entity.to = event.params.to
   entity.originalAmount = event.params.originalAmount
   entity.adjustedAmount = event.params.adjustedAmount
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleMintAttemptedWithMaxBalance(
-  event: MintAttemptedWithMaxBalanceEvent,
-): void {
-  let entity = new MintAttemptedWithMaxBalance(
-    event.transaction.hash.concatI32(event.logIndex.toI32()),
-  )
-  entity.to = event.params.to
-  entity.currentBalance = event.params.currentBalance
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -107,6 +92,21 @@ export function handleSellerDiscountBought(
   )
   entity.from = event.params.from
   entity.amount = event.params.amount
+  entity.discountId = event.params.id
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+
+export function handleDiscountUsed(event: DiscountUsedEvent): void {
+  let entity = new DiscountUsed(
+    event.transaction.hash.concatI32(event.logIndex.toI32()),
+  )
+  entity.from = event.params.user
+  entity.discountId = event.params.id
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

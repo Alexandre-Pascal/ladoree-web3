@@ -29,6 +29,15 @@ type UserRegistered @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+type UserHasMinted @entity(immuable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amount: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type ApprovalNFT @entity(immutable: true) {
   id: Bytes!
   owner: Bytes! # address
@@ -145,6 +154,7 @@ type LDRTokenApproval @entity(immutable: true) {
 type BuyerDiscountBought @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
+  discountId: BigInt!
   amount: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -156,15 +166,6 @@ type MintAdjusted @entity(immutable: true) {
   to: Bytes! # address
   originalAmount: BigInt! # uint256
   adjustedAmount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type MintAttemptedWithMaxBalance @entity(immutable: true) {
-  id: Bytes!
-  to: Bytes! # address
-  currentBalance: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -182,7 +183,17 @@ type LDRTokenOwnershipTransferred @entity(immutable: true) {
 type SellerDiscountBought @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
+  discountId: BigInt!
   amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DiscountUsed @entity(immutable: true) {
+  id: Bytes!
+  from: Bytes! # address
+  discountId: BigInt!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

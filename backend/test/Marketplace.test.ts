@@ -44,7 +44,7 @@ describe("Marketplace", function () {
     //Set address of AuthenticityNFT contract in Marketplace
     await nftContract
       .connect(owner)
-      .setMarketplaceContractContract(marketplace.getAddress());
+      .setMarketplaceContract(marketplace.getAddress());
 
     await marketplace.connect(owner).setAuthenticityNFTContract(nftContract.getAddress());
 

@@ -31,8 +31,6 @@ async function main() {
     await authenticityNFT.waitForDeployment();
     console.log("AuthenticityNFT déployé à :", await authenticityNFT.getAddress());
 
-    // Set Contracts addresses in AuthenticityNFT
-    await authenticityNFT.setMarketplaceContract(await marketplace.getAddress());
 
     // Set Contracts addresses in LDRToken
     await ldrToken.setUserManagerContract(await userManager.getAddress());
@@ -53,6 +51,10 @@ async function main() {
     await marketplace.setTokenDistributionContract(await tokenDistribution.getAddress());
     await marketplace.setAuthenticityNFTContract(await authenticityNFT.getAddress());
     console.log("Marketplace TokenDistribution et AuthenticityNFT défini");
+
+    // Set Contracts addresses in AuthenticityNFT
+    await authenticityNFT.setMarketplaceContract(await marketplace.getAddress());
+
 }
 
 main()

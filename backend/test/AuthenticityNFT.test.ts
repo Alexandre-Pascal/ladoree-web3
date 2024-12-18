@@ -19,7 +19,7 @@ describe("AuthenticityNFT", function () {
     const Marketplace = await ethers.getContractFactory("Marketplace");
     marketplaceContract = (await Marketplace.deploy()) as Marketplace;
 
-    await nftContract.setMarketplaceContractContract(marketplaceContract.getAddress());
+    await nftContract.setMarketplaceContract(marketplaceContract.getAddress());
   });
 
 
@@ -180,7 +180,7 @@ describe("AuthenticityNFT", function () {
       try {
         await nftContract
           .connect(recipient)
-          .setMarketplaceContractContract(await recipient.getAddress());
+          .setMarketplaceContract(await recipient.getAddress());
       } catch (error: any) {
         expect(error.message).to.include("OwnableUnauthorizedAccount");
       }
@@ -188,7 +188,7 @@ describe("AuthenticityNFT", function () {
 
     it("Should revert if marketplace address is 0", async function () {
       await expect(
-        nftContract.connect(owner).setMarketplaceContractContract(ZeroAddress)
+        nftContract.connect(owner).setMarketplaceContract(ZeroAddress)
       ).to.be.revertedWith("Invalid marketplace address");
     });
   });

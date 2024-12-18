@@ -1,12 +1,14 @@
 import {
   MintPermissionUpdated as MintPermissionUpdatedEvent,
   OwnershipTransferred as OwnershipTransferredEvent,
-  UserRegistered as UserRegisteredEvent
+  UserRegistered as UserRegisteredEvent,
+  UserHasMinted as UserHasMintedEvent
 } from "../generated/UserManager/UserManager"
 import {
   MintPermissionUpdated,
   OwnershipTransferred,
-  UserRegistered
+  UserRegistered,
+  UserHasMinted
 } from "../generated/schema"
 
 export function handleMintPermissionUpdated(
@@ -51,6 +53,20 @@ export function handleUserRegistered(event: UserRegisteredEvent): void {
   entity.bio = event.params.bio
   entity.isCreator = event.params.isCreator
   entity.profileImage = event.params.profileImage
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+
+export function handleUserHasMinted(event: UserHasMintedEvent): void {
+  let entity = new UserHasMinted(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  )
+  entity.user = event.params.user
+  entity.amount = event.params.amount
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

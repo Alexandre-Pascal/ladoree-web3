@@ -1,4 +1,4 @@
-export const userManagerAddress = "0xeaeCB9909c85f6CA96EF09a325D36C736D4B8187"
+export const userManagerAddress = "0x468fBa9DaC4A48923C33783E3d0903925729Ac1E"
 export const userManagerAbi = [
     {
         "inputs": [],
@@ -63,6 +63,25 @@ export const userManagerAbi = [
             }
         ],
         "name": "OwnershipTransferred",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "UserHasMinted",
         "type": "event"
     },
     {
@@ -393,7 +412,7 @@ export const userManagerAbi = [
     }
 ]
 
-export const tokenDistribution = "0xe9C15FF93291F0D590E9DFC46Aac6b20C6C1b187"
+export const tokenDistribution = "0x366c8901bec9093b77F9B1A6493D18C52Fbc9719"
 export const tokenDistributionAbi = [
     {
         "inputs": [],
@@ -642,7 +661,7 @@ export const tokenDistributionAbi = [
     }
 ]
 
-export const ldrTokenAddress = "0xA3F902784618aee85114F86d5EB39ff2905fa158"
+export const ldrTokenAddress = "0x89B9Cb8D0EDfE3681fA01B217D73592F2C05cc85"
 export const ldrTokenAbi = [
     {
         "inputs": [],
@@ -794,11 +813,36 @@ export const ldrTokenAbi = [
             {
                 "indexed": false,
                 "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
             }
         ],
         "name": "BuyerDiscountBought",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            }
+        ],
+        "name": "DiscountUsed",
         "type": "event"
     },
     {
@@ -832,25 +876,6 @@ export const ldrTokenAbi = [
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "currentBalance",
-                "type": "uint256"
-            }
-        ],
-        "name": "MintAttemptedWithMaxBalance",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
                 "name": "previousOwner",
                 "type": "address"
             },
@@ -872,6 +897,12 @@ export const ldrTokenAbi = [
                 "internalType": "address",
                 "name": "from",
                 "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
             },
             {
                 "indexed": false,
@@ -1054,12 +1085,61 @@ export const ldrTokenAbi = [
     },
     {
         "inputs": [],
+        "name": "discountCounter",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "getTokenDistributionContractAddress",
         "outputs": [
             {
                 "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "getUserDiscounts",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "id",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isUsed",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct Discount[]",
+                "name": "",
+                "type": "tuple[]"
             }
         ],
         "stateMutability": "view",
@@ -1091,7 +1171,7 @@ export const ldrTokenAbi = [
                 "type": "uint256"
             }
         ],
-        "name": "mint",
+        "name": "mintReward",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1102,14 +1182,9 @@ export const ldrTokenAbi = [
                 "internalType": "address",
                 "name": "to",
                 "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amountToMint",
-                "type": "uint256"
             }
         ],
-        "name": "mintReward",
+        "name": "monthlyMint",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1279,6 +1354,53 @@ export const ldrTokenAbi = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "discountId",
+                "type": "uint256"
+            }
+        ],
+        "name": "useDiscount",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "userDiscounts",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "isUsed",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "userManager",
         "outputs": [
@@ -1293,7 +1415,7 @@ export const ldrTokenAbi = [
     }
 ]
 
-export const marketplaceAddress = "0xcCB0c26038eD5B608f0eBf2Cdc2C0346b5f88Ab0"
+export const marketplaceAddress = "0x440A2eBAD487ECF8158F76B9F72dAF5B2a6Ef858"
 export const marketplaceAbi = [
     {
         "inputs": [],
@@ -1698,7 +1820,7 @@ export const marketplaceAbi = [
     }
 ]
 
-export const authenticityNftAddress = "0x342DcDfB60D4310F6fcb8aF0e757B0B522A7946E"
+export const authenticityNftAddress = "0x45B782Fb1B1363c92CEC532D312e6F42039AB9C1"
 export const authenticityNftAbi = [
     {
         "inputs": [],

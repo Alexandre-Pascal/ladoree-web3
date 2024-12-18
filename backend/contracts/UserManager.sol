@@ -65,6 +65,8 @@ contract UserManager is Ownable {
     ); // Émis lors de l'enregistrement d'un utilisateur
     event MintPermissionUpdated(address indexed user, bool canMint); // Émis lors de la mise à jour de permissions
 
+    event UserHasMinted(address indexed user, uint256 amount); // Émis lorsqu'un utilisateur mint
+
     // ========================
     // CONSTRUCTEUR
     // ========================
@@ -136,6 +138,7 @@ contract UserManager is Ownable {
         address user
     ) external onlyOwnerOrTokenContract onlyRegisteredUser(user) {
         users[user].lastMintTime = block.timestamp;
+        emit UserHasMinted(user, block.timestamp);
     }
 
     /**

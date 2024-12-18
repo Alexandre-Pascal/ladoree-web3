@@ -130,6 +130,20 @@ describe("TokenDistribution", function () {
         "TokenDistribution: Caller is not the Marketplace contract"
       );
     });
+
+    it("Should emit MintAttemptedWithMaxBalance if user tries to mint more than 200 tokens", async function () {
+
+      await marketplace.listItem("name", "description", "kind", 100000, 0, "imageURI", "metadataURI", await owner.getAddress(), 500);
+      await marketplace.itemBuyed(0, await user1.getAddress());
+
+      await marketplace.listItem("name", "description", "kind", 100000, 0, "imageURI", "metadataURI", await owner.getAddress(), 500);
+      await expect(marketplace.itemBuyed(1, await user1.getAddress())).to.emit(marketplace, "MintAttemptedWithMaxBalance");
+    });
+
+    it("Should revert LDRToken: Amount to mint must be greater than 0 if user tries to mint 0 tokens", async function () {
+      await marketplace.listItem("name", "description", "kind", 0, 0, "imageURI", "metadataURI", await owner.getAddress(), 500);
+      await expect(marketplace.itemBuyed(0, await user1.getAddress())).to.be.revertedWith("LDRToken: Amount to mint must be greater than 0");
+    });
   });
 
   describe("Get address of contracts", function () {

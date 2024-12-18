@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import CustomRaimbowKitProvider from "./CustomRaimbowKitProvider";
 
 import Providers from './Providers';
+import TokenCollector from "@/components/shared/TokenCollector";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -46,6 +47,7 @@ export default function RootLayout({
       >
         <CustomRaimbowKitProvider>
           <Header />
+          <TokenCollector />
           <main className="flex-grow">
             <Toaster />
             <Providers>{children}</Providers>
