@@ -232,7 +232,7 @@ const ItemDetailPage: React.FC<ItemDetailPageProps> = ({ params }) => {
                         ) :
                             <button className="bg-black text-white px-4 py-2 rounded-sm cursor-not-allowed" disabled>Connectez-vous pour acheter</button>
                         }
-                        <button className="bg-white text-black px-4 py-2 rounded-sm border border-black">FAIRE UNE OFFRE (Bientôt possible)</button>
+                        <button className="bg-white text-black px-4 py-2 rounded-sm border border-black">FAIRE UNE OFFRE (Prochainement possible)</button>
                     </div>
 
                     {/* Détails */}

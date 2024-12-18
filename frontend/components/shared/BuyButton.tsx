@@ -120,7 +120,7 @@ const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefin
         <div>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button className="bg-blue-600 text-white">Acheter maintenant</Button>
+                    <Button className="bg-black text-white px-4 py-2 rounded-sm w-full">ACHETER MAINTENANT</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
@@ -136,7 +136,7 @@ const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefin
                                     </h3>
                                     <Button
                                         onClick={() => handleApplyDiscount(discounts5[0])}
-                                        className="bg-blue-500 hover:bg-blue-600"
+                                        className="bg-white text-black px-4 py-2 rounded-sm border border-black w-full hover:bg-slate-200 mt-2"
                                     >
                                         Utiliser réduction 5%
                                     </Button>
@@ -152,7 +152,7 @@ const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefin
                                     </h3>
                                     <Button
                                         onClick={() => handleApplyDiscount(discounts10[0])}
-                                        className="bg-blue-500 hover:bg-blue-600"
+                                        className="bg-white text-black px-4 py-2 rounded-sm border border-black w-full hover:bg-slate-200 mt-2"
                                     >
                                         Utiliser réduction 10%
                                     </Button>
@@ -165,7 +165,7 @@ const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefin
                                     <p>
                                         Vous n'avez pas de réductions disponibles, si vous avez assez de tokens, vous pouvez en acheter directement depuis la page de profil.
                                     </p>
-                                    <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => window.location.href = "/profile"}>
+                                    <Button className="bg-white text-black px-4 py-2 rounded-sm border border-black w-full hover:bg-slate-200 mt-2" onClick={() => window.location.href = "/profile"}>
                                         Aller au profil
                                     </Button>
                                 </div>
