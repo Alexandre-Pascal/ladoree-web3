@@ -177,6 +177,19 @@ export const queries = {
   }
 }`,
 
+  GET_LAST_MINT_TIMESTAMP: gql`
+  query MyQuery($user: String!) {
+  userHasMinteds(
+    where: {user: $user}
+    first: 1
+    orderDirection: desc
+    orderBy: blockTimestamp
+  ) {
+    blockTimestamp
+  }
+}
+`,
+
 };
 
 // URL du sous-graph

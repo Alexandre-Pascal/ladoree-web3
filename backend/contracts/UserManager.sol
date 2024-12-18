@@ -65,7 +65,7 @@ contract UserManager is Ownable {
     ); // Émis lors de l'enregistrement d'un utilisateur
     event MintPermissionUpdated(address indexed user, bool canMint); // Émis lors de la mise à jour de permissions
 
-    event UserHasMinted(address indexed user, uint256 amount); // Émis lorsqu'un utilisateur mint
+    event UserHasMinted(address indexed user, uint256 timestamp); // Émis lorsqu'un utilisateur a mint
 
     // ========================
     // CONSTRUCTEUR
