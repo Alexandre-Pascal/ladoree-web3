@@ -12,14 +12,37 @@ import { Switch } from "@/components/ui/switch"
 import { Input } from "@/components/ui/input"
 import { User } from 'lucide-react';
 import Image from 'next/image';
-import { Button } from '@/components/ui';
 import BuyDiscountModal from '@/components/shared/BuyDiscountModal';
+import filterUnusedBuyerDiscounts from '@/utils/FilterUnusedDiscounts';
 
+interface Item {
+    name: string;
+    description: string;
+    imageURI: string;
+    price: string;
+    kind: string;
+    creationDate: string;
+    seller: string;
+    creator: string;
+    tokenId: string;
+    itemId: string;
+}
 
+interface Discount {
+    discountId: number;
+    amount: number;
+    from: string;
+}
+type GraphQLResponseBuyer = {
+    buyerDiscountBoughts: Discount[];
+    discountUseds: { discountId: number; from: string }[];
+};
+type GraphQLResponseSeller = {
+    sellerDiscountBoughts: Discount[];
+    discountUseds: { discountId: number; from: string }[];
+};
 export default function UserProfile() {
     const { address } = useAccount(); // Récupère l'adresse utilisateur connectée
-
-    const [showDiscountModal, setShowDiscountModal] = useState(false);
 
     const { data: tokenBalance, isLoading: isBalanceLoading, error: balanceError } = useReadContract({
         address: ldrTokenAddress,
@@ -46,6 +69,65 @@ export default function UserProfile() {
         },
         enabled: !!address, // Exécute la requête uniquement si une adresse est disponible
     });
+
+    const [unusedBuyerDiscounts, setUnusedBuyerDiscounts] = useState<Discount[]>([]);
+    const [unusedSellerDiscounts, setUnusedSellerDiscounts] = useState<Discount[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (!address) return;
+        const fetchDiscounts = async () => {
+            try {
+                setLoading(true);
+
+                // Appel de la requête GraphQL pour récupérer les réductions achetées et utilisées
+                const data: GraphQLResponseBuyer = await request(GRAPHQL_URL, queries.GET_ALL_BUYER_DISCOUNTS, { userAddress: address });
+
+                // Filtrer les réductions non utilisées avec la fonction utilitaire
+                const availableDiscounts: Discount[] = filterUnusedBuyerDiscounts(
+                    data.buyerDiscountBoughts,
+                    data.discountUseds
+                );
+
+                console.log("availableDiscountsBuyer", availableDiscounts);
+                setUnusedBuyerDiscounts(availableDiscounts);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des réductions :", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDiscounts();
+    }, [address]);
+
+    useEffect(() => {
+        const fetchDiscounts = async () => {
+            if (!address) return;
+            try {
+                setLoading(true);
+
+                // Appel de la requête GraphQL pour récupérer les réductions achetées et utilisées
+                const data: GraphQLResponseSeller = await request(GRAPHQL_URL, queries.GET_ALL_SELLER_DISCOUNTS, { userAddress: address });
+
+                // Filtrer les réductions non utilisées avec la fonction utilitaire
+                const availableDiscounts: Discount[] = filterUnusedBuyerDiscounts(
+                    data.sellerDiscountBoughts,
+                    data.discountUseds
+                );
+
+                console.log("availableDiscountsSeller", availableDiscounts);
+                setUnusedSellerDiscounts(availableDiscounts);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des réductions :", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDiscounts();
+    }, [address]);
+
 
     const { writeContract: updateUserName, isSuccess: updateUserNameIsSuccess, isError: updateUserNameIsError, isPending: updateUserNameIsPending } = useWriteContract();
     const { writeContract: updateEmail, isSuccess: updateEmailIsSuccess, isError: updateEmailIsError, isPending: updateEmailIsPending } = useWriteContract();
@@ -440,21 +522,42 @@ export default function UserProfile() {
                         {/* Section Réductions */}
                         <div className="p-12">
                             <h2 className="text-xl font-semibold text-gray-800 mb-4">🎟️ Vos Réductions Disponibles</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Réduction Acheteur 5% */}
-                                <div className="flex flex-col items-center bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm">
-                                    <p className="text-gray-700 text-lg font-medium">Réduction Acheteur</p>
-                                    <p className="text-3xl font-bold text-green-600 my-2">5%</p>
-                                    <p className="text-sm text-gray-500">Valable pour un achat</p>
-                                </div>
 
-                                {/* Réduction Vendeur 10% */}
-                                <div className="flex flex-col items-center bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm">
-                                    <p className="text-gray-700 text-lg font-medium">Réduction Vendeur</p>
-                                    <p className="text-3xl font-bold text-red-600 my-2">10%</p>
-                                    <p className="text-sm text-gray-500">Valable pour une vente</p>
+                            {loading ? (
+                                <p className="text-gray-500">Chargement des réductions...</p>
+                            ) : unusedBuyerDiscounts.length > 0 || unusedSellerDiscounts.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Réductions Acheteurs */}
+                                    {unusedBuyerDiscounts.map((discount) => (
+                                        <div
+                                            key={`buyer-${discount.discountId}`}
+                                            className="flex flex-col items-center bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm"
+                                        >
+                                            <p className="text-gray-700 text-lg font-medium">Réduction Acheteur</p>
+                                            <p className="text-3xl font-bold text-green-600 my-2">
+                                                {discount.amount == 50 ? '5%' : '10%'}
+                                            </p>
+                                            <p className="text-sm text-gray-500">Valable pour un achat</p>
+                                        </div>
+                                    ))}
+
+                                    {/* Réductions Vendeurs */}
+                                    {unusedSellerDiscounts.map((discount) => (
+                                        <div
+                                            key={`seller-${discount.discountId}`}
+                                            className="flex flex-col items-center bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm"
+                                        >
+                                            <p className="text-gray-700 text-lg font-medium">Réduction Vendeur</p>
+                                            <p className="text-3xl font-bold text-red-600 my-2">
+                                                {discount.amount == 50 ? '5%' : '10%'}
+                                            </p>
+                                            <p className="text-sm text-gray-500">Valable pour une vente</p>
+                                        </div>
+                                    ))}
                                 </div>
-                            </div>
+                            ) : (
+                                <p className="text-gray-500">Vous n'avez aucune réduction disponible.</p>
+                            )}
                         </div>
 
                         {/* Section NFTs */}

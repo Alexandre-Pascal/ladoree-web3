@@ -204,6 +204,20 @@ query MyQuery($userAddress: String!) {
 }
 `,
 
+  GET_ALL_SELLER_DISCOUNTS: gql`
+query MyQuery($userAddress: String!) {
+  sellerDiscountBoughts(where: { from: $userAddress }) {
+    discountId
+    amount
+    from
+  }
+  discountUseds(where: { from: $userAddress }) {
+    discountId
+    from
+  }
+}
+`,
+
 };
 
 // URL du sous-graph

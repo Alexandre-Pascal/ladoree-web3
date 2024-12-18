@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { request } from 'graphql-request';
-import { useAccount, useWriteContract } from 'wagmi';
-import { ldrTokenAbi, ldrTokenAddress } from "@/utils/abis";
+import { useAccount } from 'wagmi';
+import filterUnusedDiscounts from '@/utils/FilterUnusedDiscounts';
 
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_API_KEY!); // Clé publique Stripe
@@ -35,8 +35,6 @@ type GraphQLResponse = {
 };
 const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefined }) => {
     const [discount, setDiscount] = useState<Discount | null>(null); // Réduction sélectionnée
-    const [error, setError] = useState<string | null>(null); // Gestion des erreurs
-
 
     const [discounts, setDiscounts] = useState<Discount[] | null>(null); // Réduction sélectionnée
     const [discounts5, setDiscounts5] = useState<Discount[]>([]); // Réduction sélectionnée
@@ -44,10 +42,7 @@ const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefin
 
     const { address } = useAccount(); // Adresse Ethereum de l'utilisateur
 
-    const filterUnusedDiscounts = (buyerDiscounts: Discount[], usedDiscounts: { discountId: number }[]) => {
-        const usedIds = new Set(usedDiscounts.map(discount => discount.discountId)); // Récupère les IDs utilisés
-        return buyerDiscounts.filter(discount => !usedIds.has(discount.discountId)); // Filtre les non-utilisés
-    };
+
 
     const handleApplyDiscount = async (discount: Discount) => {
         setDiscount(discount)
@@ -121,21 +116,6 @@ const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefin
         });
     }, [discounts]);
 
-    useEffect(() => {
-        if (!discounts5 || !discounts10) return;
-        console.log("discounts5List", discounts5);
-        console.log("discounts5Length", discounts5.length);
-        console.log("discounts10List", discounts10);
-        console.log("discounts10Length", discounts10.length);
-    }, [discounts5, discounts10]);
-
-
-    useEffect(() => {
-        if (discount) {
-            console.log("discount", discount);
-        }
-    }, [discount]);
-
     return (
         <div>
             <Dialog>
@@ -147,8 +127,6 @@ const BuyButton = ({ item, buyer }: { item: Item; buyer: `0x${string}` | undefin
                         <DialogTitle>Appliquer une réduction LDR</DialogTitle>
                     </DialogHeader>
                     <div className="flex flex-col gap-4">
-                        {/* Message d'erreur */}
-                        {error && <p className="text-red-500">{error}</p>}
                         {/* Réduction 5% */}
                         {
                             discounts5.length > 0 && (
