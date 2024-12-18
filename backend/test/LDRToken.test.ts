@@ -233,21 +233,21 @@ describe("LDRToken", function () {
 
       it("Should allow users to use discount", async function () {
         await ldrToken.connect(user1).buyBuyersDiscount(50);
-        await ldrToken.connect(user1).useDiscount(0);
+        await ldrToken.connect(user1).useDiscount(user1.getAddress(), 0);
         expect((await ldrToken.getUserDiscounts(user1.getAddress())).at(0)?.[2]).to.be.true;
       });
 
       it("Should emit DiscountUsed event on successful use", async function () {
         await ldrToken.connect(user1).buyBuyersDiscount(50);
-        await expect(ldrToken.connect(user1).useDiscount(0))
+        await expect(ldrToken.connect(user1).useDiscount(user1.getAddress(), 0))
           .to.emit(ldrToken, "DiscountUsed")
           .withArgs(user1.getAddress(), 0);
       });
 
       it("Should revert if user tries to use discount with invalid index", async function () {
         await ldrToken.connect(user1).buyBuyersDiscount(50);
-        await expect(ldrToken.connect(user1).useDiscount(1))
-          .to.be.revertedWith("Invalid or already used discount")
+        await expect(ldrToken.connect(user1).useDiscount(user1.getAddress(), 1))
+          .to.be.revertedWith("Invalid or already used discount");
       });
     });
   });

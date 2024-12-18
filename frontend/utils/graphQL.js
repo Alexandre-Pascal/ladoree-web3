@@ -190,6 +190,20 @@ export const queries = {
 }
 `,
 
+  GET_ALL_BUYER_DISCOUNTS: gql`
+query MyQuery($userAddress: String!) {
+  buyerDiscountBoughts(where: { from: $userAddress }) {
+    discountId
+    amount
+    from
+  }
+  discountUseds(where: { from: $userAddress }) {
+    discountId
+    from
+  }
+}
+`,
+
 };
 
 // URL du sous-graph

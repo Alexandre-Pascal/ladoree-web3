@@ -24,7 +24,6 @@ const TokenCollector: React.FC = () => {
         // Convertir la date passée (timestamp en secondes) en millisecondes
         const givenDate = new Date(parseInt(dateToCheck) * 1000);
 
-        console.log("givenDate", givenDate);
         // Obtenir la date actuelle moins 30 jours
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1); // Soustraire 1 mois
@@ -43,7 +42,6 @@ const TokenCollector: React.FC = () => {
             }
             const blockTimestamp = lastMintedTimestamp?.userHasMinteds?.[0]?.blockTimestamp;
             const isItReady = isMoreThanOneMonthOld(blockTimestamp);
-            console.log("isItReady", isItReady);
             setIsReadyToMintAgain(isItReady);
         };
         fetchLastMinted();

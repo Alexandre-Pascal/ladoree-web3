@@ -99,7 +99,7 @@ dataSources:
     name: LDRToken
     network: polygon-amoy
     source:
-      address: "0x89B9Cb8D0EDfE3681fA01B217D73592F2C05cc85"
+      address: "0x086589D7BA6CBCC93c446F94af1C18027f0D77fF"
       abi: LDRToken
       startBlock: 15400830
     mapping:

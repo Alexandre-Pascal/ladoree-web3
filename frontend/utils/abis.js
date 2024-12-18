@@ -661,7 +661,7 @@ export const tokenDistributionAbi = [
     }
 ]
 
-export const ldrTokenAddress = "0x89B9Cb8D0EDfE3681fA01B217D73592F2C05cc85"
+export const ldrTokenAddress = "0x086589D7BA6CBCC93c446F94af1C18027f0D77fF"
 export const ldrTokenAbi = [
     {
         "inputs": [],
@@ -1355,6 +1355,11 @@ export const ldrTokenAbi = [
     },
     {
         "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
             {
                 "internalType": "uint256",
                 "name": "discountId",

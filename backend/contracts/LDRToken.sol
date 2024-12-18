@@ -163,13 +163,13 @@ contract LDRToken is ERC20, Ownable {
      * @notice Utilise une réduction pour une transaction.
      * @param discountId Index de la réduction à utiliser.
      */
-    function useDiscount(uint256 discountId) public {
-        Discount[] storage discounts = userDiscounts[msg.sender];
+    function useDiscount(address user, uint256 discountId) public {
+        Discount[] storage discounts = userDiscounts[user];
         bool found = false;
         for (uint i = 0; i < discounts.length; i++) {
             if (discounts[i].id == discountId && !discounts[i].isUsed) {
                 discounts[i].isUsed = true;
-                emit DiscountUsed(msg.sender, discountId);
+                emit DiscountUsed(user, discountId);
                 found = true;
                 break;
             }

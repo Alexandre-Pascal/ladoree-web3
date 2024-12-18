@@ -173,11 +173,6 @@ const ItemDetailPage: React.FC<ItemDetailPageProps> = ({ params }) => {
         fetchSellerItems();
     }, [seller]);
 
-    useEffect(() => {
-        console.log("sellerItems", sellerItems);
-    }
-        , [sellerItems]);
-
     if (!item) {
         return <p>Oeuvre d'art non trouvée.</p>;
     }

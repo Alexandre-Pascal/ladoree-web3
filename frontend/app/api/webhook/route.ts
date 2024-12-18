@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
 import { ethers } from 'ethers';
-import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
+import { marketplaceAbi, marketplaceAddress, ldrTokenAbi, ldrTokenAddress } from '@/utils/abis';
 
 const stripe = new Stripe(process.env.STRIPE_API_SECRET!);
 
@@ -11,6 +11,7 @@ const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
 const contractAddress = marketplaceAddress!;
 const contractABI = marketplaceAbi;
 const marketplaceContract = new ethers.Contract(contractAddress, contractABI, wallet);
+const ldrTokenContract = new ethers.Contract(ldrTokenAddress!, ldrTokenAbi, wallet);
 
 // Simule une "base de données" en mémoire pour stocker temporairement les informations
 const orderCache: Record<string, any> = {};
@@ -51,6 +52,7 @@ export async function POST(req: Request): Promise<Response> {
                 imageURI: session.metadata?.imageURI || '',
                 itemId: session.metadata?.itemId || '0',
                 buyer: session.metadata?.buyer || '0x0000000000000000000000000000000000000000',
+                discount: session.metadata?.discount || 0,
             },
         };
 
@@ -77,6 +79,19 @@ export async function POST(req: Request): Promise<Response> {
             console.log("Transaction confirmée :", receipt.transactionHash);
         } catch (err) {
             console.error("Erreur lors de l'appel à itemBuyed :", err);
+            return new Response("Erreur blockchain", { status: 500 });
+        }
+
+        //Appelle la fonction useDiscount du contrat LDRToken
+        try {
+            console.log("Appel à useDiscount sur la blockchain avec le discount :", orderDetails.item.discount);
+            const tx = await ldrTokenContract.useDiscount(orderDetails.item.buyer, Number(orderDetails.item.discount));
+            console.log("Transaction envoyée :", tx.hash);
+
+            const receipt = await tx.wait();
+            console.log("Transaction confirmée :", receipt.transactionHash);
+        } catch (err) {
+            console.error("Erreur lors de l'appel à useDiscount :", err);
             return new Response("Erreur blockchain", { status: 500 });
         }
     }

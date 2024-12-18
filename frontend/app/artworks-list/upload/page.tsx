@@ -77,10 +77,7 @@ const UploadForm: React.FC = () => {
     const { writeContract, error, isSuccess: isSuccessListItem, isPending: isPendingListItem } = useWriteContract();
     const listItem = async (data: { imageUrl: string; metadataUrl: string } | null) => {
         if (!data) return;
-
         const timestamp = dayjs(creationDate).unix();
-        console.log(timestamp); // Résultat : 1733788800
-
         try {
             writeContract({
                 address: marketplaceAddress,
