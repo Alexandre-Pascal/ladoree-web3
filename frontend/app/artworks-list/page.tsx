@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { Filter } from 'lucide-react'; // Import de l'icône de filtre
 import ListItems from '@/components/shared/ListItems';
 import { Button } from '@/components/ui/button';
+import { useAccount } from 'wagmi';
 const page = () => {
     // État pour contrôler l'affichage des filtres
     const [filtersVisible, setFiltersVisible] = useState(false);
+
+    const { address } = useAccount(); // Adresse Ethereum de l'utilisateur
 
     // Fonction pour basculer l'état d'affichage des filtres
     const toggleFilters = () => {
@@ -67,7 +70,16 @@ const page = () => {
                                 <span>{filtersVisible ? 'Masquer les filtres' : 'Afficher les filtres'}</span>
                             </button>
                         </div>
-                        <Button className="absolute top-0 left-56 mt-4 ml-6" onClick={() => window.location.href = '/artworks-list/upload'}>Mettre en vente une œuvre</Button>
+
+                        {
+                            address ? (
+                                < Button className="absolute top-0 left-56 mt-4 ml-6" onClick={() => window.location.href = '/artworks-list/upload'}>Mettre en vente une œuvre</Button>
+
+                            ) : (
+                                <button className="absolute top-0 left-56 mt-4 ml-6 bg-black text-white px-4 py-2 rounded-sm cursor-not-allowed" disabled>Connectez-vous pour vendre</button>
+                            )
+                        }
+
                         <ListItems />
                     </div>
                 </div>
