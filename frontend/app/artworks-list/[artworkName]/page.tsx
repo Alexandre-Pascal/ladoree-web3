@@ -295,5 +295,4 @@ const ItemDetailPage: React.FC<ItemDetailPageProps> = ({ params }) => {
     );
 };
 
-// Envelopper le composant avec Suspense pour gérer l'asynchronisme de useSearchParams()
 export default ItemDetailPage;

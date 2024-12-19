@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { useWriteContract, useAccount, useReadContract } from "wagmi";
-import { marketplaceAbi, marketplaceAddress, authenticityNftAbi, authenticityNftAddress } from '@/utils/abis';
+import React, { useState, ChangeEvent, FormEvent, useEffect, Suspense } from "react";
+import { useWriteContract, useAccount } from "wagmi";
+import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
 import { Input, Button, Textarea, Select, Label } from "@/components/ui/index";
 import toast, { Toaster } from "react-hot-toast";
 import {
@@ -13,9 +13,6 @@ import {
 import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
 import fetchNFTMetadata from "@/utils/fetchNFTMetadata";
-import { request } from 'graphql-request';
-import { GRAPHQL_URL, queries } from '@/utils/graphQL';
-import { cpSync } from "fs";
 
 interface NFTMetadata {
     tokenId: string;
@@ -87,53 +84,6 @@ const UploadForm: React.FC = () => {
         }
     };
 
-    const [tokenId, setTokenId] = useState<number | null>(null);
-    const { writeContract: approveContract, isError: isErrorApprove, error: errorApprove, isPending: isPendingApprove, isSuccess: isSuccessApprove } = useWriteContract();
-
-
-    // useEffect(() => {
-    //     if (!tokenURI) return;
-    //     if (!address) return;
-
-    //     const fetchTokenId = async () => {
-    //         //Récupère le tokenId à partir de l'url
-    //         const tokenId: GraphqlResponseTokenId = await request(GRAPHQL_URL, queries.GET_TOKEN_ID_BY_TOKEN_URI, { tokenURI });
-    //         setTokenId(Number(tokenId.nftminteds[0].tokenId));
-    //         console.log("tokenId", tokenId);
-    //     };
-    //     fetchTokenId();
-
-    // }, [tokenURI, address]);
-
-    // useEffect(() => {
-    //     if (!tokenId) return;
-    //     const approve = async () => {
-    // console.log("tokenIddddddddd", tokenId);
-    // //Approve le tokenId pour l'utilisateur connecté
-    // approveContract({
-    //     address: authenticityNftAddress,
-    //     abi: authenticityNftAbi,
-    //     functionName: "approve",
-    //     args: [marketplaceAddress, tokenId]
-    // });
-    //     }
-    //     approve();
-    // }, [tokenId]);
-
-    // useEffect(() => {
-    //     if (isPendingApprove) {
-    //         toast.loading("Approve tokenId en cours...", { id: toastId });
-    //     }
-    //     if (isErrorApprove) {
-    //         console.error("Error approving tokenId:", errorApprove);
-    //         toast.error("Erreur lors de l'approbation du tokenId.", { id: toastId });
-    //     }
-    //     if (isSuccessApprove) {
-    //         toast.dismiss(toastId); // Supprime le toast en cours
-    //         toast.success("tokenId approuvé avec succès!", { id: toastId });
-    //     }
-    // }, [isPendingApprove, isErrorApprove, isSuccessApprove]);
-
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         toast.loading("Mise en vente en cours...", { id: toastId });
         e.preventDefault();
@@ -152,8 +102,6 @@ const UploadForm: React.FC = () => {
             const formData = new FormData();
 
             if (NFTMetadatas) {
-                // formData.append("metadataURI", tokenURI);
-                console.log("tokenURI", tokenURI);
                 listItem(undefined, NFTMetadatas);
                 setResult({ imageUrl: NFTMetadatas.image, metadataUrl: tokenURI || "" });
 
@@ -191,9 +139,6 @@ const UploadForm: React.FC = () => {
     const { writeContract, error, isSuccess: isSuccessListItem, isPending: isPendingListItem } = useWriteContract();
     const listItem = async (data?: { metadataUrl: string; imageUrl: string } | null, nft?: NFTMetadata) => {
         if (!data && !nft) return;
-
-        console.log("data2", data);
-        console.log("nft2", nft);
         const timestamp = dayjs(creationDate).unix();
         try {
             writeContract({
@@ -220,114 +165,116 @@ const UploadForm: React.FC = () => {
     }, [error, isSuccessListItem]);
 
     return (
-        <div className="max-w-lg mx-auto my-12 p-6 bg-white shadow-md rounded-lg">
-            <Toaster />
-            <h1 className="text-2xl font-semibold mb-6 text-center">Mettre en vente une œuvre</h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Affiche uniquement l'URI si présent */}
-                {tokenURI && (
+        <Suspense fallback={<div>Chargement...</div>}>
+            <div className="max-w-lg mx-auto my-12 p-6 bg-white shadow-md rounded-lg">
+                <Toaster />
+                <h1 className="text-2xl font-semibold mb-6 text-center">Mettre en vente une œuvre</h1>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Affiche uniquement l'URI si présent */}
+                    {tokenURI && (
+                        <div>
+                            <p className="text-sm text-gray-600">
+                                Les informations de l'oeuvre ont été récupérées, vous ne pouvez pas modififier l'image.
+                            </p>
+                        </div>
+                    )}
                     <div>
-                        <p className="text-sm text-gray-600">
-                            Les informations de l'oeuvre ont été récupérées, vous ne pouvez pas modififier l'image.
-                        </p>
-                    </div>
-                )}
-                <div>
-                    <Label htmlFor="name">Nom:</Label>
-                    <Input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                        placeholder="Entrez le nom de votre création"
-                        required
-                    />
-                </div>
-                <div>
-                    <Label htmlFor="description">Description:</Label>
-                    <Textarea
-                        id="description"
-                        value={description}
-                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
-                        placeholder="Entrez une description de votre création"
-                        required
-                    />
-                </div>
-                {!NFTMetadatas && (
-                    <div>
-                        <Label htmlFor="file">Image:</Label>
+                        <Label htmlFor="name">Nom:</Label>
                         <Input
-                            id="file"
-                            type="file"
-                            onChange={handleFileChange}
+                            id="name"
+                            type="text"
+                            value={name}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                            placeholder="Entrez le nom de votre création"
                             required
                         />
                     </div>
-                )}
-                <div>
-                    <Label htmlFor="price">Prix en euros:</Label>
-                    <Input
-                        id="price"
-                        type="number"
-                        value={price}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
-                        placeholder="Entrer le prix de votre création"
-                        required
-                    />
-                </div>
-                <div>
-                    <Label htmlFor="creationDate">Date de création:</Label>
-                    <Input
-                        id="creationDate"
-                        type="date"
-                        value={creationDate}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setCreationDate(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <Label htmlFor="artType">Type d'art :</Label>
-                    <Select
-                        value={artType !== undefined ? artType : "Type"}
-                        onValueChange={(value: string) => setArtType(value)}
-                        required
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="painting">Peinture</SelectItem>
-                            <SelectItem value="drawing">Dessin</SelectItem>
-                            <SelectItem value="sculpture">Sculpture</SelectItem>
-                            <SelectItem value="photography">Photographie</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div>
-                    <Button type="submit" disabled={isLoading || isPendingListItem} className="w-full">
-                        {isLoading || isPendingListItem ? "Mise en vente..." : "Mettre en vente"}
-                    </Button>
-                </div>
-            </form>
+                    <div>
+                        <Label htmlFor="description">Description:</Label>
+                        <Textarea
+                            id="description"
+                            value={description}
+                            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+                            placeholder="Entrez une description de votre création"
+                            required
+                        />
+                    </div>
+                    {!NFTMetadatas && (
+                        <div>
+                            <Label htmlFor="file">Image:</Label>
+                            <Input
+                                id="file"
+                                type="file"
+                                onChange={handleFileChange}
+                                required
+                            />
+                        </div>
+                    )}
+                    <div>
+                        <Label htmlFor="price">Prix en euros:</Label>
+                        <Input
+                            id="price"
+                            type="number"
+                            value={price}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
+                            placeholder="Entrer le prix de votre création"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <Label htmlFor="creationDate">Date de création:</Label>
+                        <Input
+                            id="creationDate"
+                            type="date"
+                            value={creationDate}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setCreationDate(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <Label htmlFor="artType">Type d'art :</Label>
+                        <Select
+                            value={artType !== undefined ? artType : "Type"}
+                            onValueChange={(value: string) => setArtType(value)}
+                            required
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="painting">Peinture</SelectItem>
+                                <SelectItem value="drawing">Dessin</SelectItem>
+                                <SelectItem value="sculpture">Sculpture</SelectItem>
+                                <SelectItem value="photography">Photographie</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div>
+                        <Button type="submit" disabled={isLoading || isPendingListItem} className="w-full">
+                            {isLoading || isPendingListItem ? "Mise en vente..." : "Mettre en vente"}
+                        </Button>
+                    </div>
+                </form>
 
-            {result && isSuccessListItem && (
-                <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
-                    <h2 className="text-lg font-semibold text-green-700">Mise en vente réussie!</h2>
-                    <p>
-                        <strong>Image URL:</strong>{" "}
-                        <a href={`https://` + result.imageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                            Voir l'image
-                        </a>
-                    </p>
-                    <p>
-                        <strong>Metadata URL:</strong>{" "}
-                        <a href={`https://` + result.metadataUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                            Accéder à la métadonnée
-                        </a>
-                    </p>
-                </div>
-            )}
-        </div>
+                {result && isSuccessListItem && (
+                    <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
+                        <h2 className="text-lg font-semibold text-green-700">Mise en vente réussie!</h2>
+                        <p>
+                            <strong>Image URL:</strong>{" "}
+                            <a href={`https://` + result.imageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                                Voir l'image
+                            </a>
+                        </p>
+                        <p>
+                            <strong>Metadata URL:</strong>{" "}
+                            <a href={`https://` + result.metadataUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                                Accéder à la métadonnée
+                            </a>
+                        </p>
+                    </div>
+                )}
+            </div>
+        </Suspense>
     );
 };
 
