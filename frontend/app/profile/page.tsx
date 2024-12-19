@@ -20,19 +20,6 @@ import { Button } from '@/components/ui';
 import getAllNFTFromOwner from '@/utils/getAllNFTFromOwner';
 import ClipLoader from 'react-spinners/ClipLoader';
 
-interface Item {
-    name: string;
-    description: string;
-    imageURI: string;
-    price: string;
-    kind: string;
-    creationDate: string;
-    seller: string;
-    creator: string;
-    tokenId: string;
-    itemId: string;
-}
-
 interface NFTRequest {
     nftminteds: {
         tokenId: string;

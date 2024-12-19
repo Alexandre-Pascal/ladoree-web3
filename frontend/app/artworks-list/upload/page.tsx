@@ -25,13 +25,7 @@ interface NFTMetadata {
     artType: string;
 }
 
-interface GraphqlResponseTokenId {
-    nftminteds: {
-        tokenId: string;
-    }[];
-}
-
-const UploadForm: React.FC = () => {
+export default function UploadForm() {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [file, setFile] = useState<File | null>(null);
@@ -48,8 +42,6 @@ const UploadForm: React.FC = () => {
     const searchParams = useSearchParams();
     const tokenURIFromQuery = searchParams.get("tokenURI");
 
-
-
     useEffect(() => {
         if (tokenURIFromQuery) {
             setTokenURI(tokenURIFromQuery);
@@ -60,7 +52,6 @@ const UploadForm: React.FC = () => {
         const fetchMetadata = async () => {
             if (!tokenURI) return;
             //récupère les métadonnées des nft
-            // console.log("tokenURI", tokenURI);
             const NFTMetadatas: NFTMetadata = await fetchNFTMetadata(tokenURI);
             setNFTMetadatas(NFTMetadatas);
 
@@ -278,4 +269,4 @@ const UploadForm: React.FC = () => {
     );
 };
 
-export default UploadForm;
+
