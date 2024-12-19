@@ -217,6 +217,14 @@ query MyQuery($userAddress: String!) {
   }
 }
 `,
+  GET_ALL_NFT_BY_USER: gql`
+query MyQuery($owner: String = "") {
+  nftminteds(where: {owner: $owner}) {
+    tokenId
+    tokenURI
+  }
+}
+`,
 
 };
 

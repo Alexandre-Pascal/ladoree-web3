@@ -14,6 +14,8 @@ import { User } from 'lucide-react';
 import Image from 'next/image';
 import BuyDiscountModal from '@/components/shared/BuyDiscountModal';
 import filterUnusedBuyerDiscounts from '@/utils/FilterUnusedDiscounts';
+import fetchNFTMetadata from '@/utils/fetchNFTMetadata';
+import translateArtType from '@/utils/translateArtType';
 
 interface Item {
     name: string;
@@ -26,6 +28,23 @@ interface Item {
     creator: string;
     tokenId: string;
     itemId: string;
+}
+
+interface NFT {
+    nftminteds: {
+        tokenId: string;
+        tokenURI: string;
+    }[];
+}
+
+interface NFTMetadata {
+    tokenId: string;
+    name: string;
+    description: string;
+    firstPrice: string;
+    image: string;
+    creationDate: string;
+    artType: string;
 }
 
 interface Discount {
@@ -61,6 +80,37 @@ export default function UserProfile() {
             profileImage: string;
         }[];
     };
+
+    const [NFTs, setNFTs] = useState<NFT | null>(null);
+    const [NFTMetadatas, setNFTMetadatas] = useState<NFTMetadata[]>([]);
+
+    useEffect(() => {
+        if (!address) return;
+        //récupère les nft de l'utilisateur
+        const fetchNFTs = async () => {
+            try {
+                setLoading(true);
+                const data: NFT = await request(GRAPHQL_URL, queries.GET_ALL_NFT_BY_USER, { owner: address });
+                console.log("data", data.nftminteds);
+                setNFTs(data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des NFTs :", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchNFTs();
+    }, [address]);
+
+    useEffect(() => {
+        const fetchMetadata = async () => {
+            if (!NFTs) return;
+            //récupère les métadonnées des nft
+            const NFTMetadatas = await fetchNFTMetadata(NFTs.nftminteds);
+            setNFTMetadatas(NFTMetadatas);
+        };
+        fetchMetadata();
+    }, [NFTs]);
 
     const { data, isLoading, error, isSuccess: isSuccessQuery } = useQuery<UserProfileData>({
         queryKey: ['userProfile', address], // Clé unique pour l'utilisateur
@@ -562,39 +612,55 @@ export default function UserProfile() {
 
                         {/* Section NFTs */}
                         <div className="p-12">
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4">🖼️ Vos NFTs</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {/* NFT Exemple 1 */}
-                                <div className="flex flex-col items-center bg-white border rounded-lg p-4 shadow-sm">
-                                    <img
-                                        src="https://via.placeholder.com/150"
-                                        alt="NFT Exemple"
-                                        className="w-full h-32 object-cover rounded-md mb-2"
-                                    />
-                                    <p className="text-gray-700 font-medium">NFT #001</p>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                🖼️ Vos Oeuvres possédées
+                            </h2>
+                            {NFTMetadatas.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {NFTMetadatas.map((nft, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex flex-col items-center bg-white border rounded-lg p-4 shadow-lg transition transform hover:scale-105"
+                                        >
+                                            {/* Image */}
+                                            <img
+                                                src={`https://${nft.image}`}
+                                                alt={nft.name}
+                                                className="w-full h-40 object-cover rounded-md mb-4"
+                                                onError={(e) => {
+                                                    // Fallback image in case of error
+                                                    (e.target as HTMLImageElement).src =
+                                                        "https://via.placeholder.com/150";
+                                                }}
+                                            />
+                                            {/* Name */}
+                                            <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                                                {nft.name}
+                                            </h3>
+                                            {/* Description */}
+                                            <p className="text-sm text-gray-600 mb-2 text-center line-clamp-3">
+                                                {nft.description}
+                                            </p>
+                                            {/* Additional Metadata */}
+                                            <p className="text-xs text-gray-500">
+                                                Type d'art: <span className="font-medium">{translateArtType(nft.artType)}</span>
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                Créée le :{" "}
+                                                <span className="font-medium">{nft.creationDate}</span>
+                                            </p>
+                                            {/* Token ID */}
+                                            <span className="mt-4 inline-block text-xs px-3 py-1 bg-gray-100 text-gray-500 rounded-full">
+                                                Token ID: {nft.tokenId}
+                                            </span>
+                                        </div>
+                                    ))}
                                 </div>
-
-                                {/* NFT Exemple 2 */}
-                                <div className="flex flex-col items-center bg-white border rounded-lg p-4 shadow-sm">
-                                    <img
-                                        src="https://via.placeholder.com/150"
-                                        alt="NFT Exemple"
-                                        className="w-full h-32 object-cover rounded-md mb-2"
-                                    />
-                                    <p className="text-gray-700 font-medium">NFT #002</p>
-                                </div>
-
-                                {/* NFT Exemple 3 */}
-                                <div className="flex flex-col items-center bg-white border rounded-lg p-4 shadow-sm">
-                                    <img
-                                        src="https://via.placeholder.com/150"
-                                        alt="NFT Exemple"
-                                        className="w-full h-32 object-cover rounded-md mb-2"
-                                    />
-                                    <p className="text-gray-700 font-medium">NFT #003</p>
-                                </div>
-                            </div>
+                            ) : (
+                                <p className="text-gray-600 text-center">Vous n'avez pas encore de NFTs.</p>
+                            )}
                         </div>
+
                     </div>
                 </div>
             </div>
