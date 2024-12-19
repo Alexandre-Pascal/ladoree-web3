@@ -226,6 +226,31 @@ query MyQuery($owner: String = "") {
 }
 `,
 
+  GET_LAST_TOKEN_ID: gql`
+query MyQuery {
+  nftminteds(first: 1, orderDirection: desc, orderBy: blockTimestamp) {
+    tokenId
+  }
+}
+`,
+
+  GET_NFT_BY_TOKEN_ID: gql`
+query MyQuery($tokenId: BigInt!) {
+  nftminteds(where: {tokenId: $tokenId}) {
+    tokenId
+    tokenURI
+  }
+}
+`,
+
+  GET_TOKEN_ID_BY_TOKEN_URI: gql`
+  query MyQuery($tokenURI: String!) {
+  nftminteds(where: {tokenURI: $tokenURI}) {
+    tokenId
+  }
+}
+  `,
+
 };
 
 // URL du sous-graph

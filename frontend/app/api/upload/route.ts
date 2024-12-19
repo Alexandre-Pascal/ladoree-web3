@@ -4,6 +4,7 @@ import { pinata } from "@/utils/config";
 export async function POST(request: NextRequest) {
     try {
         const data = await request.formData();
+
         const file: File | null = data.get("file") as unknown as File;
         const name = data.get("name") as string;
         const description = data.get("description") as string;

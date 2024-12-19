@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { useWriteContract, useAccount } from "wagmi";
-import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
+import { useWriteContract, useAccount, useReadContract } from "wagmi";
+import { marketplaceAbi, marketplaceAddress, authenticityNftAbi, authenticityNftAddress } from '@/utils/abis';
 import { Input, Button, Textarea, Select, Label } from "@/components/ui/index";
 import toast, { Toaster } from "react-hot-toast";
 import {
@@ -11,7 +11,28 @@ import {
     SelectTrigger,
 } from "@/components/ui/select"
 import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
+import fetchNFTMetadata from "@/utils/fetchNFTMetadata";
+import { request } from 'graphql-request';
+import { GRAPHQL_URL, queries } from '@/utils/graphQL';
+import { cpSync } from "fs";
 
+interface NFTMetadata {
+    tokenId: string;
+    tokenURI: string;
+    name: string;
+    description: string;
+    firstPrice: string;
+    image: string;
+    creationDate: string;
+    artType: string;
+}
+
+interface GraphqlResponseTokenId {
+    nftminteds: {
+        tokenId: string;
+    }[];
+}
 
 const UploadForm: React.FC = () => {
     const [name, setName] = useState<string>("");
@@ -22,8 +43,41 @@ const UploadForm: React.FC = () => {
     const [artType, setArtType] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [result, setResult] = useState<{ imageUrl: string; metadataUrl: string } | null>(null);
+    const [tokenURI, setTokenURI] = useState<string | null>(null);
+    const [NFTMetadatas, setNFTMetadatas] = useState<NFTMetadata>();
 
     const { address } = useAccount();
+
+    const searchParams = useSearchParams();
+    const tokenURIFromQuery = searchParams.get("tokenURI");
+
+
+
+    useEffect(() => {
+        if (tokenURIFromQuery) {
+            setTokenURI(tokenURIFromQuery);
+        }
+    }, [tokenURIFromQuery]);
+
+    useEffect(() => {
+        const fetchMetadata = async () => {
+            if (!tokenURI) return;
+            //récupère les métadonnées des nft
+            // console.log("tokenURI", tokenURI);
+            const NFTMetadatas: NFTMetadata = await fetchNFTMetadata(tokenURI);
+            setNFTMetadatas(NFTMetadatas);
+
+            // Pré-remplir les champs avec les métadonnées
+            if (NFTMetadatas) {
+                setName(NFTMetadatas.name);
+                setDescription(NFTMetadatas.description);
+                setPrice(NFTMetadatas.firstPrice);
+                setCreationDate(NFTMetadatas.creationDate);
+                setArtType(NFTMetadatas.artType);
+            }
+        };
+        fetchMetadata();
+    }, [tokenURI]);
 
     let toastId;
 
@@ -33,13 +87,62 @@ const UploadForm: React.FC = () => {
         }
     };
 
+    const [tokenId, setTokenId] = useState<number | null>(null);
+    const { writeContract: approveContract, isError: isErrorApprove, error: errorApprove, isPending: isPendingApprove, isSuccess: isSuccessApprove } = useWriteContract();
+
+
+    // useEffect(() => {
+    //     if (!tokenURI) return;
+    //     if (!address) return;
+
+    //     const fetchTokenId = async () => {
+    //         //Récupère le tokenId à partir de l'url
+    //         const tokenId: GraphqlResponseTokenId = await request(GRAPHQL_URL, queries.GET_TOKEN_ID_BY_TOKEN_URI, { tokenURI });
+    //         setTokenId(Number(tokenId.nftminteds[0].tokenId));
+    //         console.log("tokenId", tokenId);
+    //     };
+    //     fetchTokenId();
+
+    // }, [tokenURI, address]);
+
+    // useEffect(() => {
+    //     if (!tokenId) return;
+    //     const approve = async () => {
+    // console.log("tokenIddddddddd", tokenId);
+    // //Approve le tokenId pour l'utilisateur connecté
+    // approveContract({
+    //     address: authenticityNftAddress,
+    //     abi: authenticityNftAbi,
+    //     functionName: "approve",
+    //     args: [marketplaceAddress, tokenId]
+    // });
+    //     }
+    //     approve();
+    // }, [tokenId]);
+
+    // useEffect(() => {
+    //     if (isPendingApprove) {
+    //         toast.loading("Approve tokenId en cours...", { id: toastId });
+    //     }
+    //     if (isErrorApprove) {
+    //         console.error("Error approving tokenId:", errorApprove);
+    //         toast.error("Erreur lors de l'approbation du tokenId.", { id: toastId });
+    //     }
+    //     if (isSuccessApprove) {
+    //         toast.dismiss(toastId); // Supprime le toast en cours
+    //         toast.success("tokenId approuvé avec succès!", { id: toastId });
+    //     }
+    // }, [isPendingApprove, isErrorApprove, isSuccessApprove]);
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         toast.loading("Mise en vente en cours...", { id: toastId });
         e.preventDefault();
         setIsLoading(true);
         setResult(null);
 
-        if (!file) {
+        console.log("NFTMetadatas", NFTMetadatas);
+
+        if (!file && !tokenURI) {
             toast.error("Please select a file!", { id: toastId });
             setIsLoading(false);
             return;
@@ -47,25 +150,36 @@ const UploadForm: React.FC = () => {
 
         try {
             const formData = new FormData();
-            formData.append("file", file);
-            formData.append("name", name);
-            formData.append("description", description);
-            formData.append("price", price);
-            formData.append("creationDate", creationDate);
-            formData.append("artType", artType);
 
-            const response = await fetch("/api/upload", {
-                method: "POST",
-                body: formData,
-            });
+            if (NFTMetadatas) {
+                // formData.append("metadataURI", tokenURI);
+                console.log("tokenURI", tokenURI);
+                listItem(undefined, NFTMetadatas);
+                setResult({ imageUrl: NFTMetadatas.image, metadataUrl: tokenURI || "" });
 
-            if (!response.ok) {
-                throw new Error("Failed to upload");
+            } else {
+                // Upload file and generate new metadata if no tokenURI is provided
+                if (file) {
+                    formData.append("file", file);
+                }
+                formData.append("name", name);
+                formData.append("description", description);
+                formData.append("price", price);
+                formData.append("creationDate", creationDate);
+                formData.append("artType", artType);
+                const response = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to upload");
+                }
+
+                const data = await response.json();
+                listItem(data);
+                setResult(data);
             }
 
-            const data = await response.json();
-            listItem(data);
-            setResult(data);
         } catch (error) {
             console.error("Error uploading data:", error);
             toast.error("An error occurred during the upload process.", { id: toastId });
@@ -75,15 +189,18 @@ const UploadForm: React.FC = () => {
     };
 
     const { writeContract, error, isSuccess: isSuccessListItem, isPending: isPendingListItem } = useWriteContract();
-    const listItem = async (data: { imageUrl: string; metadataUrl: string } | null) => {
-        if (!data) return;
+    const listItem = async (data?: { metadataUrl: string; imageUrl: string } | null, nft?: NFTMetadata) => {
+        if (!data && !nft) return;
+
+        console.log("data2", data);
+        console.log("nft2", nft);
         const timestamp = dayjs(creationDate).unix();
         try {
             writeContract({
                 address: marketplaceAddress,
                 abi: marketplaceAbi,
                 functionName: "listItem",
-                args: [name, description, artType, price, timestamp, data.imageUrl, data.metadataUrl, address, 500]
+                args: [name, description, artType, price, timestamp, data?.imageUrl ? data.imageUrl : nft?.image, data?.metadataUrl ? data.metadataUrl : nft?.tokenURI, address, 500]
             });
         } catch (error) {
             console.error("Error listing item:", error);
@@ -107,6 +224,14 @@ const UploadForm: React.FC = () => {
             <Toaster />
             <h1 className="text-2xl font-semibold mb-6 text-center">Mettre en vente une œuvre</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Affiche uniquement l'URI si présent */}
+                {tokenURI && (
+                    <div>
+                        <p className="text-sm text-gray-600">
+                            Les informations de l'oeuvre ont été récupérées, vous ne pouvez pas modififier l'image.
+                        </p>
+                    </div>
+                )}
                 <div>
                     <Label htmlFor="name">Nom:</Label>
                     <Input
@@ -128,15 +253,17 @@ const UploadForm: React.FC = () => {
                         required
                     />
                 </div>
-                <div>
-                    <Label htmlFor="file">Image:</Label>
-                    <Input
-                        id="file"
-                        type="file"
-                        onChange={handleFileChange}
-                        required
-                    />
-                </div>
+                {!NFTMetadatas && (
+                    <div>
+                        <Label htmlFor="file">Image:</Label>
+                        <Input
+                            id="file"
+                            type="file"
+                            onChange={handleFileChange}
+                            required
+                        />
+                    </div>
+                )}
                 <div>
                     <Label htmlFor="price">Prix en euros:</Label>
                     <Input
