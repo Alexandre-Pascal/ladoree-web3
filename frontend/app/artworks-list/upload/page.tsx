@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, ChangeEvent, FormEvent, useEffect, Suspense } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useWriteContract, useAccount } from "wagmi";
 import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
 import { Input, Button, Textarea, Select, Label } from "@/components/ui/index";
@@ -11,8 +11,8 @@ import {
     SelectTrigger,
 } from "@/components/ui/select"
 import dayjs from "dayjs";
-import { useSearchParams } from "next/navigation";
 import fetchNFTMetadata from "@/utils/fetchNFTMetadata";
+import useTokenUri from "@/utils/hooks";
 
 interface NFTMetadata {
     tokenId: string;
@@ -39,8 +39,7 @@ export default function UploadForm() {
 
     const { address } = useAccount();
 
-    const searchParams = useSearchParams();
-    const tokenURIFromQuery = searchParams.get("tokenURI");
+    const tokenURIFromQuery = useTokenUri();
 
     useEffect(() => {
         if (tokenURIFromQuery) {
@@ -156,116 +155,114 @@ export default function UploadForm() {
     }, [error, isSuccessListItem]);
 
     return (
-        <Suspense fallback={<div>Chargement...</div>}>
-            <div className="max-w-lg mx-auto my-12 p-6 bg-white shadow-md rounded-lg">
-                <Toaster />
-                <h1 className="text-2xl font-semibold mb-6 text-center">Mettre en vente une œuvre</h1>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Affiche uniquement l'URI si présent */}
-                    {tokenURI && (
-                        <div>
-                            <p className="text-sm text-gray-600">
-                                Les informations de l'oeuvre ont été récupérées, vous ne pouvez pas modififier l'image.
-                            </p>
-                        </div>
-                    )}
+        <div className="max-w-lg mx-auto my-12 p-6 bg-white shadow-md rounded-lg">
+            <Toaster />
+            <h1 className="text-2xl font-semibold mb-6 text-center">Mettre en vente une œuvre</h1>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Affiche uniquement l'URI si présent */}
+                {tokenURI && (
                     <div>
-                        <Label htmlFor="name">Nom:</Label>
-                        <Input
-                            id="name"
-                            type="text"
-                            value={name}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                            placeholder="Entrez le nom de votre création"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="description">Description:</Label>
-                        <Textarea
-                            id="description"
-                            value={description}
-                            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
-                            placeholder="Entrez une description de votre création"
-                            required
-                        />
-                    </div>
-                    {!NFTMetadatas && (
-                        <div>
-                            <Label htmlFor="file">Image:</Label>
-                            <Input
-                                id="file"
-                                type="file"
-                                onChange={handleFileChange}
-                                required
-                            />
-                        </div>
-                    )}
-                    <div>
-                        <Label htmlFor="price">Prix en euros:</Label>
-                        <Input
-                            id="price"
-                            type="number"
-                            value={price}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
-                            placeholder="Entrer le prix de votre création"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="creationDate">Date de création:</Label>
-                        <Input
-                            id="creationDate"
-                            type="date"
-                            value={creationDate}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setCreationDate(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="artType">Type d'art :</Label>
-                        <Select
-                            value={artType !== undefined ? artType : "Type"}
-                            onValueChange={(value: string) => setArtType(value)}
-                            required
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="painting">Peinture</SelectItem>
-                                <SelectItem value="drawing">Dessin</SelectItem>
-                                <SelectItem value="sculpture">Sculpture</SelectItem>
-                                <SelectItem value="photography">Photographie</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div>
-                        <Button type="submit" disabled={isLoading || isPendingListItem} className="w-full">
-                            {isLoading || isPendingListItem ? "Mise en vente..." : "Mettre en vente"}
-                        </Button>
-                    </div>
-                </form>
-
-                {result && isSuccessListItem && (
-                    <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
-                        <h2 className="text-lg font-semibold text-green-700">Mise en vente réussie!</h2>
-                        <p>
-                            <strong>Image URL:</strong>{" "}
-                            <a href={`https://` + result.imageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                                Voir l'image
-                            </a>
-                        </p>
-                        <p>
-                            <strong>Metadata URL:</strong>{" "}
-                            <a href={`https://` + result.metadataUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                                Accéder à la métadonnée
-                            </a>
+                        <p className="text-sm text-gray-600">
+                            Les informations de l'oeuvre ont été récupérées, vous ne pouvez pas modififier l'image.
                         </p>
                     </div>
                 )}
-            </div>
-        </Suspense>
+                <div>
+                    <Label htmlFor="name">Nom:</Label>
+                    <Input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                        placeholder="Entrez le nom de votre création"
+                        required
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="description">Description:</Label>
+                    <Textarea
+                        id="description"
+                        value={description}
+                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+                        placeholder="Entrez une description de votre création"
+                        required
+                    />
+                </div>
+                {!NFTMetadatas && (
+                    <div>
+                        <Label htmlFor="file">Image:</Label>
+                        <Input
+                            id="file"
+                            type="file"
+                            onChange={handleFileChange}
+                            required
+                        />
+                    </div>
+                )}
+                <div>
+                    <Label htmlFor="price">Prix en euros:</Label>
+                    <Input
+                        id="price"
+                        type="number"
+                        value={price}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
+                        placeholder="Entrer le prix de votre création"
+                        required
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="creationDate">Date de création:</Label>
+                    <Input
+                        id="creationDate"
+                        type="date"
+                        value={creationDate}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setCreationDate(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="artType">Type d'art :</Label>
+                    <Select
+                        value={artType !== undefined ? artType : "Type"}
+                        onValueChange={(value: string) => setArtType(value)}
+                        required
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="painting">Peinture</SelectItem>
+                            <SelectItem value="drawing">Dessin</SelectItem>
+                            <SelectItem value="sculpture">Sculpture</SelectItem>
+                            <SelectItem value="photography">Photographie</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div>
+                    <Button type="submit" disabled={isLoading || isPendingListItem} className="w-full">
+                        {isLoading || isPendingListItem ? "Mise en vente..." : "Mettre en vente"}
+                    </Button>
+                </div>
+            </form>
+
+            {result && isSuccessListItem && (
+                <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
+                    <h2 className="text-lg font-semibold text-green-700">Mise en vente réussie!</h2>
+                    <p>
+                        <strong>Image URL:</strong>{" "}
+                        <a href={`https://` + result.imageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                            Voir l'image
+                        </a>
+                    </p>
+                    <p>
+                        <strong>Metadata URL:</strong>{" "}
+                        <a href={`https://` + result.metadataUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                            Accéder à la métadonnée
+                        </a>
+                    </p>
+                </div>
+            )}
+        </div>
     );
 };
 
