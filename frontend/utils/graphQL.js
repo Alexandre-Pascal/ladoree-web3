@@ -38,6 +38,7 @@ export const queries = {
         userName
         bio
         profileImage
+        user
       }
     }
   `,
@@ -250,6 +251,22 @@ query MyQuery($tokenId: BigInt!) {
   }
 }
   `,
+
+  GET_ITEMS_SOLD_BY_USER: gql`
+  query ItemsSold($seller: String!) {
+  itemSolds(where: {seller: $seller}) {
+    itemId
+  }
+}`,
+
+  GET_ITEMS_FOR_SALE_BY_USER: gql`
+  query ItemsForSale($seller: String!) {
+  itemListeds(where: {seller: $seller}) {
+    itemId
+    name
+    price
+  }
+}`,
 
 };
 

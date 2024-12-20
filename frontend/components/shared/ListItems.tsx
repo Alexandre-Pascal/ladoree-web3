@@ -58,10 +58,7 @@ export default function ListItems({ items }: { items?: Item[] }) {
 
                 // Ne pas afficher les items qui ont une imageURI qui commence par un truc différent de "indigo"
                 const itemFiltered = unsoldItems.filter((item) => item.imageURI.startsWith("indigo")); // À supprimer au prochain déploiement
-                console.log("itemFiltered:", itemFiltered);
-                console.log("unsoldItems:", unsoldItems);
-                console.log("listedData:", listedData);
-                console.log("soldData:", soldData);
+
                 setItemList(itemFiltered);
             } catch (err: any) {
                 console.error("Error fetching metadata:", err);

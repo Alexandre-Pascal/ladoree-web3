@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useWriteContract, useAccount } from "wagmi";
-import { marketplaceAbi, marketplaceAddress } from '@/utils/abis';
+import { marketplaceAbi, marketplaceAddress, authenticityNftAbi, authenticityNftAddress } from '@/utils/abis';
 import { Input, Button, Textarea, Select, Label } from "@/components/ui/index";
 import toast, { Toaster } from "react-hot-toast";
 import {
@@ -126,17 +126,39 @@ export default function UploadForm() {
         }
     };
 
-    const { writeContract, error, isSuccess: isSuccessListItem, isPending: isPendingListItem } = useWriteContract();
+    const { writeContractAsync: useSetApprovalForAll } = useWriteContract();
+    const { writeContractAsync: useListItem, error, isSuccess: isSuccessListItem, isPending: isPendingListItem } = useWriteContract();
     const listItem = async (data?: { metadataUrl: string; imageUrl: string } | null, nft?: NFTMetadata) => {
         if (!data && !nft) return;
         const timestamp = dayjs(creationDate).unix();
         try {
-            writeContract({
+            toast(
+                "Authorisez la place de marché à pouvoir récupérer l'oeuvre... (La prochaine étape sera la mise en vente de l'oeuvre et le transfert du nft à la place de marché)",
+                {
+                    duration: 7000,
+                }
+            );
+            // Approve marketplace to transfer NFT
+            await useSetApprovalForAll({
+                address: authenticityNftAddress,
+                abi: authenticityNftAbi,
+                functionName: "setApprovalForAll",
+                args: [marketplaceAddress, true]
+            });
+
+            toast(
+                "Mise en vente et transfert de l'oeuvre à la place de marché en cours...",
+                {
+                    duration: 6000,
+                }
+            );
+            await useListItem({
                 address: marketplaceAddress,
                 abi: marketplaceAbi,
                 functionName: "listItem",
                 args: [name, description, artType, price, timestamp, data?.imageUrl ? data.imageUrl : nft?.image, data?.metadataUrl ? data.metadataUrl : nft?.tokenURI, address, 500]
             });
+
         } catch (error) {
             console.error("Error listing item:", error);
             toast.error("Erreur lors de la mise en vente de l'oeuvre.", { id: toastId });

@@ -19,7 +19,6 @@ const page = () => {
         <div>
             <div className="py-12 text-center border-b border-gray-300">
                 <h1 className='text-3xl tracking-wide text-gray-800'>Explore</h1>
-                <p className='text-gray-500 mt-1'>100 résultats</p>
             </div>
 
             <div className="flex max-w-screen-xl-2xl mx-auto py-12 relative ">

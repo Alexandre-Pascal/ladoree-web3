@@ -10,6 +10,7 @@ export type Creator = {
     userName: string;
     bio: string;
     profileImage: string;
+    user: string;
 }
 export type CreatorData = {
     userRegistereds: {
@@ -17,7 +18,7 @@ export type CreatorData = {
         userName: string;
         bio: string;
         profileImage: string;
-        user: user;
+        user: string;
     }[];
 };
 
