@@ -252,15 +252,17 @@ query MyQuery($tokenId: BigInt!) {
 }
   `,
 
-  GET_ITEMS_SOLD_BY_USER: gql`
-  query ItemsSold($seller: String!) {
-  itemSolds(where: {seller: $seller}) {
+  GET_ITEMS_FOR_SALE_BY_USER: gql`
+  query ItemsForSale($seller: String!) {
+  itemListeds(where: {seller: $seller}) {
     itemId
+    name
+    price
   }
 }`,
 
-  GET_ITEMS_FOR_SALE_BY_USER: gql`
-  query ItemsForSale($seller: String!) {
+  GET_ITEMS_BY_SELLER: gql`
+  query ItemsBySeller($seller: String!) {
   itemListeds(where: {seller: $seller}) {
     itemId
     name

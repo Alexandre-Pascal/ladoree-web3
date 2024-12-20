@@ -19,6 +19,7 @@ import translateArtType from '@/utils/translateArtType';
 import { Button } from '@/components/ui';
 import getAllNFTFromOwner from '@/utils/getAllNFTFromOwner';
 import ClipLoader from 'react-spinners/ClipLoader';
+import ArtCard from '@/components/shared/ArtCard';
 
 interface NFTRequest {
     nftminteds: {
@@ -56,8 +57,69 @@ type GraphQLResponseSeller = {
     sellerDiscountBoughts: Discount[];
     discountUseds: { discountId: number; from: string }[];
 };
+
+type UserProfileData = {
+    userRegistereds: {
+        userName: string;
+        email: string;
+        bio: string;
+        isCreator: boolean;
+        profileImage: string;
+    }[];
+};
+
+interface Item {
+    name: string;
+    description: string;
+    imageURI: string;
+    price: string;
+    kind: string;
+    seller: string;
+    creator: string;
+    tokenId: string;
+    itemId: string;
+}
+
+interface GraphQLResponseItemListed {
+    itemListeds: Item[];
+}
+
+interface GraphQLResponseItemSold {
+    itemSolds: {
+        itemId: string;
+    }[];
+}
+
 export default function UserProfile() {
     const { address } = useAccount(); // Récupère l'adresse utilisateur connectée
+
+    const [artworksData, setArtworksData] = useState<Item[]>([]);
+
+    useEffect(() => {
+        if (!address) return;
+        const fetchItems = async () => {
+            try {
+                const data: GraphQLResponseItemListed = await request(GRAPHQL_URL, queries.GET_ARTWORKS_BY_CREATOR, { creator: address });
+                console.log("data", data);
+
+                // Récupération des items vendus
+                const soldData: GraphQLResponseItemSold = await request(GRAPHQL_URL, queries.GET_ITEMS_SOLD);
+
+                // Transforme les items vendus en un Set pour une recherche rapide
+                const soldItemIds = new Set(soldData.itemSolds.map((sold) => sold.itemId));
+
+                // Filtre les items en vente qui ne sont pas dans la liste des items vendus
+                const itemFiltered = data.itemListeds.filter((item) => !soldItemIds.has(item.itemId));
+
+                setArtworksData(itemFiltered);
+                console.log("artworksData", itemFiltered);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des items :", error);
+            }
+        }
+        fetchItems();
+    }, [address]);
+
 
     const { data: tokenBalance, isLoading: isBalanceLoading, error: balanceError } = useReadContract({
         address: ldrTokenAddress,
@@ -65,18 +127,6 @@ export default function UserProfile() {
         functionName: 'balanceOf',
         args: [address],
     });
-
-
-    type UserProfileData = {
-        userRegistereds: {
-            userName: string;
-            email: string;
-            bio: string;
-            isCreator: boolean;
-            profileImage: string;
-        }[];
-    };
-
 
     const [NFTs, setNFTs] = useState<NFT[] | null>(null);
     const [NFTMetadatas, setNFTMetadatas] = useState<NFTMetadata[]>([]);
@@ -684,9 +734,22 @@ export default function UserProfile() {
                                     }</>
                             )}
                         </div>
+
+                        <div className="p-12">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6">🎨 Vos Oeuvres Mises en Vente</h2>
+                            <div className="flex flex-row gap-6">
+                                {artworksData.length > 0 ? (
+                                    artworksData.map((item, index) => (
+                                        <ArtCard key={index} item={item} />
+                                    ))
+                                ) : (
+                                    <p className="text-gray-600 text-center">Vous n'avez pas encore d'oeuvres mises en vente.</p>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
