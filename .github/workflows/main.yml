@@ -33,7 +33,19 @@ jobs:
         
       - name: Run Hardhat tests
         run: npx hardhat test --network hardhat
-        
+        env:
+          PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
+          PINATA_API_SECRET: ${{ secrets.PINATA_API_SECRET }}
+          PINATA_JWT: ${{ secrets.PINATA_JWT }}
+          NEXT_PUBLIC_STRIPE_API_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_API_KEY }}
+          STRIPE_API_SECRET: ${{ secrets.STRIPE_API_SECRET }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          BLOCKCHAIN_RPC_URL: ${{ secrets.BLOCKCHAIN_RPC_URL }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          NEXT_PUBLIC_RPC_URL: ${{ secrets.NEXT_PUBLIC_RPC_URL }}
+          
       - name: Run Coverage
         run: npx hardhat coverage
         env:
