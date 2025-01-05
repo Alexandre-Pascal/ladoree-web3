@@ -2,8 +2,8 @@ name: Backend Tests
 
 on:
   push:
-    # paths:
-    #   - 'backend/**'
+    paths:
+      - 'backend/**'
     branches: [ "main" ]
   pull_request:
     paths:
@@ -45,7 +45,7 @@ jobs:
           BLOCKCHAIN_RPC_URL: ${{ secrets.BLOCKCHAIN_RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           NEXT_PUBLIC_RPC_URL: ${{ secrets.NEXT_PUBLIC_RPC_URL }}
-          
+
       - name: Run Coverage
         run: npx hardhat coverage
         env:
