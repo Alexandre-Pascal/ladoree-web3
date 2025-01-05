@@ -172,7 +172,7 @@ export default function UploadForm() {
         }
         if (isSuccessListItem) {
             toast.dismiss(toastId); // Supprime le toast en cours
-            toast.success("Oeuve mise en vente avec succès!", { id: toastId });
+            toast.success("Oeuvre mise en vente avec succès!", { id: toastId });
         }
     }, [error, isSuccessListItem]);
 
