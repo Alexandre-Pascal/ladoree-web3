@@ -1,8 +1,11 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ArtCard from '@/components/shared/ArtCard';
 import { artworksData, artistsData } from '../data/artistsData';
+import { GRAPHQL_URL, queries } from '@/utils/graphQL';
+import { request } from 'graphql-request';
+
 
 // Exemple de données d'artistes et d'acheteurs
 const topArtists = artistsData.slice(0, 3);
@@ -25,22 +28,57 @@ const topBuyers = [
   },
 ];
 
+interface GraphQLResponseLastArtwork {
+  itemListeds: {
+    name: string;
+    creator: number;
+    imageURI: string;
+  }[];
+}
+
+interface GraphQLResponseCreatorNameLastArtwork {
+  userRegistereds: {
+    userName: string;
+  }[];
+}
+
+
 const HomePage = () => {
+  const [lastItems, setLastItems] = useState<GraphQLResponseLastArtwork['itemListeds'][0] | null>(null);
+  const [creatorName, setCreatorName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLastItems = async () => {
+      const itemData: GraphQLResponseLastArtwork = await request(GRAPHQL_URL, queries.GET_LAST_ITEM_LISTED);
+      setLastItems(itemData.itemListeds[0]);
+    };
+    fetchLastItems();
+  }, []);
+
+  useEffect(() => {
+    if (!lastItems) return;
+    const fetchCreatorName = async () => {
+      const creatorData: GraphQLResponseCreatorNameLastArtwork = await request(GRAPHQL_URL, queries.GET_CREATOR_NAME_BY_ADDRESS, { address: lastItems?.creator });
+      setCreatorName(creatorData.userRegistereds[0].userName);
+    };
+    fetchCreatorName();
+  }, [lastItems]);
+
   return (
     <div className="max-w-screen-xl mx-auto py-12 px-6">
       {/* Section de mise en valeur d'une œuvre */}
       <section className="relative mb-16">
-        <div className="relative h-[500px] overflow-hidden rounded-lg shadow-md">
+        <div className="relative h-[650px] overflow-hidden rounded-lg shadow-md">
           <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg"
-            alt="La Nuit étoilée"
+            src={'https://' + lastItems?.imageURI}
+            alt={lastItems?.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-center text-white">
-            <h2 className="text-5xl font-bold">La Nuit étoilée</h2>
-            <p className="mt-2 text-lg">Par Vincent van Gogh</p>
+            <h2 className="text-5xl font-bold"> {lastItems?.name} </h2>
+            <p className="mt-2 text-lg">Par <span className="font-semibold">{creatorName}</span></p>
             <Link
-              href="/artworks-list/La%20Nuit%20étoilée"
+              href={`/artworks-list/${encodeURIComponent(lastItems?.name || '')}`}
               className="mt-6 px-6 py-3 bg-indigo-500 rounded-md hover:bg-indigo-600 transition"
             >
               Découvrez cette œuvre
@@ -104,15 +142,15 @@ const HomePage = () => {
       </div>
 
       {/* Section de recommandation ou autres éléments supplémentaires */}
-      <section className="mb-16">
+      {/* <section className="mb-16">
         <h3 className="text-3xl font-semibold text-gray-800 mb-6">Recommandations pour vous</h3>
         <div className="flex flex-wrap gap-8">
-          {/* Affichage d'œuvres d'art sous forme de cartes */}
-          {/* <ArtCard artwork={artworksData[0]} />
+           Affichage d'œuvres d'art sous forme de cartes 
+           <ArtCard artwork={artworksData[0]} />
           <ArtCard artwork={artworksData[1]} />
-          <ArtCard artwork={artworksData[2]} /> */}
+          <ArtCard artwork={artworksData[2]} /> 
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

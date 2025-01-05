@@ -270,6 +270,24 @@ query MyQuery($tokenId: BigInt!) {
   }
 }`,
 
+  GET_LAST_ITEM_LISTED: gql`
+  query MyQuery {
+  itemListeds(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+    name
+    creator
+    imageURI
+  }
+}
+`,
+
+  GET_CREATOR_NAME_BY_ADDRESS: gql`
+query MyQuery($address: String!) {
+  userRegistereds(where: {user: $address}) {
+    userName
+  }
+}
+`,
+
 };
 
 // URL du sous-graph

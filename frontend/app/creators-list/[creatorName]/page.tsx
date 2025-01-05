@@ -82,7 +82,7 @@ const ArtistDetailPage: React.FC<ArtistDetailPageProps> = ({ params }) => {
                 <div className="ml-8">
                     <p className="text-xl text-gray-600">{bio}</p>
                     <p className="text-gray-600 mt-2">Email : {email}</p>
-                    <h2 className="text-lg font-semibold text-gray-800 mt-4">Œuvres notables</h2>
+                    {/* <h2 className="text-lg font-semibold text-gray-800 mt-4">Œuvres notables</h2> */}
                     <ul className="list-disc pl-6 mt-2">
                         {/* {artist.notableWorks.map((work, index) => (
                             <li key={index} className="text-gray-600">{work}</li>

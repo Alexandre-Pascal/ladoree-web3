@@ -70,7 +70,7 @@ const ArtCard = ({ item }: { item: Item }) => {
         <Link href={`/artworks-list/${encodeURIComponent(item.name)}`}>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer flex-none w-[350px] content-center">
                 <div className="relative h-80">
-                    <Image src={`https://` + item.imageURI} alt={item.name} sizes="100%" fill className="w-full h-full object-cover" />
+                    <img src={`https://` + item.imageURI} alt={item.name} sizes="100%" className="w-full h-full object-cover" />
                 </div>
                 <div className="py-8 px-4">
                     <div className="flex items-center">

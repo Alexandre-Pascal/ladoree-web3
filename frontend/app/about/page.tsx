@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-import moi from '../../icons/moi-le-boss.png';
+import moi from '../../icons/moi.png';
 import jeremy from '../../icons/jeremy.png';
 import ahmadou from '../../icons/ahmadou.png';
 import rihab from '../../icons/rihab.png';
@@ -88,7 +88,6 @@ const About = () => {
                             className="w-36 h-36 object-cover rounded-full mx-auto mb-4 border-4 border-gray-200 shadow-md"
                         />
                         <h3 className="text-xl font-semibold text-gray-800">Alexandre Pascal</h3>
-                        <h4 className="text-base text-gray-500 italic mb-2">Dit "L'humble"</h4>
                         <p className="text-gray-700">Développeur Blockchain</p>
                     </div>
 
