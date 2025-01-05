@@ -1,0 +1,41 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Étape 1 : Récupérer le code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Étape 2 : Configurer les dépendances
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install Dependencies
+      run: npm install
+
+    # Étape 3 : Tests et déploiement
+    - name: Run Tests
+      run: npm test
+
+    - name: Deploy Contracts
+      env:
+        BLOCKCHAIN_RPC_URL: ${{ secrets.BLOCKCHAIN_RPC_URL }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      run: |
+        npx hardhat compile
+        npx hardhat run scripts/deploy.js --network mainnet
+
+    - name: Deploy Frontend
+      env:
+        NEXT_PUBLIC_STRIPE_API_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_API_KEY }}
+      run: npm run build
