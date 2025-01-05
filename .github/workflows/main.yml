@@ -33,6 +33,9 @@ jobs:
         
       - name: Run Hardhat tests
         run: npx hardhat test --network hardhat
+        
+      - name: Run Coverage
+        run: npx hardhat coverage
         env:
           PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
           PINATA_API_SECRET: ${{ secrets.PINATA_API_SECRET }}
