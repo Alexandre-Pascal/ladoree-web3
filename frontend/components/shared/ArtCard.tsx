@@ -1,7 +1,6 @@
 // components/ArtCard.tsx
 
 import React, { useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { GRAPHQL_URL, queries } from '@/utils/graphQL';
 import { request } from 'graphql-request';
@@ -75,8 +74,13 @@ const ArtCard = ({ item }: { item: Item }) => {
                 <div className="py-8 px-4">
                     <div className="flex items-center">
                         <div className="w-12 h-16 relative rounded-full overflow-hidden">
-                            {artist &&
-                                <Image src={artist.profileImage} alt={artist.userName} sizes='100%' fill className="rounded-full border-2 border-gray-200 w-full h-full object-cover" />
+                            {artist && artist.profileImage ?
+                                (
+                                    <img src={artist.profileImage} alt={artist.userName} sizes='100%' className="rounded-full border-2 border-gray-200 w-full h-full object-cover" />
+                                ) :
+                                (
+                                    <div className="w-full h-full bg-gray-200 rounded-full"></div>
+                                )
                             }
                         </div>
                         <div className="ml-4">

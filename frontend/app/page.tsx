@@ -43,16 +43,77 @@ interface GraphQLResponseCreatorNameLastArtwork {
 }
 
 
+
+
+
+interface Item {
+  name: string;
+  description: string;
+  imageURI: string;
+  price: string;
+  kind: string;
+  seller: string;
+  creator: string;
+  tokenId: string;
+  itemId: string;
+}
+
+interface GraphQLResponseItemListed {
+  itemListeds: Item[];
+}
+
+interface GraphQLResponseItemSold {
+  itemSolds: {
+    itemId: string;
+  }[];
+}
+
 const HomePage = () => {
-  const [lastItems, setLastItems] = useState<GraphQLResponseLastArtwork['itemListeds'][0] | null>(null);
+  const [lastItems, setLastItems] = useState<Item | null>(null);
   const [creatorName, setCreatorName] = useState<string | null>(null);
 
+
+
+  // Liste des items en vente, si aucun item n'est passé en paramètre, on récupère tous les items en vente
+
+  const [itemList, setItemList] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    const fetchLastItems = async () => {
-      const itemData: GraphQLResponseLastArtwork = await request(GRAPHQL_URL, queries.GET_LAST_ITEM_LISTED);
-      setLastItems(itemData.itemListeds[0]);
+    const fetchItemListeds = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        let listedData: GraphQLResponseItemListed = { itemListeds: [] };
+
+
+        // Récupération des items en vente
+        listedData = await request(GRAPHQL_URL, queries.GET_ARTWORKS);
+
+
+        // Récupération des items vendus
+        const soldData: GraphQLResponseItemSold = await request(GRAPHQL_URL, queries.GET_ITEMS_SOLD);
+
+        // Transforme les items vendus en un Set pour une recherche rapide
+        const soldItemIds = new Set(soldData.itemSolds.map((sold) => sold.itemId));
+
+        // Filtre les items en vente qui ne sont pas dans la liste des items vendus
+        const unsoldItems = listedData.itemListeds.filter((item) => !soldItemIds.has(item.itemId));
+
+        // Ne pas afficher les items qui ont une imageURI qui commence par un truc différent de "indigo"
+        const itemFiltered = unsoldItems.filter((item) => item.imageURI.startsWith("indigo")); // À supprimer au prochain déploiement
+
+        setLastItems(itemFiltered[0]);
+      } catch (err: any) {
+        console.error("Error fetching metadata:", err);
+        setError(err.message || "Unknown error occurred");
+      } finally {
+        setIsLoading(false);
+      }
     };
-    fetchLastItems();
+    fetchItemListeds();
   }, []);
 
   useEffect(() => {
