@@ -20,6 +20,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 interface ITokenDistribution {
     function distributeTokens(address user, uint256 amountSpent) external;
     function setMarketplaceContract(address _ldrTokenAddress) external;
+    function setUserManagerContract(address _userManagerAddress) external;
 }
 
 // ========================
