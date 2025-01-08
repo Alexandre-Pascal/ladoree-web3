@@ -1,4 +1,4 @@
-export const userManagerAddress = "0x468fBa9DaC4A48923C33783E3d0903925729Ac1E"
+export const userManagerAddress = "0x432BD61aa62AAAF2C063F54b4cD29Cc739bb0A6d"
 export const userManagerAbi = [
     {
         "inputs": [],
@@ -412,7 +412,7 @@ export const userManagerAbi = [
     }
 ]
 
-export const tokenDistribution = "0x366c8901bec9093b77F9B1A6493D18C52Fbc9719"
+export const tokenDistribution = "0x0B5A42c90bBd1Dc6A10276C4C3361D1f259967Fd"
 export const tokenDistributionAbi = [
     {
         "inputs": [],
@@ -661,7 +661,7 @@ export const tokenDistributionAbi = [
     }
 ]
 
-export const ldrTokenAddress = "0x086589D7BA6CBCC93c446F94af1C18027f0D77fF"
+export const ldrTokenAddress = "0xef8fb5FC45b6a1e67b50B94EFEA6659FCCF31B66"
 export const ldrTokenAbi = [
     {
         "inputs": [],
@@ -1420,7 +1420,7 @@ export const ldrTokenAbi = [
     }
 ]
 
-export const marketplaceAddress = "0x440A2eBAD487ECF8158F76B9F72dAF5B2a6Ef858"
+export const marketplaceAddress = "0x7FfF7d4b2Cd376E40fce166930D8D79d6d2Eaa03"
 export const marketplaceAbi = [
     {
         "inputs": [],
@@ -1825,7 +1825,7 @@ export const marketplaceAbi = [
     }
 ]
 
-export const authenticityNftAddress = "0x45B782Fb1B1363c92CEC532D312e6F42039AB9C1"
+export const authenticityNftAddress = "0x39378CD92578c0F210Fa3Ba3629b7AE823fdf7B4"
 export const authenticityNftAbi = [
     {
         "inputs": [],
